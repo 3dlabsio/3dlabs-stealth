@@ -24,12 +24,13 @@
  * Creatbot D600 Pro pin assignments (Rumba derivative)
  */
 
+#include "advi3pp_defines.h"
+
 #ifndef __AVR_ATmega2560__
   #error "Oops!  Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu."
 #endif
 
-#define DEFAULT_MACHINE_NAME "Creatbot D600 Pro"
-#define BOARD_NAME           "BOARD_CREATBOT_D600_PRO"
+#define BOARD_NAME           "Creatbot D600 Pro"
 
 #define ARDUINO_SERIAL 1
 

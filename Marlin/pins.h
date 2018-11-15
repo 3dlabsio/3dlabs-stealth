@@ -187,7 +187,11 @@
   #include "pins_I3_PLUS_MARK2.h"     // ATmega2560
 #elif MB(I3_PLUS_HE180021)
   #include "pins_I3_PLUS_HE180021.h"  // ATmega2560
-
+#elif MB(CREATBOT_D600_PRO)
+  #include "pins_CREATBOT_CREATBOT_D600_PRO.h"
+#elif MB(CREATBOT_F430)
+  #include "pins_CREATBOT_CREATBOT_F430.h"
+  
 //
 // ATmega1281, ATmega2561
 //
@@ -269,8 +273,6 @@
   #include "pins_TEENSY2.h"           // AT90USB1286                                env:teensy20
 #elif MB(5DPRINT)
   #include "pins_5DPRINT.h"           // AT90USB1286
-#elif MB(CREATBOT_D600_PRO)
-  #include "pins_CREATBOT_D600_PRO.h"       // ATmega2560                                 env:megaatmega2560
 
 #else
   #error "Unknown MOTHERBOARD value set in Configuration.h"

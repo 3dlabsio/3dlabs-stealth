@@ -462,9 +462,9 @@
   //#define PID_BED_DEBUG // Sends debug data to the serial port.
 
   // @advi3++: Wanhao Duplicator i3 Plus
-  #define DEFAULT_bedKp 333.66
-  #define DEFAULT_bedKi 60.79
-  #define DEFAULT_bedKd 457.83
+  //#define DEFAULT_bedKp 333.66
+  //#define DEFAULT_bedKi 60.79
+  //#define DEFAULT_bedKd 457.83
 
   //120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   //from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
@@ -1024,9 +1024,8 @@
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define NUM_RUNOUT_SENSORS   2     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
-  //#define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
+  #define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
   #define FIL_RUNOUT_INVERTING true // set to true to invert the logic of the sensor.
-  #define ENDSTOPPULLUP_FIL_RUNOUT // Uncomment to use internal pullup for filament runout pins if the sensor is defined.
   #define FILAMENT_RUNOUT_SCRIPT "M600"
 #endif
 
