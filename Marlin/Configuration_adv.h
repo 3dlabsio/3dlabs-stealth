@@ -111,6 +111,25 @@
   #define WATCH_BED_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
+/**
+ * Thermal Protection parameters for the chamber are just as above for hotends.
+ */
+#if ENABLED(THERMAL_PROTECTION_CHAMBER)
+  // Use appropriate values for Creatbot D600 Pro
+  #define THERMAL_PROTECTION_CHAMBER_PERIOD 30    // Seconds
+  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 3 // Degrees Celsius
+
+  /**
+   * As described above, except for the bed (M141/M191).
+   */
+  #define WATCH_CHAMBER_TEMP_PERIOD 60                // Seconds
+  #define WATCH_CHAMBER_TEMP_INCREASE 2               // Degrees Celsius
+#endif
+
+// Heated chamber settings for bang-bang. PID is not currently implemented.
+#define CHAMBER_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
+#define MAX_CHAMBER_POWER 200 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
+
 #if ENABLED(PIDTEMP)
   // this adds an experimental additional term to the heating power, proportional to the extrusion speed.
   // if Kc is chosen well, the additional required power due to increased melting should be compensated.
@@ -841,7 +860,7 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
-//#define MINIMUM_STEPPER_DIR_DELAY 650
+#define MINIMUM_STEPPER_DIR_DELAY 1500
 
 /**
  * Minimum stepper driver pulse width (in µs)
@@ -854,7 +873,7 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
-//#define MINIMUM_STEPPER_PULSE 2
+#define MINIMUM_STEPPER_PULSE 1
 
 /**
  * Maximum stepping rate (in Hz) the stepper driver allows
@@ -868,7 +887,7 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
-//#define MAXIMUM_STEPPER_RATE 250000
+#define MAXIMUM_STEPPER_RATE 300000
 
 // @section temperature
 

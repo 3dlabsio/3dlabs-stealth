@@ -338,7 +338,7 @@
 #define TEMP_SENSOR_4 0
 // @advi3++: Headed bed with a thermistor (type 1)
 #define TEMP_SENSOR_BED 1
-#define TEMP_SENSOR_CHAMBER 0
+#define TEMP_SENSOR_CHAMBER 1
 
 // Dummy thermistor constant temperature readings, for use with 998 and 999
 #define DUMMY_THERMISTOR_998_VALUE 25
@@ -359,6 +359,12 @@
 #define TEMP_BED_HYSTERESIS 3       // (degC) range of +/- temperatures considered "close" to the target one
 #define TEMP_BED_WINDOW     1       // (degC) Window around target to start the residency timer x degC early.
 
+// Bed temperature must be close to target for this long before M190 returns success
+#define TEMP_CHAMBER_RESIDENCY_TIME 10  // (seconds)
+#define TEMP_CHAMBER_HYSTERESIS 3       // (degC) range of +/- temperatures considered "close" to the target one
+#define TEMP_CHAMBER_WINDOW     1       // (degC) Window around target to start the residency timer x degC early.
+
+
 // The minimal temperature defines the temperature below which the heater will not be enabled It is used
 // to check that the wiring to the thermistor is not broken.
 // Otherwise this would lead to the heater being powered on all the time.
@@ -368,6 +374,7 @@
 #define HEATER_3_MINTEMP 5
 #define HEATER_4_MINTEMP 5
 #define BED_MINTEMP 5
+#define CHAMBER_MINTEMP 5
 
 // When temperature exceeds max temp, your heater will be switched off.
 // This feature exists to protect your hotend from overheating accidentally, but *NOT* from thermistor short/failure!
@@ -378,6 +385,7 @@
 #define HEATER_3_MAXTEMP 275
 #define HEATER_4_MAXTEMP 275
 #define BED_MAXTEMP 120
+#define CHAMBER_MAXTEMP 75
 
 //===========================================================================
 //============================= PID Settings ================================
@@ -524,6 +532,7 @@
 
 #define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
 #define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
+#define THERMAL_PROTECTION_CHAMBER // Enable thermal protection for the heated chamber
 
 //===========================================================================
 //============================= Mechanical Settings =========================

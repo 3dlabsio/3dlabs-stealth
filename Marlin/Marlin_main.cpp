@@ -8785,6 +8785,14 @@ inline void gcode_M109() {
 
 #endif // HAS_HEATED_BED
 
+  /**
+   * M141: Set chamber temperature
+   */
+  inline void gcode_M141() {
+    if (DEBUGGING(DRYRUN)) return;
+    if (parser.seenval('S')) thermalManager.setTargetChamber(parser.value_celsius());
+  }
+
 /**
  * M110: Set Current Line Number
  */
@@ -12934,6 +12942,11 @@ void process_parsed_command() {
       #if HAS_HEATED_BED
         case 140: gcode_M140(); break;                            // M140: Set Bed Temperature
         case 190: gcode_M190(); break;                            // M190: Set Bed Temperature. Wait for target.
+      #endif
+
+      #if HAS_HEATED_CHAMBER
+        case 141: gcode_M141(); break;                            // M141: Set Chamber Temperature
+        // case 191: gcode_M191(); break;                            // M190: Set Chamber Temperature. Wait for target.
       #endif
 
       #if FAN_COUNT > 0

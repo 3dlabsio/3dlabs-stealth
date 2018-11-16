@@ -133,7 +133,7 @@ int16_t Temperature::current_temperature_raw[HOTENDS] = { 0 },
 #endif // HAS_HEATED_BED
 
 #if HAS_TEMP_CHAMBER
-  #if ENABLED(HAS_HEATED_CHAMBER)
+  #if HAS_HEATED_CHAMBER
     #ifdef CHAMBER_MINTEMP
       int16_t Temperature::chamber_minttemp_raw = HEATER_CHAMBER_RAW_LO_TEMP;
     #endif
@@ -149,7 +149,7 @@ int16_t Temperature::current_temperature_raw[HOTENDS] = { 0 },
       millis_t Temperature::watch_chamber_next_ms = 0;
       millis_t Temperature::next_chamber_check_ms;
     #endif
-  #endif // ENABLED(HAS_HEATED_CHAMBER)
+  #endif // HAS_HEATED_CHAMBER
   float Temperature::current_temperature_chamber = 0.0;
   int16_t Temperature::current_temperature_chamber_raw = 0;
   uint16_t Temperature::raw_temp_chamber_value = 0;
@@ -967,7 +967,7 @@ void Temperature::manage_heater() {
   #endif // HAS_HEATED_BED
 
 	#if HAS_TEMP_CHAMBER
-    #if ENABLED(HAS_HEATED_CHAMBER)
+    #if HAS_HEATED_CHAMBER
 
       #if WATCH_THE_CHAMBER
         // Make sure temperature is increasing
@@ -998,14 +998,14 @@ void Temperature::manage_heater() {
         WRITE_HEATER_CHAMBER(LOW);
       }
     
-      #if ENABLED(THERMAL_PROTECTION_CHAMBER)
+      #if HAS_THERMALLY_PROTECTED_CHAMBER
         thermal_runaway_protection(&thermal_runaway_chamber_state_machine, &thermal_runaway_chamber_timer, current_temperature_chamber, target_temperature_chamber, -2, THERMAL_PROTECTION_CHAMBER_PERIOD, THERMAL_PROTECTION_CHAMBER_HYSTERESIS);
       #endif
 
       // TODO: Implement true PID pwm
       //soft_pwm_amount_bed = WITHIN(current_temperature_chamber, CHAMBER_MINTEMP, CHAMBER_MAXTEMP) ? (int)get_pid_output_chamber() >> 1 : 0;
 
-    #endif // ENABLED(HAS_HEATED_CHAMBER)
+    #endif // HAS_HEATED_CHAMBER
 	#endif //HAS_TEMP_CHAMBER  
 }
 
@@ -1241,7 +1241,7 @@ void Temperature::init() {
   #if HAS_HEATED_BED
     SET_OUTPUT(HEATER_BED_PIN);
   #endif
-	#if ENABLED(HAS_HEATED_CHAMBER)
+	#if HAS_HEATED_CHAMBER
     OUT_WRITE(HEATER_CHAMBER_PIN, HEATER_CHAMBER_INVERTING);
 	#endif
   #if HAS_FAN0
@@ -1449,7 +1449,7 @@ void Temperature::init() {
     #endif // BED_MAXTEMP
   #endif // HAS_HEATED_BED
 
-  #if ENABLED(HAS_HEATED_CHAMBER)
+  #if HAS_HEATED_CHAMBER
     #ifdef CHAMBER_MINTEMP
       while (analog2tempChamber(chamber_minttemp_raw) < CHAMBER_MINTEMP) {
         #if HEATER_CHAMBER_RAW_LO_TEMP < HEATER_CHAMBER_RAW_HI_TEMP
@@ -1468,7 +1468,7 @@ void Temperature::init() {
         #endif
       }
     #endif // CHAMBER_MAXTEMP
-  #endif // ENABLED(HAS_HEATED_CHAMBER)
+  #endif // HAS_HEATED_CHAMBER
   #if ENABLED(PROBING_HEATERS_OFF)
     paused = false;
   #endif
@@ -1564,7 +1564,7 @@ void Temperature::init() {
   }
 #endif
 
-#if ENABLED(THERMAL_PROTECTION_HOTENDS) || HAS_THERMALLY_PROTECTED_BED || ENABLED(THERMAL_PROTECTION_CHAMBER)
+#if ENABLED(THERMAL_PROTECTION_HOTENDS) || HAS_THERMALLY_PROTECTED_BED || HAS_THERMALLY_PROTECTED_CHAMBER
 
   #if ENABLED(THERMAL_PROTECTION_HOTENDS)
     Temperature::TRState Temperature::thermal_runaway_state_machine[HOTENDS] = { TRInactive };
@@ -1576,7 +1576,7 @@ void Temperature::init() {
     millis_t Temperature::thermal_runaway_bed_timer;
   #endif
 
-  #if ENABLED(THERMAL_PROTECTION_CHAMBER)
+  #if HAS_THERMALLY_PROTECTED_CHAMBER
     Temperature::TRState Temperature::thermal_runaway_chamber_state_machine = TRInactive;
     millis_t Temperature::thermal_runaway_chamber_timer;
 
@@ -1648,7 +1648,7 @@ void Temperature::init() {
     }
   }
 
-#endif // THERMAL_PROTECTION_HOTENDS || THERMAL_PROTECTION_BED || ENABLED(THERMAL_PROTECTION_CHAMBER)
+#endif // THERMAL_PROTECTION_HOTENDS || THERMAL_PROTECTION_BED || HAS_THERMALLY_PROTECTED_CHAMBER
 
 void Temperature::disable_all_heaters() {
 
@@ -1663,7 +1663,7 @@ void Temperature::disable_all_heaters() {
   #endif
 
   #if HAS_TEMP_CHAMBER
-    #if ENABLED(HAS_HEATED_CHAMBER)
+    #if HAS_HEATED_CHAMBER
         setTargetChamber(0);
     #endif
   #endif
@@ -1709,7 +1709,7 @@ void Temperature::disable_all_heaters() {
 	#if HAS_TEMP_CHAMBER
 		target_temperature_chamber = 0;
 		soft_pwm_amount_chamber = 0;
-		#if ENABLED(HAS_HEATED_CHAMBER)
+		#if HAS_HEATED_CHAMBER
 			WRITE_HEATER_CHAMBER(LOW);
 		#endif
 	#endif
@@ -2090,7 +2090,7 @@ void Temperature::isr() {
   #if HAS_HEATED_BED
     ISR_STATICS(BED);
   #endif
-	#if ENABLED(HAS_HEATED_CHAMBER)
+	#if HAS_HEATED_CHAMBER
     ISR_STATICS(CHAMBER);
 	#endif
 
@@ -2132,7 +2132,7 @@ void Temperature::isr() {
         WRITE_HEATER_BED(soft_pwm_count_BED > pwm_mask ? HIGH : LOW);
       #endif
 
-			#if ENABLED(HAS_HEATED_CHAMBER)
+			#if HAS_HEATED_CHAMBER
         soft_pwm_count_CHAMBER = (soft_pwm_count_CHAMBER & pwm_mask) + soft_pwm_amount_chamber;
         WRITE_HEATER_CHAMBER(soft_pwm_count_CHAMBER > pwm_mask ? HIGH : LOW);
 			#endif
@@ -2171,7 +2171,7 @@ void Temperature::isr() {
         if (soft_pwm_count_BED <= pwm_count_tmp) WRITE_HEATER_BED(LOW);
       #endif
 
-			#if ENABLED(HAS_HEATED_CHAMBER)
+			#if HAS_HEATED_CHAMBER
         if (soft_pwm_count_CHAMBER <= pwm_count_tmp) WRITE_HEATER_CHAMBER(LOW);
 			#endif
 
@@ -2570,7 +2570,7 @@ void Temperature::isr() {
       );
     #endif
     #if HAS_TEMP_CHAMBER
-      #if ENABLED(HAS_HEATED_CHAMBER)
+      #if HAS_HEATED_CHAMBER
         print_heater_state(degChamber(), degTargetChamber()
           #if ENABLED(SHOW_TEMP_ADC_VALUES)
             , rawChamberTemp()
@@ -2590,7 +2590,7 @@ void Temperature::isr() {
           #endif
           , -2 // CHAMBER
         );
-      #endif // ENABLED(HAS_HEATED_CHAMBER)
+      #endif // HAS_HEATED_CHAMBER
     #endif
     #if HOTENDS > 1
       HOTEND_LOOP() print_heater_state(degHotend(e), degTargetHotend(e)

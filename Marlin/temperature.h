@@ -168,7 +168,7 @@ class Temperature {
       #endif
     #endif
 
-		#if ENABLED(HAS_HEATED_CHAMBER)
+		#if HAS_HEATED_CHAMBER
       static int16_t target_temperature_chamber;
       static uint8_t soft_pwm_amount_chamber;
 		#endif
@@ -273,7 +273,7 @@ class Temperature {
       static float current_temperature_chamber;
       static int16_t current_temperature_chamber_raw;
 
-      #if ENABLED(HAS_HEATED_CHAMBER)
+      #if HAS_HEATED_CHAMBER
         #if WATCH_THE_CHAMBER
           static uint16_t watch_target_chamber_temp;
           static millis_t watch_chamber_next_ms;
@@ -453,7 +453,7 @@ class Temperature {
 
     #if HAS_TEMP_CHAMBER
       static void setTargetChamber(const int16_t celsius){
-        #if ENABLED(HAS_HEATED_CHAMBER)
+        #if HAS_HEATED_CHAMBER
           target_temperature_chamber =
             #ifdef CHAMBER_MAXTEMP
               min(celsius, CHAMBER_MAXTEMP)
@@ -465,7 +465,7 @@ class Temperature {
           #if WATCH_THE_CHAMBER
             start_watching_chamber();
           #endif
-        #endif // ENABLED(HAS_HEATED_CHAMBER)
+        #endif // HAS_HEATED_CHAMBER
     }
 
     #endif
@@ -522,7 +522,7 @@ class Temperature {
         FORCE_INLINE static int16_t rawChamberTemp() { return current_temperature_chamber_raw; }
       #endif
       FORCE_INLINE static float degChamber() { return current_temperature_chamber; }
-      #if ENABLED(HAS_HEATED_CHAMBER)
+      #if HAS_HEATED_CHAMBER
         FORCE_INLINE static bool isHeatingChamber()     { return target_temperature_chamber > current_temperature_chamber; }
         FORCE_INLINE static bool isCoolingChamber()     { return target_temperature_chamber < current_temperature_chamber; }
         FORCE_INLINE static int16_t degTargetChamber() {return target_temperature_chamber; }
@@ -684,7 +684,7 @@ class Temperature {
       static float get_pid_output_bed();
     #endif
 
-    #if ENABLED(HAS_HEATED_CHAMBER)
+    #if HAS_HEATED_CHAMBER
       static float get_pid_output_chamber();
     #endif
 
