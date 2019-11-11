@@ -187,11 +187,9 @@
   #include "pins_I3_PLUS_MARK2.h"     // ATmega2560
 #elif MB(I3_PLUS_HE180021)
   #include "pins_I3_PLUS_HE180021.h"  // ATmega2560
-#elif MB(CREATBOT_D600_PRO)
-  #include "pins_CREATBOT_CREATBOT_D600_PRO.h"
-#elif MB(CREATBOT_F430)
-  #include "pins_CREATBOT_CREATBOT_F430.h"
-  
+#elif MB(3DLABS_STEALTH)
+  #include "pins_3DLABS_STEALTH.h"
+
 //
 // ATmega1281, ATmega2561
 //

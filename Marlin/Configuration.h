@@ -147,13 +147,8 @@
 // Please choose the name from boards.h that matches your setup
 //#ifndef MOTHERBOARD
 // @advi3++: Wanhao Duplicator i3 Plus or Mark II motherboard
-#if defined(CREATBOT_D600_PRO)
-#define MOTHERBOARD BOARD_CREATBOT_D600_PRO
-#elif defined(CREATBOT_F430)
-#define MOTHERBOARD BOARD_CREATBOT_F430
-#else
-#define MOTHERBOARD CREATBOT_F430
-#endif
+#define MOTHERBOARD BOARD_3DLABS_STEALTH
+
 
 // Optional custom name for your RepStrap or other custom machine
 // Displayed in the LCD "Ready" message

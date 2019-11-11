@@ -30,7 +30,7 @@
   #error "Oops!  Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu."
 #endif
 
-#define BOARD_NAME           "Creatbot D600 Pro"
+#define BOARD_NAME           "3DLabs Stealth"
 
 #define ARDUINO_SERIAL 1
 
