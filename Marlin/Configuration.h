@@ -1553,7 +1553,22 @@
  *
  */
 // @advi3++: Wanhao i3 Plus printer do have a SD card reader
-#define SDSUPPORT
+// @3dlabs: 3DLabs Stealth does not have an SD card slot
+//#define SDSUPPORT
+
+/**
+ * USB and SD CARD SUPPORT
+ * 
+ * Support for the CH376 driver commonly used with Arduino and Chinese motherboards to allow the use 
+ * of a USB thumb drive as an SD card replacement.
+ */
+// @3dlabs: ported from FYSETC's F6 board source code
+#define CH376_STORAGE_SUPPORT
+#ifdef CH376_STORAGE_SUPPORT    
+  #undef SDSUPPORT
+  #define CH376_STORAGE_SPI     // SPI mode
+  #define CH376_STORAGE_USBMODE  // Use USB mode
+#endif
 
 /**
  * SD CARD: SPI SPEED

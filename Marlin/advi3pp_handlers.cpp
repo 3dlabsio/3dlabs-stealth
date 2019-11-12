@@ -20,6 +20,9 @@
 #include "configuration_store.h"
 #include "temperature.h"
 #include "cardreader.h"
+#if ENABLED(CH376_STORAGE_SUPPORT)
+#include "mass_storage/cardusbdiskreader.h"
+#endif
 #include "planner.h"
 #include "parser.h"
 #include "duration_t.h"

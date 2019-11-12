@@ -28,7 +28,7 @@
  */
 #include "MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
 #include "SdFatUtil.h"
 #include "serial.h"

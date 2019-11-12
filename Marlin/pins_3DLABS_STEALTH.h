@@ -147,6 +147,16 @@
 #define BTN_EN2            12
 #define BTN_ENC            43
 
+#if ENABLED(CH376_STORAGE_SUPPORT)
+  #define CH376_SPI_MOSI_PIN  51       // SPI Master Out Slave In pin
+  #define CH376_SPI_MISO_PIN  50       // SPI Master In Slave Out pin
+  #define CH376_SPI_SCK_PIN   52       // SPI Clock pin
+  #define CH376_SPI_SS_PIN    53
+  #define CH376_INT_PIN       49
+  #define CH376_BUSY_PIN      5
+  #define CH376_RESET_PIN     78
+#endif
+
 //
 // LED functions
 //

@@ -264,6 +264,7 @@
 #include "endstops.h"
 #include "temperature.h"
 #include "cardreader.h"
+#include "mass_storage/cardusbdiskreader.h"
 #include "configuration_store.h"
 #include "language.h"
 #include "pins_arduino.h"
@@ -362,6 +363,8 @@
 
 #if ENABLED(SDSUPPORT)
   CardReader card;
+#elif ENABLED(CH376_STORAGE_SUPPORT)
+  USBReader card;
 #endif
 
 #if ENABLED(EXPERIMENTAL_I2CBUS)
@@ -826,7 +829,7 @@ void sync_plan_position_e() { planner.set_e_position_mm(current_position[E_CART]
   }
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
   #include "SdFatUtil.h"
   int freeMemory() { return SdFatUtil::FreeRam(); }
 #else
@@ -1097,7 +1100,7 @@ inline void get_serial_commands() {
 
         gcode_LastN = gcode_N;
       }
-      #if ENABLED(SDSUPPORT)
+      #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
         else if (card.saving && strcmp(command, "M29") != 0) // No line number with M29 in Pronterface
           return gcode_line_error(PSTR(MSG_ERR_NO_CHECKSUM));
       #endif
@@ -1159,7 +1162,7 @@ inline void get_serial_commands() {
   } // queue has space, serial has data
 }
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
   #if ENABLED(PRINTER_EVENT_LEDS) && HAS_RESUME_CONTINUE
     static bool lights_off_after_print; // = false
@@ -1288,7 +1291,7 @@ void get_available_commands() {
     if (job_recovery_phase == JOB_RECOVERY_YES && drain_job_recovery_commands()) return;
   #endif
 
-  #if ENABLED(SDSUPPORT)
+  #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
     get_sdcard_commands();
   #endif
 }
@@ -7266,7 +7269,7 @@ inline void gcode_M17() {
     ++did_pause_print;
 
     // Pause the print job and timer
-    #if ENABLED(SDSUPPORT)
+    #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
       if (card.sdprinting) {
         card.pauseSDPrint();
         ++did_pause_print; // Indicate SD pause also
@@ -7469,7 +7472,7 @@ inline void gcode_M17() {
 
     --did_pause_print;
 
-    #if ENABLED(SDSUPPORT)
+    #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
       if (did_pause_print) {
         card.startFileprint();
         --did_pause_print;
@@ -7596,8 +7599,129 @@ inline void gcode_M17() {
       card.removeFile(parser.string_arg);
     }
   }
-
-#endif // SDSUPPORT
+#elif ENABLED(CH376_STORAGE_SUPPORT)
+    /**
+     * M20: List SD card to serial output
+     */
+    inline void gcode_M20() {
+      SERIAL_PROTOCOLLNPGM(MSG_BEGIN_FILE_LIST);
+      card.ls();
+      SERIAL_PROTOCOLLNPGM(MSG_END_FILE_LIST);
+    }
+  
+    /**
+     * M21: Init SD Card
+     */
+    inline void gcode_M21() { card.initsd(); }
+  
+    /**
+     * M22: Release SD Card
+     */
+    inline void gcode_M22() { card.release(); }
+  
+    /**
+     * M23: Open a file
+     */
+    inline void gcode_M23() {
+    #if ENABLED(POWER_LOSS_RECOVERY)
+        card.removeJobRecoveryFile();
+    #endif
+      // Simplify3D includes the size, so zero out all spaces (#7227)
+      for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
+      card.openFile(parser.string_arg, true);
+    
+  	#if ENABLED(FYS_RECORD_CURRENT_PRINT_FILE)
+        strcpy(currentPrintFile, card.filename);
+    #endif
+    }
+  
+    /**
+     * M24: Start or Resume SD Print
+     */
+    inline void gcode_M24() {
+    #if ENABLED(PARK_HEAD_ON_PAUSE)
+        resume_print();
+    #endif
+  
+    #if ENABLED(POWER_LOSS_RECOVERY)
+        if (parser.seenval('S')) card.setIndex(parser.value_long());
+    #endif
+  
+      card.startFileprint();
+  
+    #if ENABLED(POWER_LOSS_RECOVERY)
+        if (parser.seenval('T'))
+          print_job_timer.resume(parser.value_long());
+        else
+    #endif
+  
+      print_job_timer.start();
+    }
+  
+    /**
+     * M25: Pause SD Print
+     */
+    inline void gcode_M25() {
+      card.pauseSDPrint();
+      print_job_timer.pause();
+  
+    #if ENABLED(PARK_HEAD_ON_PAUSE)
+        enqueue_and_echo_commands_P(PSTR("M125")); // Must be enqueued with pauseSDPrint set to be last in the buffer
+    #endif
+    }
+  
+    /**
+     * M26: Set SD Card file index
+     */
+    inline void gcode_M26() {
+      if (card.cardOK && parser.seenval('S'))
+        card.setIndex(parser.value_long());
+    }
+  
+    /**
+     * M27: Get SD Card status
+     *      OR, with 'S<seconds>' set the SD status auto-report interval. (Requires AUTO_REPORT_SD_STATUS)
+     *      OR, with 'C' get the current filename.
+     */
+    inline void gcode_M27() {
+      if (parser.seen('C')) {
+        SERIAL_ECHOPGM("Current file: ");
+        card.printFilename();
+      }
+  
+    #if ENABLED(AUTO_REPORT_SD_STATUS)
+        else if (parser.seenval('S'))
+          card.set_auto_report_interval(parser.value_byte());
+    #endif
+  
+      else
+        card.getStatus();
+    }
+  
+    /**
+     * M28: Start SD Write
+     */
+    inline void gcode_M28() { card.openFile(parser.string_arg, false); }
+  
+    /**
+     * M29: Stop SD Write
+     * Processed in write to file routine above
+     */
+    inline void gcode_M29() {
+      // card.saving = false;
+    }
+  
+    /**
+     * M30 <filename>: Delete SD Card file
+     */
+    inline void gcode_M30() {
+      if (card.cardOK) {
+        card.closefile();
+        card.removeFile(parser.string_arg);
+      }
+    }
+  
+#endif // SDSUPPORT CH376_STORAGE_SUPPORT
 
 /**
  * M31: Get the time since the start of SD Print (or last M109)
@@ -7612,7 +7736,7 @@ inline void gcode_M31() {
   SERIAL_ECHOLNPAIR("Print time: ", buffer);
 }
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
   /**
    * M32: Select file and start SD Print
@@ -8293,7 +8417,7 @@ inline void gcode_M42() {
    *   This has no effect during an SD print job
    */
   inline void gcode_M73() {
-    if (!IS_SD_PRINTING() && parser.seen('P')) {
+    if (!IS_SD_PRINTING && parser.seen('P')) {
       progress_bar_percent = parser.value_byte();
       NOMORE(progress_bar_percent, 100);
     }
@@ -10926,14 +11050,14 @@ inline void gcode_M502() {
   }
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
   /**
    * M524: Abort the current SD print job (started with M24)
    */
-  inline void gcode_M524() {
-    if (IS_SD_PRINTING()) card.abort_sd_printing = true;
-  }
+  //inline void gcode_M524() {
+  //  if (IS_SD_PRINTING() card.abort_sd_printing = true;
+  //}
 
 #endif // SDSUPPORT
 
@@ -12864,7 +12988,7 @@ void process_parsed_command() {
 
       case 17: gcode_M17(); break;                                // M17: Enable all steppers
 
-      #if ENABLED(SDSUPPORT)
+      #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
         case 20: gcode_M20(); break;                              // M20: List SD Card
         case 21: gcode_M21(); break;                              // M21: Init SD Card
         case 22: gcode_M22(); break;                              // M22: Release SD Card
@@ -13130,9 +13254,9 @@ void process_parsed_command() {
         case 504: gcode_M504(); break;                            // M504: Validate EEPROM
       #endif
 
-      #if ENABLED(SDSUPPORT)
-        case 524: gcode_M524(); break;                            // M524: Abort SD print job
-      #endif
+      //#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
+      //  case 524: gcode_M524(); break;                            // M524: Abort SD print job
+      //#endif
 
       #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
         case 540: gcode_M540(); break;                            // M540: Set Abort on Endstop Hit for SD Printing
@@ -15422,7 +15546,7 @@ void setup() {
  */
 void loop() {
 
-  #if ENABLED(SDSUPPORT)
+  #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
     card.checkautostart();
 
@@ -15451,7 +15575,7 @@ void loop() {
 
   if (commands_in_queue) {
 
-    #if ENABLED(SDSUPPORT)
+    #if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
       if (card.saving) {
         char* command = command_queue[cmd_queue_index_r];
