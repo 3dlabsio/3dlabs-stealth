@@ -101,7 +101,7 @@
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
   // @advi3++: Use appropriate values for Wanaho i3 Plus
-  #define THERMAL_PROTECTION_BED_PERIOD 30    // Seconds
+  #define THERMAL_PROTECTION_BED_PERIOD 60    // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS 3 // Degrees Celsius
 
   /**
@@ -116,19 +116,19 @@
  */
 #if ENABLED(THERMAL_PROTECTION_CHAMBER)
   // Use appropriate values for Creatbot D600 Pro
-  #define THERMAL_PROTECTION_CHAMBER_PERIOD 30    // Seconds
-  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 3 // Degrees Celsius
+  #define THERMAL_PROTECTION_CHAMBER_PERIOD 180    // Seconds
+  #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
 
   /**
    * As described above, except for the bed (M141/M191).
    */
-  #define WATCH_CHAMBER_TEMP_PERIOD 60                // Seconds
+  #define WATCH_CHAMBER_TEMP_PERIOD 180                // Seconds
   #define WATCH_CHAMBER_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
 // Heated chamber settings for bang-bang. PID is not currently implemented.
 #define CHAMBER_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
-#define MAX_CHAMBER_POWER 200 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
+#define MAX_CHAMBER_POWER 255 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
 
 #if ENABLED(PIDTEMP)
   // this adds an experimental additional term to the heating power, proportional to the extrusion speed.
@@ -664,10 +664,10 @@
   #endif
 
   // This allows hosts to request long names for files and folders with M33
-  //#define LONG_FILENAME_HOST_SUPPORT
+  #define LONG_FILENAME_HOST_SUPPORT
 
   // Enable this option to scroll long filenames in the SD card menu
-  //#define SCROLL_LONG_FILENAMES
+  #define SCROLL_LONG_FILENAMES
 
   /**
    * This option allows you to abort SD printing when any endstop is triggered.
