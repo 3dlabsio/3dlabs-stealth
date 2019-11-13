@@ -592,7 +592,7 @@
   #endif
 #endif // LED_CONTROL_MENU
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(SDSUPPORT) || ENABLED(CH376_STORAGE_SUPPORT)
 
   // Some RAMPS and other boards don't detect when an SD card is inserted. You can work
   // around this by connecting a push button or single throw switch to the pin defined
@@ -664,10 +664,10 @@
   #endif
 
   // This allows hosts to request long names for files and folders with M33
-  #define LONG_FILENAME_HOST_SUPPORT
+  //#define LONG_FILENAME_HOST_SUPPORT
 
   // Enable this option to scroll long filenames in the SD card menu
-  #define SCROLL_LONG_FILENAMES
+  //#define SCROLL_LONG_FILENAMES
 
   /**
    * This option allows you to abort SD printing when any endstop is triggered.
