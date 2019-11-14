@@ -44,7 +44,7 @@ extern void dwell(millis_t time);
 
 namespace
 {
-    const unsigned long advi3_pp_baudrate = 115200; // Between the LCD panel and the mainboard
+    const unsigned long advi3_pp_baudrate = 250000; // Between the LCD panel and the mainboard
 
     const advi3pp::Feature DEFAULT_FEATURES =
         advi3pp::Feature::ThermalProtection |
