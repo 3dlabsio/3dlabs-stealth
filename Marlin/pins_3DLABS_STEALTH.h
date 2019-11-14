@@ -119,8 +119,8 @@
 
 
 #define FAN_PIN             7
-//#define FAN1_PIN            8
-//#define FAN2_PIN		      	10
+#define FAN1_PIN            8
+#define FAN2_PIN		      	10
 
 //
 // LCD
