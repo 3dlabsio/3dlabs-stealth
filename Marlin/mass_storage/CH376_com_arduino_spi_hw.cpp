@@ -6,7 +6,6 @@
 #include "CH376_debug.h"
 #include "../pins.h"
 
-
 // Only support 1280 and 2560 at the moment!
 #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 

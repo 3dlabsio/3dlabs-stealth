@@ -329,6 +329,7 @@ UINT8	USBReader::LsDive( UINT8 index , const char * const match/*=NULL*/){
 
       /* 读取枚举到的文件的FAT_DIR_INFO结构,返回长度总是sizeof( FAT_DIR_INFO ) */
 			CH376ReadBlock( buf );  
+      
 			//xWriteCH376Cmd( CMD0H_FILE_ENUM_GO );  /* 继续枚举文件和目录,先发出下一个命令再分析上行读出的数据可以让CH376与单片机分别同时工作,提高速度 */
 			//xEndCH376Cmd( );
       
@@ -389,15 +390,7 @@ UINT8	USBReader::LsDive( UINT8 index , const char * const match/*=NULL*/){
                 SERIAL_ECHOLNPAIR("nrFiles:",nrFiles);
               #endif
               break;
-/*
-            case LS_SerialPrint:
-              createFilename(filename, p);
-              if (prepend) SERIAL_PROTOCOL(prepend);
-              SERIAL_PROTOCOL(filename);
-              SERIAL_PROTOCOLCHAR(' ');
-              SERIAL_PROTOCOLLN(p.fileSize);
-              break;
-*/
+
             case LS_GetFilename:
               #ifdef USB_READER_DEBUG
                 SERIAL_ECHO(" rootX clust:");
@@ -411,6 +404,7 @@ UINT8	USBReader::LsDive( UINT8 index , const char * const match/*=NULL*/){
               #endif
               //strcpy(filenameorigin,pDir->DIR_Name);
               createFilename(filename, pDir->DIR_Name);
+
               #ifdef USB_READER_DEBUG
                 SERIAL_ECHOLNPAIR("fileCnt:",fileCnt);
                 SERIAL_ECHOLNPAIR("filename:",filename);
@@ -558,13 +552,13 @@ void USBReader::printFilename() {
     char dosFilename[FILENAME_LENGTH];
     file.getFilename(dosFilename);
     SERIAL_ECHO(dosFilename);
-    #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
+    //#if ENABLED(LONG_FILENAME_HOST_SUPPORT)
       getfilename(0, dosFilename);
       if (longFilename[0]) {
         SERIAL_ECHO(' ');
         SERIAL_ECHO(longFilename);
       }
-    #endif
+    //#endif
   }
   else
     SERIAL_ECHOPGM("(no file)");
@@ -1015,7 +1009,7 @@ void USBReader::getfilename(uint16_t nr, const char * const match/*=NULL*/) {
 	  SERIAL_ECHO("root.DirStartClust:");
     SERIAL_ECHOLN(root.getDirStartClust());
   #endif
-
+  
 	CH376FileClose( FALSE );  /* 关闭 */
 
   #ifdef USB_READER_DEBUG
@@ -1029,8 +1023,8 @@ void USBReader::getLongnameFromShort() {
   UINT8 LongNameBuf[ LONG_NAME_BUF_LEN ];
 
   // 不获取文件夹长名，会出错
-  char*t = strchr(filename, '.');
-  if(t==NULL) return;
+//  char*t = strchr(filename, '.');
+// if(t==NULL) return;
 
   #ifdef USB_READER_DEBUG
     SERIAL_PROTOCOLLN("getLongname");
@@ -1057,6 +1051,7 @@ void USBReader::getLongnameFromShort() {
 			longFilename[i]=LongNameBuf[j];
 			i++;
 		}
+    
 		//SERIAL_ECHO("\n");
 	}
 	else {
@@ -1064,7 +1059,6 @@ void USBReader::getLongnameFromShort() {
 	}
 	//CH376FileClose( FALSE );  /* 关闭 */
 }
-
 
 // 此函数是获取 workdir 下的文件数量不是 root 下的 ,只获取这一级目录，下一级不获取
 uint16_t USBReader::getnrfilenames() {

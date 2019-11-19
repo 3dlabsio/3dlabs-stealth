@@ -1371,6 +1371,7 @@ void SdCard::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& nam
 	if(last_file_index_ >= index_in_page)
 	{
 		card.getfilename(last_file_index_ - index_in_page);
+        card.getLongnameFromShort();
         if(card.filenameIsDir) name = "[";
 		name += (card.longFilename[0] == 0) ? card.filename : card.longFilename;
 		if(card.filenameIsDir) name += "]";
