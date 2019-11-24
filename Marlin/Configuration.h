@@ -382,7 +382,7 @@
 #define HEATER_2_MAXTEMP 275
 #define HEATER_3_MAXTEMP 275
 #define HEATER_4_MAXTEMP 275
-#define BED_MAXTEMP 150
+#define BED_MAXTEMP 200
 #define CHAMBER_MAXTEMP 100
 
 //===========================================================================
@@ -613,7 +613,7 @@
  * :['A4988', 'DRV8825', 'LV8729', 'L6470', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE']
  */
 #define X_DRIVER_TYPE  TMC2208_STANDALONE
-#define Y_DRIVER_TYPE  A4988
+#define Y_DRIVER_TYPE  TMC2208_STANDALONE
 #define Z_DRIVER_TYPE  TMC2208_STANDALONE
 #define X2_DRIVER_TYPE A4988
 #define Y2_DRIVER_TYPE A4988
@@ -871,7 +871,7 @@
 // Values specific to the 3dlabs Stealth
 #define X_PROBE_OFFSET_FROM_EXTRUDER 36
 #define Y_PROBE_OFFSET_FROM_EXTRUDER 70
-#define Z_PROBE_OFFSET_FROM_EXTRUDER -1
+#define Z_PROBE_OFFSET_FROM_EXTRUDER -1.6
 
 // Certain types of probes need to stay away from edges
 #define MIN_PROBE_EDGE 10
@@ -950,7 +950,7 @@
 // @advi3++: Set the right directions for Wanhao i3 Plus
 // @3dlabs: Set the right directions for 3DLabs Stealth
 #define INVERT_X_DIR true
-#define INVERT_Y_DIR false
+#define INVERT_Y_DIR true
 #define INVERT_Z_DIR false
 
 // @section extruder
@@ -1577,7 +1577,8 @@
   #define CH376_STORAGE_USBMODE  // Use USB mode
 #endif
 
-#define USB_READER_DEBUG
+// WARNING: enabling this causes the touch screen firmware to do very strange things which are still being traced down. Enable only if absolutely needed.
+//#define USB_READER_DEBUG
 
 /**
  * SD CARD: SPI SPEED

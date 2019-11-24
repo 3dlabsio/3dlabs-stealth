@@ -60,19 +60,19 @@ namespace
 
     //! Default preheat values
     const advi3pp::Preset DEFAULT_PREHEAT_PRESET[advi3pp::Preheat::NB_PRESETS] = {
-        {180, 50, 0},
-        {200, 60, 0},
-        {220, 70, 0},
-        {180, 00, 0},
+        {160, 90, 0},
+        {160, 50, 0},
+        {160, 150, 0},
+        {160, 180, 0},
         {200, 00, 0}
     };
 
     //! List of multipliers in Print Settings
-    const double PRINT_SETTINGS_MULTIPLIERS[] = {0.04, 0.08, 0.12};
+    const double PRINT_SETTINGS_MULTIPLIERS[] = {0.05, 0.10, 0.15};
 
 #ifdef ADVi3PP_PROBE
     //! List of multipliers in Z-height Tuning
-    const double SENSOR_Z_HEIGHT_MULTIPLIERS[] = {0.04, 0.12, 1.0};
+    const double SENSOR_Z_HEIGHT_MULTIPLIERS[] = {0.05, 0.10, 1.0};
 
     //! Get the name of a sensor holder
     //! @param index Index of the holder
@@ -80,17 +80,16 @@ namespace
     const FlashChar* get_sensor_name(size_t index)
     {
         // Note: F macro can be used only in a function, this is why this is coded like this
-        auto teaching_tech_side  = F("Teaching Tech L. Side");
         auto custom              = F("Custom");
 
 #if defined(ADVi3PP_MARK2)
         auto mark2               = F("Mark II");
         static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
-          {mark2, teaching_tech_side, custom};
+          {custom};
 #elif defined(ADVi3PP_BLTOUCH)
-        auto baseggio            = F("Indianagio Front");
+        auto stealth            = F("Stealth");
         static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
-          {baseggio, teaching_tech_side, custom};
+          {stealth, custom};
 #endif
         assert(index < advi3pp::SensorSettings::NB_SENSOR_POSITIONS);
         return names[index];
@@ -100,12 +99,10 @@ namespace
     const advi3pp::SensorPosition DEFAULT_SENSOR_POSITION[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
     {
 #if defined(ADVi3PP_MARK2)
-        {     0,  6000 },    // Mark II
-        { -2400, -3800 },    // Teaching Tech L. Side
+        {  3600,  7000 },    // 3D Labs Stealth
         {     0,     0 }     // Custom
 #elif defined(ADVi3PP_BLTOUCH)
-        {  +150, -4270 },    // Baseggio/Indianagio Front
-        { -2400, -3800 },    // Teaching Tech L. Side
+        {  3600,  7000 },    // 3D Labs Stealth
         {     0,     0 }     // Custom
 #endif
     };
@@ -1371,7 +1368,6 @@ void SdCard::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& nam
 	if(last_file_index_ >= index_in_page)
 	{
 		card.getfilename(last_file_index_ - index_in_page);
-        card.getLongnameFromShort();
         if(card.filenameIsDir) name = "[";
 		name += (card.longFilename[0] == 0) ? card.filename : card.longFilename;
 		if(card.filenameIsDir) name += "]";
