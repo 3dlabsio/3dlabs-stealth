@@ -2565,7 +2565,7 @@ void PrintSettings::hotend_minus_command()
 void PrintSettings::hotend_plus_command()
 {
     auto temperature = Temperature::degTargetHotend(0);
-    if(temperature >= 300)
+    if(temperature >= 420)
         return;
 
     Temperature::setTargetHotend(temperature + 1, 0);
