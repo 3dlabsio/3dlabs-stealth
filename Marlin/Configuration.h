@@ -427,10 +427,11 @@
   //#define DEFAULT_Ki 2.25
   //#define DEFAULT_Kd 440
 
-	// CreatBot
+	// @3dlabs
   #define  DEFAULT_Kp 12.9
   #define  DEFAULT_Ki 0.76
   #define  DEFAULT_Kd 55
+
 #endif // PIDTEMP
 
 //===========================================================================
@@ -484,10 +485,10 @@
   //#define DEFAULT_bedKi 1.41
   //#define DEFAULT_bedKd 1675.16
 
-	// CreatBot
-	#define  DEFAULT_bedKp 345.78
-	#define  DEFAULT_bedKi 14.59
-	#define  DEFAULT_bedKd 2047.99
+	// @3dlabs stealth bed
+	#define DEFAULT_bedKp 346.39
+  #define DEFAULT_bedKi 65.06
+  #define DEFAULT_bedKd 461.09
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED

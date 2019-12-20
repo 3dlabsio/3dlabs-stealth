@@ -552,13 +552,13 @@ void USBReader::printFilename() {
     char dosFilename[FILENAME_LENGTH];
     file.getFilename(dosFilename);
     SERIAL_ECHO(dosFilename);
-    //#if ENABLED(LONG_FILENAME_HOST_SUPPORT)
+    #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
       getfilename(0, dosFilename);
       if (longFilename[0]) {
         SERIAL_ECHO(' ');
         SERIAL_ECHO(longFilename);
       }
-    //#endif
+    #endif
   }
   else
     SERIAL_ECHOPGM("(no file)");
