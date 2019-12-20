@@ -486,9 +486,9 @@
   //#define DEFAULT_bedKd 1675.16
 
 	// @3dlabs stealth bed
-	#define DEFAULT_bedKp 346.39
-  #define DEFAULT_bedKi 65.06
-  #define DEFAULT_bedKd 461.09
+	#define DEFAULT_bedKp 67.15
+  #define DEFAULT_bedKi 1.35
+  #define DEFAULT_bedKd 834.78
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
@@ -1111,7 +1111,7 @@
   // Gradually reduce leveling correction until a set height is reached,
   // at which point movement will be level to the machine's XY plane.
   // The height can be set with M420 Z<height>
-  //#define ENABLE_LEVELING_FADE_HEIGHT // @advi3++ Does not enable it, does not respect the geometry of objects
+  #define ENABLE_LEVELING_FADE_HEIGHT // @advi3++ Does not enable it, does not respect the geometry of objects
 
   // For Cartesian machines, instead of dividing moves on mesh boundaries,
   // split up moves into short segments like a Delta. This follows the
