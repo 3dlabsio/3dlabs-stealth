@@ -122,12 +122,12 @@
   /**
    * As described above, except for the bed (M141/M191).
    */
-  #define WATCH_CHAMBER_TEMP_PERIOD 180                // Seconds
+  #define WATCH_CHAMBER_TEMP_PERIOD 360                // Seconds
   #define WATCH_CHAMBER_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
 // Heated chamber settings for bang-bang. PID is not currently implemented.
-#define CHAMBER_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
+#define CHAMBER_CHECK_INTERVAL 2000 // ms between checks in bang-bang control
 #define MAX_CHAMBER_POWER 255 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
 
 #if ENABLED(PIDTEMP)
@@ -265,9 +265,9 @@
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
 #define E4_AUTO_FAN_PIN -1
-#define CHAMBER_AUTO_FAN_PIN -1
+#define CHAMBER_AUTO_FAN_PIN FAN2_PIN
 #define EXTRUDER_AUTO_FAN_TEMPERATURE 50
-#define EXTRUDER_AUTO_FAN_SPEED   127  // == full speed
+#define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
 
 /**
  * Part-Cooling Fan Multiplexer
