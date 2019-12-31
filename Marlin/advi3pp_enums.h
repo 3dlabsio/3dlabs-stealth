@@ -32,34 +32,40 @@ enum class Variable: uint16_t
     // 0 - Statuses
     TargetBed               = 0x0000,
     Bed                     = 0x0001,
-    TargetHotEnd            = 0x0002,
-    HotEnd                  = 0x0003,
-    FanSpeed                = 0x0004,
-    ZHeight                 = 0x0005,
-    ProgressLow             = 0x0006,
-    ProgressHigh            = 0x0007,
-    ZLayer                  = 0x0008,
-    SensorActive            = 0x0009,
-    Feedrate                = 0x000A,
-    Babysteps               = 0x000B,
+    TargetChamber           = 0x0002,
+    Chamber                 = 0x0003,
+    TargetHotEnd1           = 0x0004,
+    HotEnd1                 = 0x0005,
+    TargetHotEnd2           = 0x0006,
+    HotEnd2                 = 0x0007,
+    FanSpeed                = 0x0008,
+    ZHeight                 = 0x0009,
+    ZLayer                  = 0x000A,
+    ProgressLow             = 0x000B,
+    ProgressHigh            = 0x000C,
+    SensorActive            = 0x000D,
+    Feedrate                = 0x000E,
     Message                 = 0x0010,
     CenteredMessage         = 0x0028,
     Progress                = 0x0040,
 
-    // 1 - Short Texts
+    // 1 - Texts
     ShortText0              = 0x0100,
     ShortText1              = 0x0108,
     ShortText2              = 0x0110,
     ShortText3              = 0x0118,
-    ShortText4              = 0x0120,
+    LongText0               = 0x0120,
+    LongText1               = 0x0138,
+    LongText2               = 0x0150,
+    LongText3               = 0x0168,
+    LongText4               = 0x0180,
+    LongTextCentered0       = 0x0198,
 
-    // 2 - Long Texts
-    LongText0               = 0x0200,
-    LongText1               = 0x0218,
-    LongText2               = 0x0230,
-    LongText3               = 0x0248,
-    LongText4               = 0x0260,
-    LongTextCentered0       = 0x0278,
+    // 2 - Versions
+    ADVi3ppVersion          = 0x0200,
+    ADVi3ppBuild            = 0x0208,
+    ADVi3ppDGUSVersion      = 0x0210,
+    ADVi3ppMarlinVersion    = 0x0218,
 
     // 3 - Values
     Value0                  = 0x0300,
@@ -70,14 +76,6 @@ enum class Variable: uint16_t
     Value5                  = 0x0305,
     Value6                  = 0x0306,
     Value7                  = 0x0307,
-
-    // 5 - Versions
-    ADVi3ppLCDVersion_Raw       = 0x0500,
-    ADVi3ppMotherboardVersion   = 0x0501,
-    ADVi3ppMotherboardBuild     = 0x0509,
-    ADVi3ppLCDVersion           = 0x0511,
-    ADVi3ppDGUSVersion          = 0x0519,
-    ADVi3ppMarlinVersion        = 0x0521
 };
 
 //! List of actions sent by the LCD.
@@ -97,8 +95,7 @@ enum class Action: uint16_t
     AutomaticLeveling       = 0x040A,
     PidTuning               = 0x040B,
     SensorSettings          = 0x040C,
-    Firmware                = 0x040D,
-    NoSensor                = 0x040E,
+    Babysteps               = 0x040D,
     LCD                     = 0x040F,
     Statistics              = 0x0410,
     Versions                = 0x0411,
@@ -114,35 +111,37 @@ enum class Action: uint16_t
     SensorZHeight           = 0x041B,
     ChangeFilament          = 0x041C,
     EEPROMMismatch          = 0x041D,
-    Sponsors                = 0x041E,
     LinearAdvanceTuning     = 0x041F,
     LinearAdvanceSettings   = 0x0420,
-    Diagnosis               = 0x0421,
     Temperatures            = 0x0422,
-    VersionsMismatch        = 0x0423,
 
-    // 6 - Moves
-    MoveXMinus              = 0x0600,
-    MoveXPlus               = 0x0601,
-    MoveYMinus              = 0x0602,
-    MoveYPlus               = 0x0603,
-    MoveZMinus              = 0x0604,
-    MoveZPlus               = 0x0605,
-    MoveEMinus              = 0x0606,
-    MoveEPlus               = 0x0607,
-    BabyMinus               = 0x0608,
-    BabyPlus                = 0x0609,
-    ZHeightMinus            = 0x060A,
-    ZHeightPlus             = 0x060B,
-    LCDBrightness           = 0x060C,
-    FeedrateMinus           = 0x060D,
-    FeedratePlus            = 0x060E,
-    FanMinus                = 0x060F,
-    FanPlus                 = 0x0610,
-    HotendMinus             = 0x0611,
-    HotendPlus              = 0x0612,
-    BedMinus                = 0x0613,
-    BedPlus                 = 0x0614,
+    // 5 - Increments
+    MoveXMinus              = 0x0500,
+    MoveXPlus               = 0x0501,
+    MoveYMinus              = 0x0502,
+    MoveYPlus               = 0x0503,
+    MoveZMinus              = 0x0504,
+    MoveZPlus               = 0x0505,
+    MoveEMinus              = 0x0506,
+    MoveEPlus               = 0x0507,
+    BabyMinus               = 0x0508,
+    BabyPlus                = 0x0509,
+    ZHeightMinus            = 0x050A,
+    ZHeightPlus             = 0x050B,
+
+    FeedrateMinus           = 0x050C,
+    FeedratePlus            = 0x050D,
+    FanMinus                = 0x050E,
+    FanPlus                 = 0x050F,
+    Hotend1Minus            = 0x0510,
+    Hotend1Plus             = 0x0511,
+    Hotend2Minus            = 0x0512,
+    Hotend2Plus             = 0x0513,
+    BedMinus                = 0x0514,
+    BedPlus                 = 0x0515,
+    EnclosureMinus          = 0x0516,
+    EnclosurePlus           = 0x0517,
+    LCDBrightness           = 0x0518,
 
     Undefined               = 0xFFFF
 };
@@ -207,11 +206,6 @@ enum class KeyValue: uint16_t
     SensorSettingsPrevious  = 0x0001,
     SensorSettingsNext      = 0x0002,
 
-    ThermalProtection       = 0x0001,
-    RunoutSensor            = 0x0002,
-    USBBaudrateMinus        = 0x0003,
-    USBBaudratePlus         = 0x0004,
-
     LCDDimming              = 0x0001,
     BuzzerOnAction          = 0x0002,
     BuzzOnPress             = 0x0003,
@@ -244,12 +238,9 @@ enum class KeyValue: uint16_t
 enum class Feature: uint16_t
 {
     None                = 0b0000000000000000,
-    HeadParking         = 0b0000000000000001,
-    ThermalProtection   = 0b0000000000000010,
     Dimming             = 0b0000000000000100,
     Buzzer              = 0b0000000000001000,
-    BuzzOnPress         = 0b0000000000010000,
-    RunoutSensor        = 0b0000000000100000
+    BuzzOnPress         = 0b0000000000010000
 };
 ENABLE_BITMASK_OPERATOR(Feature);
 

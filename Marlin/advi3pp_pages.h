@@ -38,7 +38,6 @@ enum class Page: uint8_t
     Move                    = 38,
     SdCard                  = 40,
     Print                   = 42,
-    Sponsors                = 44,
     Waiting                 = 46,
     ManualLeveling          = 48,
     ExtruderTuningTemp      = 50,
@@ -57,10 +56,8 @@ enum class Page: uint8_t
     JerkSettings            = 78,
     PrintSettings           = 80,
     ThermalRunawayError     = 82,
-    VersionsMismatch        = 84,
     Temperature             = 86,
     Infos                   = 88,
-    Firmware                = 90,
     NoSensor                = 92,
     SensorSettings          = 94,
     LCD                     = 96,
@@ -71,7 +68,7 @@ enum class Page: uint8_t
     ZHeightTuning           = 106,
     LinearAdvanceTuning     = 108,
     LinearAdvanceSettings   = 110,
-    Diagnosis               = 112
+    Babystepping            = 116
 };
 
 }
