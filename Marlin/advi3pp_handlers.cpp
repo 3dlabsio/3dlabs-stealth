@@ -2443,6 +2443,27 @@ void PrintSettings::bed_plus_command()
     Temperature::setTargetBed(temperature + 1);
 }
 
+//! Handle the -Enclosure Temperature command
+void PrintSettings::enclosure_minus_command()
+{
+    auto temperature = Temperature::degTargetChamber();
+    if(temperature <= 0)
+        return;
+
+    Temperature::setTargetChamber(temperature - 1);
+}
+
+//! Handle the +Enclosure Temperature command
+void PrintSettings::enclosure_plus_command()
+{
+    auto temperature = Temperature::degTargetChamber();
+    if(temperature >= 180)
+        return;
+
+    Temperature::setTargetChamber(temperature + 1);
+}
+
+
 //! Handle the -Babystep command
 void PrintSettings::baby_minus_command()
 {
