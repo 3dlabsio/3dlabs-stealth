@@ -620,25 +620,6 @@ private:
 };
 
 // --------------------------------------------------------------------
-// Diagnosis Page
-// --------------------------------------------------------------------
-
-//! Diagnosis Page
-struct Diagnosis: Handler<Diagnosis>
-{
-    enum class State: uint8_t { Off = 0, On = 1, Output = 2};
-
-private:
-    Page do_prepare_page();
-    void do_back_command();
-    State get_pin_state(uint8_t pin);
-    void send_data();
-
-    friend Parent;
-};
-
-
-// --------------------------------------------------------------------
 // Sensor Settings Page
 // --------------------------------------------------------------------
 
@@ -691,31 +672,6 @@ private:
 
 
 // --------------------------------------------------------------------
-// Firmware Setting Page
-// --------------------------------------------------------------------
-
-//! Firmware Setting Page
-struct FirmwareSettings: Handler<FirmwareSettings>
-{
-private:
-    bool do_dispatch(KeyValue key_value);
-    Page do_prepare_page();
-    void do_save_command();
-    void thermal_protection_command();
-    void runout_sensor_command();
-    void send_usb_baudrate() const;
-    void send_features() const;
-    void baudrate_minus_command();
-    void baudrate_plus_command();
-    size_t usb_baudrate_index(uint32_t baudrate);
-
-    uint32_t usb_baudrate_ = BAUDRATE;
-    Feature features_ = Feature::BuzzOnPress | Feature::Dimming | Feature::ThermalProtection;
-
-    friend Parent;
-};
-
-// --------------------------------------------------------------------
 // LCD Setting Page
 // --------------------------------------------------------------------
 
@@ -747,10 +703,14 @@ struct PrintSettings: Handler<PrintSettings>
     void feedrate_plus_command();
     void fan_minus_command();
     void fan_plus_command();
-    void hotend_minus_command();
-    void hotend_plus_command();
+    void hotend1_minus_command();
+    void hotend1_plus_command();
+    void hotend2_minus_command();
+    void hotend2_plus_command();
     void bed_minus_command();
     void bed_plus_command();
+    void enclosure_minus_command();
+    void enclosure_plus_command();
     void baby_minus_command();
     void baby_plus_command();
 
@@ -921,28 +881,12 @@ private:
 //! Versions Page
 struct Versions: Handler<Versions>
 {
-    bool check();
-
 private:
     Page do_prepare_page();
-    void get_version_from_lcd();
     bool is_lcd_version_valid();
     void send_versions() const;
 
     uint16_t lcd_version_ = 0x0000;
-
-    friend Parent;
-};
-
-// --------------------------------------------------------------------
-// Sponsors Page
-// --------------------------------------------------------------------
-
-//! Sponsors Page
-struct Sponsors: Handler<Sponsors>
-{
-private:
-    Page do_prepare_page();
 
     friend Parent;
 };
@@ -991,34 +935,6 @@ private:
     void do_save_command();
 
     bool mismatch_ = false;
-
-    friend Parent;
-};
-
-// --------------------------------------------------------------------
-// Versions Mismatch Page
-// --------------------------------------------------------------------
-
-//! EEPROM Mismatch Page
-struct VersionsMismatch: Handler<VersionsMismatch>
-{
-private:
-    Page do_prepare_page();
-    void do_save_command();
-
-    friend Parent;
-};
-
-
-// --------------------------------------------------------------------
-// No Sensor Page
-// --------------------------------------------------------------------
-
-//! No Sensor Page
-struct NoSensor: Handler<NoSensor>
-{
-private:
-    Page do_prepare_page();
 
     friend Parent;
 };

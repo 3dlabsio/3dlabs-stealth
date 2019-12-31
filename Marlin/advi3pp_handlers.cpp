@@ -152,8 +152,6 @@ inline namespace singletons
     ExtruderTuning extruder_tuning;
     PidTuning pid_tuning;
     SensorSettings sensor_settings;
-    FirmwareSettings firmware_settings;
-    NoSensor no_sensor;
     LcdSettings lcd_settings;
     Statistics statistics;
     Versions versions;
@@ -170,11 +168,8 @@ inline namespace singletons
     SensorZHeight sensor_z_height;
     ChangeFilament change_filament;
     EepromMismatch eeprom_mismatch;
-    VersionsMismatch versions_mismatch;
-    Sponsors sponsors;
     LinearAdvanceTuning linear_advance_tuning;
     LinearAdvanceSettings linear_advance_settings;
-    Diagnosis diagnosis;
     Print print;
     AdvancedPause pause;
 }
@@ -2025,66 +2020,6 @@ Page LinearAdvanceTuning::do_prepare_page()
 
 
 // --------------------------------------------------------------------
-// Diagnosis
-// --------------------------------------------------------------------
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page Diagnosis::do_prepare_page()
-{
-    task.set_background_task(BackgroundTask{this, &Diagnosis::send_data}, 250);
-    return Page::Diagnosis;
-}
-
-//! Execute the Back command
-void Diagnosis::do_back_command()
-{
-    task.clear_background_task();
-    Parent::do_back_command();
-}
-
-//! Get current digital pin state (adapted from Arduino source code).
-//! @param pin  Pin number to check.
-//! @return     The current state: On (input), Off (input), Output
-Diagnosis::State Diagnosis::get_pin_state(uint8_t pin)
-{
-    uint8_t mask = digitalPinToBitMask(pin);
-    uint8_t port = digitalPinToPort(pin);
-    if(port == NOT_A_PIN)
-        return State::Off;
-
-    volatile uint8_t* reg = portModeRegister(port);
-    if(*reg & mask)
-        return State::Output;
-
-    uint8_t timer = digitalPinToTimer(pin);
-    if(timer != NOT_ON_TIMER)
-        return State::Output;
-
-    return (*portInputRegister(port) & mask) ? State::On : State::Off;
-}
-
-//! Send the current data to the LCD panel.
-void Diagnosis::send_data()
-{
-    WriteRamDataRequest request{Variable::Value0};
-
-    for(size_t i = 0; i < adv::count_of(diagnosis_digital_pins); ++i)
-    {
-        request.reset(static_cast<Variable>(static_cast<uint16_t>(Variable::Value0) + i));
-        request << Uint16{static_cast<uint16_t>(get_pin_state(diagnosis_digital_pins[i]))};
-        request.send(false);
-    }
-
-    for(size_t i = 0; i < adv::count_of(diagnosis_analog_pins); ++i)
-    {
-        request.reset(static_cast<Variable>(static_cast<uint16_t>(Variable::Value0) + 0x20 + i));
-        request << Uint16{static_cast<uint16_t>(analogRead(diagnosis_analog_pins[i]))};
-        request.send(false);
-    }
-}
-
-// --------------------------------------------------------------------
 // Sensor Settings
 // --------------------------------------------------------------------
 
@@ -2277,109 +2212,6 @@ Page SensorSettings::do_prepare_page()
 
 
 // --------------------------------------------------------------------
-// Firmware Settings
-// --------------------------------------------------------------------
-
-//! Handle Firmware Settings command
-//! @param key_value    The sub-action to handle
-//! @return             True if the action was handled
-bool FirmwareSettings::do_dispatch(KeyValue key_value)
-{
-    if(Parent::do_dispatch(key_value))
-        return true;
-
-    switch(key_value)
-    {
-        case KeyValue::ThermalProtection:   thermal_protection_command(); break;
-        case KeyValue::RunoutSensor:        runout_sensor_command(); break;
-        case KeyValue::USBBaudrateMinus:    baudrate_minus_command(); break;
-        case KeyValue::USBBaudratePlus:     baudrate_plus_command(); break;
-        default:                            return false;
-    }
-
-    return true;
-}
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page FirmwareSettings::do_prepare_page()
-{
-    usb_baudrate_ = advi3pp.get_current_baudrate();
-    features_ = advi3pp.get_current_features();
-    send_usb_baudrate();
-    send_features();
-    return Page::Firmware;
-}
-
-//! Toggle the Thermal Runaway Protection feature.
-void FirmwareSettings::thermal_protection_command()
-{
-    flip_bits(features_, Feature::ThermalProtection);
-    send_features();
-}
-
-//! Toggle the Runout Sensor feature (currently not fully implemented)
-void FirmwareSettings::runout_sensor_command()
-{
-    flip_bits(features_, Feature::RunoutSensor);
-    send_features();
-}
-
-//! Handles the Save (Continue) command
-void FirmwareSettings::do_save_command()
-{
-    if(advi3pp.get_current_baudrate() != usb_baudrate_)
-        advi3pp.change_usb_baudrate(usb_baudrate_, true);
-    advi3pp.change_features(features_);
-    Parent::do_save_command();
-}
-
-//! Send the current selected features to the LCD Panel.
-void FirmwareSettings::send_features() const
-{
-    WriteRamDataRequest frame{Variable::Value0}; frame << Uint16(static_cast<uint16_t>(features_)); frame.send();
-}
-
-//! Send the current selected baudrate to the LCD Panel.
-void FirmwareSettings::send_usb_baudrate() const
-{
-    ADVString<6> value; value << usb_baudrate_;
-
-    WriteRamDataRequest frame{Variable::ShortText0};
-    frame << value;
-    frame.send();
-}
-
-//! Get the baudrate index from its value.
-//! @param baudrate Baudrate
-//! @return The index corresponding to the baudrate, or 0 if none.
-size_t FirmwareSettings::usb_baudrate_index(uint32_t baudrate)
-{
-    size_t nb = adv::count_of(usb_baudrates);
-    for(size_t i = 0; i < nb; ++i)
-        if(baudrate == usb_baudrates[i])
-            return i;
-    return 0;
-}
-
-//! Handle the -Baudrate command.
-void FirmwareSettings::baudrate_minus_command()
-{
-    auto index = usb_baudrate_index(usb_baudrate_);
-    usb_baudrate_ = index > 0 ? usb_baudrates[index - 1] : usb_baudrates[0];
-    send_usb_baudrate();
-}
-
-//! Handle the +Baudrate command.
-void FirmwareSettings::baudrate_plus_command()
-{
-    auto index = usb_baudrate_index(usb_baudrate_);
-    static const auto max = adv::count_of(usb_baudrates) - 1;
-    usb_baudrate_ = index < max ? usb_baudrates[index + 1] : usb_baudrates[max];
-    send_usb_baudrate();
-}
-
-// --------------------------------------------------------------------
 // LCD Settings
 // --------------------------------------------------------------------
 
@@ -2552,7 +2384,7 @@ void PrintSettings::fan_plus_command()
 }
 
 //! Handle the -Hotend Temperature command
-void PrintSettings::hotend_minus_command()
+void PrintSettings::hotend1_minus_command()
 {
     auto temperature = Temperature::degTargetHotend(0);
     if(temperature <= 0)
@@ -2562,13 +2394,33 @@ void PrintSettings::hotend_minus_command()
 }
 
 //! Handle the +Hotend Temperature command
-void PrintSettings::hotend_plus_command()
+void PrintSettings::hotend1_plus_command()
 {
     auto temperature = Temperature::degTargetHotend(0);
     if(temperature >= 420)
         return;
 
     Temperature::setTargetHotend(temperature + 1, 0);
+}
+
+//! Handle the -Hotend Temperature command
+void PrintSettings::hotend2_minus_command()
+{
+    auto temperature = Temperature::degTargetHotend(1);
+    if(temperature <= 0)
+        return;
+
+    Temperature::setTargetHotend(temperature - 1, 1);
+}
+
+//! Handle the +Hotend Temperature command
+void PrintSettings::hotend2_plus_command()
+{
+    auto temperature = Temperature::degTargetHotend(1);
+    if(temperature >= 300)
+        return;
+
+    Temperature::setTargetHotend(temperature + 1, 1);
 }
 
 //! Handle the -Bed Temperature command
@@ -3157,37 +3009,6 @@ void Statistics::send_stats()
 // Versions
 // --------------------------------------------------------------------
 
-//! Check if the versions of the different parts (LCD Panel, Mainboard) are compatible and if not, display a message
-//! @return True if the versions are compatible
-bool Versions::check()
-{
-    get_version_from_lcd();
-    send_versions();
-
-    if(!is_lcd_version_valid())
-    {
-        pages.show_page(Page::VersionsMismatch, ShowOptions::None);
-        return false;
-    }
-
-    return true;
-}
-
-//! Get the version of the LCD Panel part.
-void Versions::get_version_from_lcd()
-{
-    ReadRamData frame{Variable::ADVi3ppLCDVersion_Raw, 1};
-    if(!frame.send_and_receive())
-    {
-        Log::error() << F("Receiving Frame (Measures)") << Log::endl();
-        return;
-    }
-
-    Uint16 version; frame >> version;
-    Log::log() << F("ADVi3++ LCD version = ") <<  version.word << Log::endl();
-    lcd_version_ = version.word;
-}
-
 //! Get the current DGUS firmware version.
 //! @return     The version as a string.
 template<size_t L>
@@ -3220,13 +3041,12 @@ ADVString<L>& convert_version(ADVString<L>& version, uint16_t hex_version)
 //! Send the different versions to the LCD screen.
 void Versions::send_versions() const
 {
-    ADVString<16> motherboard_version;
-    ADVString<16> motherboard_build;
-    ADVString<16> lcd_version;
+    ADVString<16> advi3pp_version;
+    ADVString<16> advi3pp_build;
     ADVString<16> dgus_version;
     ADVString<16> marlin_version{SHORT_BUILD_VERSION};
 
-    motherboard_build
+    advi3pp_build
         << (YEAR__ - 2000)
         << (MONTH__ < 10 ? "0" : "") << MONTH__
         << (DAY__   < 10 ? "0" : "") << DAY__
@@ -3234,16 +3054,14 @@ void Versions::send_versions() const
         << (MIN__   < 10 ? "0" : "") << MIN__
         << (SEC__   < 10 ? "0" : "") << SEC__;
 
-    convert_version(motherboard_version, advi3_pp_version).align(Alignment::Left);
-    motherboard_build.align(Alignment::Left);
-    convert_version(lcd_version, lcd_version_).align(Alignment::Left);
+    convert_version(advi3pp_version, advi3_pp_version).align(Alignment::Left);
+    advi3pp_build.align(Alignment::Left);
     get_lcd_firmware_version(dgus_version).align(Alignment::Left);
     marlin_version.align(Alignment::Left);
 
-    WriteRamDataRequest frame{Variable::ADVi3ppMotherboardVersion};
-    frame << motherboard_version
-          << motherboard_build
-          << lcd_version
+    WriteRamDataRequest frame{Variable::ADVi3ppVersion};
+    frame << advi3pp_version
+          << advi3pp_build
           << dgus_version
           << marlin_version;
     frame.send();
@@ -3261,17 +3079,6 @@ bool Versions::is_lcd_version_valid()
 Page Versions::do_prepare_page()
 {
     return Page::Versions;
-}
-
-// --------------------------------------------------------------------
-// Sponsors
-// --------------------------------------------------------------------
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page Sponsors::do_prepare_page()
-{
-    return Page::Sponsors;
 }
 
 // --------------------------------------------------------------------
@@ -3344,35 +3151,6 @@ void EepromMismatch::set_mismatch()
 void EepromMismatch::reset_mismatch()
 {
     mismatch_ = false;
-}
-
-// --------------------------------------------------------------------
-// Versions mismatch
-// --------------------------------------------------------------------
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page VersionsMismatch::do_prepare_page()
-{
-    return Page::VersionsMismatch;
-}
-
-//! Handles the Save (Continue) command
-void VersionsMismatch::do_save_command()
-{
-    pages.show_page(Page::Main);
-}
-
-
-// --------------------------------------------------------------------
-// No Sensor
-// --------------------------------------------------------------------
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page NoSensor::do_prepare_page()
-{
-    return Page::NoSensor;
 }
 
 

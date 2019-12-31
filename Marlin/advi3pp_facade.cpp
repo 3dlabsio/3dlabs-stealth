@@ -135,11 +135,6 @@ void ADVi3pp::temperature_error(const FlashChar* message)
     advi3pp.temperature_error(message);
 }
 
-bool ADVi3pp::is_thermal_protection_enabled()
-{
-    return advi3pp.is_thermal_protection_enabled();
-}
-
 void ADVi3pp::set_brightness(int16_t britghness)
 {
     advi3pp.set_brightness(britghness);

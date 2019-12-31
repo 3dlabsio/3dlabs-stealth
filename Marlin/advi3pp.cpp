@@ -47,8 +47,6 @@ namespace
     const unsigned long advi3_pp_baudrate = 115000; // Between the LCD panel and the mainboard
 
     const advi3pp::Feature DEFAULT_FEATURES =
-        advi3pp::Feature::ThermalProtection |
-        advi3pp::Feature::HeadParking |
         advi3pp::Feature::Dimming |
         advi3pp::Feature::Buzzer;
 
@@ -85,9 +83,7 @@ inline namespace singletons
     extern ManualLeveling manual_leveling;
     extern ExtruderTuning extruder_tuning;
     extern PidTuning pid_tuning;
-    extern FirmwareSettings firmware_settings;
     extern SensorSettings sensor_settings;
-    extern NoSensor no_sensor;
     extern AutomaticLeveling automatic_leveling;
     extern LevelingGrid leveling_grid;
     extern SensorTuning sensor_tuning;
@@ -104,11 +100,8 @@ inline namespace singletons
     extern Copyrights copyrights;
     extern ChangeFilament change_filament;
     extern EepromMismatch eeprom_mismatch;
-    extern VersionsMismatch versions_mismatch;
-    extern Sponsors sponsors;
     extern LinearAdvanceTuning linear_advance_tuning;
     extern LinearAdvanceSettings linear_advance_settings;
-    extern Diagnosis diagnosis;
     extern Print print;
     extern AdvancedPause pause;
 }
@@ -140,9 +133,6 @@ void ADVi3pp_::setup()
 void ADVi3pp_::show_boot_page()
 {
     if(!eeprom_mismatch.check())
-        return;
-
-    if(!versions.check())
         return;
 
     pages.show_page(Page::Boot, ShowOptions::None);
@@ -244,14 +234,6 @@ void ADVi3pp_::restore_settings()
     // Note: Previously, M420 (bed leveling compensation) was reset by M501. It is no more the case.
     enqueue_and_echo_commands_P(PSTR("M501"));
 }
-
-//! Check if thermal runaway protection is activated or not.
-//! @return true if thermal runaway protection is activated
-bool ADVi3pp_::is_thermal_protection_enabled() const
-{
-    return test_one_bit(features_, Feature::ThermalProtection);
-}
-
 
 // --------------------------------------------------------------------
 // Incoming LCD commands and status update
@@ -408,8 +390,6 @@ void ADVi3pp_::read_lcd_serial()
         case Action::ExtruderTuning:        extruder_tuning.handle(key_value); break;
         case Action::PidTuning:             pid_tuning.handle(key_value); break;
         case Action::SensorSettings:        sensor_settings.handle(key_value); break;
-        case Action::Firmware:              firmware_settings.handle(key_value); break;
-        case Action::NoSensor:              no_sensor.handle(key_value); break;
         case Action::LCD:                   lcd_settings.handle(key_value); break;
         case Action::Statistics:            statistics.handle(key_value); break;
         case Action::Versions:              versions.handle(key_value); break;
@@ -426,12 +406,9 @@ void ADVi3pp_::read_lcd_serial()
         case Action::SensorZHeight:         sensor_z_height.handle(key_value); break;
         case Action::ChangeFilament:        change_filament.handle(key_value); break;
         case Action::EEPROMMismatch:        eeprom_mismatch.handle(key_value); break;
-        case Action::Sponsors:              sponsors.handle(key_value); break;
         case Action::LinearAdvanceTuning:   linear_advance_tuning.handle(key_value); break;
         case Action::LinearAdvanceSettings: linear_advance_settings.handle(key_value); break;
-        case Action::Diagnosis:             diagnosis.handle(key_value); break;
         case Action::Temperatures:          temperatures.handle(key_value); break;
-        case Action::VersionsMismatch:      versions_mismatch.handle(key_value); break;
 
         case Action::MoveXPlus:             move.x_plus_command(); break;
         case Action::MoveXMinus:            move.x_minus_command(); break;
@@ -448,10 +425,14 @@ void ADVi3pp_::read_lcd_serial()
         case Action::FeedratePlus:          print_settings.feedrate_plus_command(); break;
         case Action::FanMinus:              print_settings.fan_minus_command(); break;
         case Action::FanPlus:               print_settings.fan_plus_command(); break;
-        case Action::HotendMinus:           print_settings.hotend_minus_command(); break;
-        case Action::HotendPlus:            print_settings.hotend_plus_command(); break;
+        case Action::Hotend1Minus:          print_settings.hotend1_minus_command(); break;
+        case Action::Hotend1Plus:           print_settings.hotend1_plus_command(); break;
+        case Action::Hotend2Minus:          print_settings.hotend2_minus_command(); break;
+        case Action::Hotend2Plus:           print_settings.hotend2_plus_command(); break;
         case Action::BedMinus:              print_settings.bed_minus_command(); break;
         case Action::BedPlus:               print_settings.bed_plus_command(); break;
+        case Action::EnclosureMinus:        print_settings.enclosure_minus_command(); break;
+        case Action::EnclosurePlus:         print_settings.enclosure_plus_command(); break;
         case Action::ZHeightMinus:          sensor_z_height.minus(); break;
         case Action::ZHeightPlus:           sensor_z_height.plus(); break;
 
