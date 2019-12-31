@@ -1059,6 +1059,7 @@ struct ADVi3pp_
     void on_set_temperature(TemperatureKind kind, uint16_t temperature);
 
     double get_current_z_height(int multiply = 1) const;
+    double get_current_z_layer(int multiply = 1) const;
 
     void process_command(const GCodeParser& parser);
 

@@ -142,13 +142,7 @@ void ADVi3pp_::show_boot_page()
 //! Under GPLv3 provision 7(b), you are not authorized to remove or alter this notice.
 void ADVi3pp_::send_gplv3_7b_notice()
 {
-    SERIAL_ECHOLNPGM("Based on ADVi3++, Copyright (C) 2017-2019 Sebastien Andrivet");
-}
-
-//! Send the list of sponsors on the serial port (www.patreon.com/andrivet)
-void ADVi3pp_::send_sponsors()
-{
-    SERIAL_ECHOLNPGM("Sponsored by Alexander Cherenegar, Joshua");
+    SERIAL_ECHOLNPGM("Based on ADVi3++, Copyright (C) 2017-2020 Sebastien Andrivet");
 }
 
 //! Store presets in permanent memory.
@@ -257,7 +251,6 @@ void ADVi3pp_::init()
 #endif
 
     send_gplv3_7b_notice(); // You are not authorized to remove or alter this notice
-    send_sponsors();
     graphs.clear();
     dimming.reset(true);
     reset_status();
@@ -294,7 +287,7 @@ void ADVi3pp_::update_progress()
         progress_bar_percent = card.percentDone();
 }
 
-//! Get the current Z height (optionaly multiplied by a factor)
+//! Get the current Z height (optionally multiplied by a factor)
 //! @return The current Z height in mm
 double ADVi3pp_::get_current_z_height(int multiply) const
 {
@@ -303,6 +296,17 @@ double ADVi3pp_::get_current_z_height(int multiply) const
 		return round(height);
 	return height;
 }
+
+//! Get the current Z layer (optionally multiplied by a factor)
+//! @return The current Z layer
+double ADVi3pp_::get_current_z_layer(int multiply) const
+{
+    auto height = current_position[Z_AXIS] * multiply;
+    if(multiply != 1)
+        return round(height);
+    return height;
+}
+
 
 //! Update the status of the printer on the LCD.
 void ADVi3pp_::send_status_data(bool force_update)
@@ -324,15 +328,19 @@ void ADVi3pp_::send_status_data(bool force_update)
 
     // Send the current status in one frame
     WriteRamDataRequest frame{Variable::TargetBed};
-    frame << Uint16(Temperature::target_temperature_bed)
+    frame << Uint16(Temperature::degTargetBed())
           << Uint16(Temperature::degBed())
-          << Uint16(Temperature::target_temperature[0])
+          << Uint16(Temperature::degTargetChamber())
+          << Uint16(Temperature::degChamber())
+          << Uint16(Temperature::degTargetHotend(0))
           << Uint16(Temperature::degHotend(0))
+          << Uint16(Temperature::degTargetHotend(1))
+          << Uint16(Temperature::degHotend(1))
           << Uint16(scale(fanSpeeds[0], 255, 100))
           << Uint16(get_current_z_height(100))
+          << Uint16(get_current_z_layer(100))
           << Uint16(progress_bar_low)
           << Uint16(progress_var_high)
-          << 0_u16 // TODO
           << Uint16(probe_state)
           << Uint16(feedrate_percentage);
     frame.send(false);
