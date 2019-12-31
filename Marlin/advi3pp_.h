@@ -1029,7 +1029,6 @@ struct ADVi3pp_
     uint16_t size_of() const;
     void eeprom_settings_mismatch();
     void temperature_error(const FlashChar* message);
-    bool is_thermal_protection_enabled() const;
     void advanced_pause_show_message(AdvancedPauseMessage message);
     void set_brightness(int16_t britghness);
     void save_settings();
@@ -1069,7 +1068,6 @@ private:
     void update_progress();
     void send_status_data(bool force_update = false);
     void send_gplv3_7b_notice(); // Forks: you have to keep this notice
-    void send_sponsors();
     void read_lcd_serial();
     void show_boot_page();
 
