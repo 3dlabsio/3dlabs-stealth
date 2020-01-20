@@ -1458,7 +1458,7 @@ void Print::advanced_pause_command()
 {
     if(!is_printing())
         return;
-    
+
     wait.show(F("Pausing..."), ShowOptions::SaveBack);
     enqueue_and_echo_commands_P(PSTR("M600"));
 }
@@ -1475,6 +1475,7 @@ void Print::process_stop_code()
     clear_command_queue();
 
     advi3pp.set_status(F("Print Stopped"));
+    pages.show_back_page();
     pages.show_back_page();
 }
 
