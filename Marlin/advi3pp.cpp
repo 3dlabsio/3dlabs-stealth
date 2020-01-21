@@ -70,7 +70,6 @@ inline namespace singletons
     Task task;
     Feature features;
     Dimming dimming;
-    Graphs graphs;
 
     extern Screens screens;
     extern Wait wait;
@@ -253,7 +252,6 @@ void ADVi3pp_::init()
 #endif
 
     send_gplv3_7b_notice(); // You are not authorized to remove or alter this notice
-    graphs.clear();
     dimming.reset(true);
     reset_status();
     show_boot_page();
@@ -271,7 +269,6 @@ void ADVi3pp_::idle()
     task.execute_background_task();
     update_progress();
     send_status_data();
-    graphs.update();
 }
 
 //! Check if the printer is doing something or is idle
@@ -656,44 +653,6 @@ void ADVi3pp_::process_command(const GCodeParser& parser)
     }
 }
 
-
-// --------------------------------------------------------------------
-// Graphs
-// --------------------------------------------------------------------
-
-//! Constructor
-//! Initialize the update time
-Graphs::Graphs()
-{
-    next_update_graph_time_ = millis() + 1000L * 10; // Wait 10 sec before starting updating graphs
-}
-
-//! Update the graphs (if the update delay has elapsed)
-void Graphs::update()
-{
-    if(!ELAPSED(millis(), next_update_graph_time_))
-        return;
-
-    send_data();
-    next_update_graph_time_ = millis() + 500;
-}
-
-//! Update the graphs on the LCD panel (two channels: the bed and the hotend).
-void Graphs::send_data()
-{
-    WriteCurveDataRequest frame{0b00000011};
-    frame << Uint16{Temperature::degBed()}
-          << Uint16{Temperature::degHotend(0)};
-    frame.send(false);
-}
-
-//! Clear the graphs
-void Graphs::clear()
-{
-    WriteRegisterDataRequest request{Register::TrendlineClear}; // TODO: Fix this (Mini DGUS)
-    request << 0x55_u8;
-    request.send();
-}
 
 // --------------------------------------------------------------------
 // Background tasks

@@ -141,7 +141,6 @@ inline namespace singletons
 {
     extern Feature features;
     extern Dimming dimming;
-    extern Graphs graphs;
 
     Screens screens;
     Wait wait;
