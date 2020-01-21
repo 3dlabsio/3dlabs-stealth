@@ -1,5 +1,29 @@
 # ADVi3++ Changelog
 
+## 4.0.5 (2020-01-20)
+
+* **#230** - During pause (both normal and advanced), wait a moment just after purging the nozzle
+* **#229** - Publish a firmware to clear the EEPROM (to use when it is corrupted)
+* **#228** - Sometimes after flashing, the LCD screen displays distorted images
+* **#227** - Mark II: 4.0.4 Auto bed leveling stuck at homing
+* **#226** - Printer freeze when using BLTouch Y offset >= 8
+* **#223** - Disabling beeps does not work with some LCD displays
+* **#219** - After stopping a print the X, Y, and Z axis will all move when Z jog is pressed
+* **#218** - Fix (again) "(L,R,F,B) out of bounds" error
+* **#217** - Y axis jogs itself on first G0/G1 after power on
+
+## 4.0.4 (2019-12-30)
+
+* **#224** - Fix ghost touch with BLTouch 3.1. See note bellow
+* **#218** - Fix "(L,R,F,B) out of bounds" error
+* **#215** - Sometimes after flashing, the LCD Panel displays a version mismatch warning
+
+**Note**: 
+
+* **#224** is not really a bug but more a vibration problem with the printer itself or the mounting support.
+This release tries however to minimize the occurrences of such ghosts touches. As a consequence, the G29 sequence is slower.
+I will change that in version 4.1.0 to make the sensor parameters configurable. 
+
 ## 4.0.3 (2019-07-11)
 
 * **#215** - Sometimes after flashing, the LCD Panel displays a version mismatch warning with a wrong LCD version and the continue button does not work

@@ -875,12 +875,10 @@ private:
 //! Versions Page
 struct Versions: Handler<Versions>
 {
-private:
-    Page do_prepare_page();
-    bool is_lcd_version_valid();
     void send_versions() const;
 
-    uint16_t lcd_version_ = 0x0000;
+private:
+    Page do_prepare_page();
 
     friend Parent;
 };

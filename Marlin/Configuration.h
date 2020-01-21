@@ -138,7 +138,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115000
+#define BAUDRATE 115200
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -427,7 +427,7 @@
   //#define DEFAULT_Ki 2.25
   //#define DEFAULT_Kd 440
 
-	// @3dlabs
+  // @3dlabs
   #define  DEFAULT_Kp 12.9
   #define  DEFAULT_Ki 0.76
   #define  DEFAULT_Kd 55
@@ -485,8 +485,8 @@
   //#define DEFAULT_bedKi 1.41
   //#define DEFAULT_bedKd 1675.16
 
-	// @3dlabs stealth bed
-	#define DEFAULT_bedKp 67.15
+  // @3dlabs stealth bed
+  #define DEFAULT_bedKp 67.15
   #define DEFAULT_bedKi 1.35
   #define DEFAULT_bedKd 834.78
 
@@ -872,9 +872,10 @@
  */
 
 // Values specific to the 3dlabs Stealth
-#define X_PROBE_OFFSET_FROM_EXTRUDER 36
-#define Y_PROBE_OFFSET_FROM_EXTRUDER 70
-#define Z_PROBE_OFFSET_FROM_EXTRUDER -1.6
+// Disable them to be sure these static values are not used by mistake
+//#define X_PROBE_OFFSET_FROM_EXTRUDER 36
+//#define Y_PROBE_OFFSET_FROM_EXTRUDER 70
+//#define Z_PROBE_OFFSET_FROM_EXTRUDER -1.6
 
 // Certain types of probes need to stay away from edges
 #define MIN_PROBE_EDGE 10

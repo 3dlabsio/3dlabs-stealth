@@ -24,7 +24,7 @@
 // The preferred way to build ADVi3++ is with PlatformIO. With PlatformIO, you can easily build BLTouch and non-BLtouch releases.
 
 // If for whatever reason, you prefer to use Arduino IDE, uncomment the following line to build a BLTouch release.
-//#define ADVi3PP_BLTOUCH
+// #define ADVi3PP_BLTOUCH
 
 // In a similar way, uncomment the following line to build a Mark II release.
 // #define ADVi3PP_MARK2

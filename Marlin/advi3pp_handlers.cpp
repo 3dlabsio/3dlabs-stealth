@@ -3081,13 +3081,6 @@ void Versions::send_versions() const
     frame.send();
 }
 
-//! Check if the versions of the different parts (LCD Panel, Mainboard) are compatible.
-//! @return True if the versions are compatible
-bool Versions::is_lcd_version_valid()
-{
-    return lcd_version_ >= advi3_pp_oldest_lcd_compatible_version && lcd_version_ <= advi3_pp_newest_lcd_compatible_version;
-}
-
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
 Page Versions::do_prepare_page()

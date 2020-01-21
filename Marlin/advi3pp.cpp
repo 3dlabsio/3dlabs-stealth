@@ -44,7 +44,7 @@ extern void dwell(millis_t time);
 
 namespace
 {
-    const unsigned long advi3_pp_baudrate = 115000; // Between the LCD panel and the mainboard
+    const unsigned long advi3_pp_baudrate = 115200; // Between the LCD panel and the mainboard
 
     const advi3pp::Feature DEFAULT_FEATURES =
         advi3pp::Feature::Dimming |
@@ -134,6 +134,8 @@ void ADVi3pp_::show_boot_page()
 {
     if(!eeprom_mismatch.check())
         return;
+
+    versions.send_versions();
 
     pages.show_page(Page::Boot, ShowOptions::None);
 }
