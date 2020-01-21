@@ -163,7 +163,7 @@
 // This defines the number of extruders
 // :[1, 2, 3, 4, 5]
 // @3dlabs: disabled until menu issues are sorted for second extruder
-#define EXTRUDERS 1
+#define EXTRUDERS 2
 
 // Generally expected filament diameter (1.75, 2.85, 3.0, ...). Used for Volumetric, Filament Width Sensor, etc.
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
@@ -329,8 +329,7 @@
  */
 #define TEMP_SENSOR_0 -1
 // 3dlabs: disabled until second extruder is working
-#define TEMP_SENSOR_1 0
-//#define TEMP_SENSOR_1 -1
+#define TEMP_SENSOR_1 -1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0
 #define TEMP_SENSOR_4 0
@@ -1037,7 +1036,7 @@
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   // 3dlabs: set to 1 until second extruder is working
-  #define NUM_RUNOUT_SENSORS   1
+  #define NUM_RUNOUT_SENSORS   2
   //#define NUM_RUNOUT_SENSORS   2     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
   #define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
   #define FIL_RUNOUT_INVERTING false // set to true to invert the logic of the sensor.
