@@ -36,25 +36,7 @@
 #else
 
   // @advi3++: Change the name depending of the model of the printer and the model of the sensor
-  #if defined(ADVi3PP_MARK2)
-  #define ADVi3PP_NAME "ADVi3++MarkII"
-  #elif defined(ADVi3PP_HE180021)
-    #if defined(ADVi3PP_BLTOUCH3)
-      #define ADVi3PP_NAME "ADVi3++HE180021-BLTouch3"
-    #elif defined(ADVi3PP_BLTOUCH)
-      #define ADVi3PP_NAME "ADVi3++HE180021-BLTouch"
-    #else
-      #define ADVi3PP_NAME "ADVi3++HE180021"
-    #endif
-  #else
-    #if defined(ADVi3PP_BLTOUCH3)
-      #define ADVi3PP_NAME "ADVi3++BLTouch3"
-    #elif defined(ADVi3PP_BLTOUCH)
-      #define ADVi3PP_NAME "ADVi3++BLTouch"
-    #else
-      #define ADVi3PP_NAME "ADVi3++"
-    #endif
-  #endif
+  #define ADVi3PP_NAME "ADVi3++3DLabs"
 
   /**
    * Marlin release version identifier
@@ -66,7 +48,7 @@
    * from where the binary was downloaded or the source code was compiled.
    */
   // @advi3++: Construct build version (version number set by advbumpversion) 
-  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (" ADVi3PP_NAME " 4.0.5-dev)"
+  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (" ADVi3PP_NAME " 1.0.0-dev)"
 
   /**
    * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
@@ -97,7 +79,7 @@
    * Defines a generic printer name to be output to the LCD after booting Marlin.
    */
   // @advi3++: Machine name 
-  #define MACHINE_NAME "Wanhao Duplicator i3 Plus"
+  #define MACHINE_NAME "3DLabs Stealth"
 
   /**
    * The SOURCE_CODE_URL is the location where users will find the Marlin Source
