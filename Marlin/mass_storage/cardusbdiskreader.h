@@ -299,16 +299,8 @@ extern USBReader card;
 
 #endif // CH376_STORAGE_SUPPORT
 
-#if ENABLED(SDSUPPORT)
-  #define IS_SD_PRINTING (card.sdprinting)
-  #define IS_SD_FILE_OPEN (card.isFileOpen())
-#elif ENABLED(CH376_STORAGE_SUPPORT)
-  #define IS_SD_PRINTING (card.sdprinting)
-  #define IS_SD_FILE_OPEN (card.isFileOpen())
-#else
-  #define IS_SD_PRINTING (false)
-  #define IS_SD_FILE_OPEN (false)
-#endif
+#define IS_CARD_PRINTING (card.sdprinting)
+#define IS_CARD_FILE_OPEN (card.isFileOpen())
 
 #endif // _CARDREADER_H_
 
