@@ -58,9 +58,6 @@ extern float zprobe_zoffset;
 
 namespace
 {
-    //! List of possible baudrates
-    constexpr uint32_t usb_baudrates[] = {9600, 19200, 38400, 57600, 115200, 230400, 250000};
-
     //! Default preheat values
     const advi3pp::Preset DEFAULT_PREHEAT_PRESET[advi3pp::Preheat::NB_PRESETS] = {
         {160, 90, 0},
@@ -110,29 +107,6 @@ namespace
 #endif
     };
 #endif
-
-    //! List of digital pins for the Diagnosis page
-    const uint8_t diagnosis_digital_pins[] =
-    {
-        54,     // PF0 / ADC0 - A0
-        24,     // PA2 / AD2
-        23,     // PA1 / AD1
-         6,     // PH3 / OC4A
-        25,     // PA3 / AD3
-
-        40,     // PG1 / !RD
-        56,     // PF2 / ADC2 - A2
-        36,     // PC1 / A9
-        37,     // PC0 / A8
-
-        34,     // PC3 / A11
-        35,     // PC2 / A10
-        32,     // PC5 / A13
-        33,     // PC4 / A12
-    };
-
-    //! List of analogic pins for the Diagnosis page
-    const uint8_t diagnosis_analog_pins[] = {55, 68, 54, 56}; // A1, A14, A0, A2
 }
 
 namespace advi3pp {
