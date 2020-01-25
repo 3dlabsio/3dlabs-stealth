@@ -47,11 +47,9 @@ extern bool pause_print(const float &retract, const point_t &park_point, const f
 extern void resume_print(const float &slow_load_length=0, const float &fast_load_length=0, const float &purge_length=ADVANCED_PAUSE_PURGE_LENGTH, int8_t max_beep_count=0);
 extern bool ensure_safe_temperature(AdvancedPauseMode mode=ADVANCED_PAUSE_MODE_PAUSE_PRINT);
 
-#ifdef ADVi3PP_PROBE
 bool set_probe_deployed(bool);
 float run_z_probe();
 extern float zprobe_zoffset;
-#endif
 
 // --------------------------------------------------------------------
 
@@ -60,17 +58,16 @@ namespace
 {
     //! Default preheat values
     const advi3pp::Preset DEFAULT_PREHEAT_PRESET[advi3pp::Preheat::NB_PRESETS] = {
-        {160, 90, 0},
-        {160, 50, 0},
-        {160, 150, 0},
-        {160, 180, 0},
-        {200, 00, 0}
+        {160, 160, 90,  0, 0},
+        {160, 160, 50,  0, 0},
+        {160, 160, 150, 0, 0},
+        {160, 160, 180, 0, 0},
+        {200, 160, 00,  0, 0}
     };
 
     //! List of multipliers in Print Settings
     const double PRINT_SETTINGS_MULTIPLIERS[] = {0.05, 0.10, 0.15};
 
-#ifdef ADVi3PP_PROBE
     //! List of multipliers in Z-height Tuning
     const double SENSOR_Z_HEIGHT_MULTIPLIERS[] = {0.05, 0.10, 1.0};
 
@@ -80,17 +77,9 @@ namespace
     const FlashChar* get_sensor_name(size_t index)
     {
         // Note: F macro can be used only in a function, this is why this is coded like this
-        auto custom              = F("Custom");
-
-#if defined(ADVi3PP_MARK2)
-        auto mark2               = F("Mark II");
-        static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
-          {custom};
-#elif defined(ADVi3PP_BLTOUCH)
-        auto stealth            = F("Stealth");
-        static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
-          {stealth, custom};
-#endif
+        auto custom   = F("Custom");
+        auto stealth  = F("Stealth");
+        static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] = {stealth, custom};
         assert(index < advi3pp::SensorSettings::NB_SENSOR_POSITIONS);
         return names[index];
     }
@@ -98,15 +87,9 @@ namespace
     //! Default position of the sensor for the different holders
     const advi3pp::SensorPosition DEFAULT_SENSOR_POSITION[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
     {
-#if defined(ADVi3PP_MARK2)
         {  3600,  7000 },    // 3D Labs Stealth
         {     0,     0 }     // Custom
-#elif defined(ADVi3PP_BLTOUCH)
-        {  3600,  7000 },    // 3D Labs Stealth
-        {     0,     0 }     // Custom
-#endif
     };
-#endif
 }
 
 namespace advi3pp {
@@ -132,6 +115,7 @@ inline namespace singletons
     Statistics statistics;
     Versions versions;
     PrintSettings print_settings;
+    BabyStepsSettings babysteps_settings;
     PidSettings pid_settings;
     StepSettings steps_settings;
     FeedrateSettings feedrates_settings;
@@ -489,6 +473,11 @@ void Temperatures::do_back_command()
 // Load and Unload Filament
 // --------------------------------------------------------------------
 
+uint16_t LoadUnload::get_current_hotend_index() const
+{
+    return hotend_ == TemperatureKind::Hotend1 ? 0 : 1;
+}
+
 //! Handle Load & Unload actions.
 //! @param key_value    The sub-action to handle
 //! @return             True if the action was handled
@@ -512,7 +501,8 @@ bool LoadUnload::do_dispatch(KeyValue key_value)
 Page LoadUnload::do_prepare_page()
 {
     WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(advi3pp.get_last_used_temperature(TemperatureKind::Hotend));
+    frame << Uint16(get_current_hotend_index())
+          << Uint16(advi3pp.get_last_used_temperature(hotend_));
     frame.send();
     return Page::LoadUnload;
 }
@@ -521,16 +511,17 @@ Page LoadUnload::do_prepare_page()
 //! @param background Background task to detect if it is time for step #2
 void LoadUnload::prepare(const BackgroundTask& background)
 {
-    ReadRamData frame{Variable::Value0, 1};
+    ReadRamData frame{Variable::Value0, 2};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Receiving Frame (Target Temperature)") << Log::endl();
         return;
     }
 
-    Uint16 hotend; frame >> hotend;
+    Uint16 hotend, temperature; frame >> hotend >> temperature;
 
-    Temperature::setTargetHotend(hotend.word, 0);
+    hotend_ = hotend.word == 0 ? TemperatureKind::Hotend1 : TemperatureKind::Hotend2;
+    Temperature::setTargetHotend(temperature.word, hotend.word);
     enqueue_and_echo_commands_P(PSTR("M83"));       // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
 
@@ -559,7 +550,7 @@ bool LoadUnload::stop()
     advi3pp.reset_status();
     task.set_background_task(BackgroundTask(this, &LoadUnload::stop_task));
     clear_command_queue();
-    Temperature::setTargetHotend(0, 0);
+    Temperature::setTargetHotend(0, get_current_hotend_index());
     return true;
 }
 
@@ -581,7 +572,8 @@ void LoadUnload::stop_task()
 //! @param back_task    Background task to detect if the target temperature is reached and in this case, do step #2
 void LoadUnload::start_task(const char* command, const BackgroundTask& back_task)
 {
-    if(Temperature::current_temperature[0] >= Temperature::target_temperature[0] - 10)
+    uint16_t hotend_index = get_current_hotend_index();
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
     {
         Log::log() << F("Load/Unload Filament") << Log::endl();
         advi3pp.buzz(); // Inform the user that the extrusion starts
@@ -600,7 +592,8 @@ void LoadUnload::load_start_task()
 //! Load the filament if the temperature is high enough.
 void LoadUnload::load_task()
 {
-    if(Temperature::current_temperature[0] >= Temperature::target_temperature[0] - 10)
+    uint16_t hotend_index = get_current_hotend_index();
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
         enqueue_and_echo_commands_P(PSTR("G1 E1 F120"));
 }
 
@@ -613,7 +606,8 @@ void LoadUnload::unload_start_task()
 //! Unload the filament if the temperature is high enough.
 void LoadUnload::unload_task()
 {
-    if(Temperature::current_temperature[0] >= Temperature::target_temperature[0] - 10)
+    uint16_t hotend_index = get_current_hotend_index();
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
         enqueue_and_echo_commands_P(PSTR("G1 E-1 F120"));
 }
 
@@ -646,8 +640,10 @@ void Preheat::do_write(EepromWrite& eeprom) const
 {
     for(auto& preset: presets_)
     {
-        eeprom.write(preset.hotend);
+        eeprom.write(preset.hotend1);
+        eeprom.write(preset.hotend2);
         eeprom.write(preset.bed);
+        eeprom.write(preset.enclosure);
     }
 }
 
@@ -657,8 +653,10 @@ void Preheat::do_read(EepromRead& eeprom)
 {
     for(auto& preset: presets_)
     {
-        eeprom.read(preset.hotend);
+        eeprom.read(preset.hotend1);
+        eeprom.read(preset.hotend2);
         eeprom.read(preset.bed);
+        eeprom.read(preset.enclosure);
     }
 }
 
@@ -667,9 +665,11 @@ void Preheat::do_reset()
 {
     for(size_t i = 0; i < NB_PRESETS; ++i)
     {
-        presets_[i].hotend  = DEFAULT_PREHEAT_PRESET[i].hotend;
-        presets_[i].bed     = DEFAULT_PREHEAT_PRESET[i].bed;
-        presets_[i].fan     = DEFAULT_PREHEAT_PRESET[i].fan;
+        presets_[i].hotend1     = DEFAULT_PREHEAT_PRESET[i].hotend1;
+        presets_[i].hotend2     = DEFAULT_PREHEAT_PRESET[i].hotend2;
+        presets_[i].bed         = DEFAULT_PREHEAT_PRESET[i].bed;
+        presets_[i].fan         = DEFAULT_PREHEAT_PRESET[i].fan;
+        presets_[i].enclosure   = DEFAULT_PREHEAT_PRESET[i].enclosure;
     }
 }
 
@@ -677,7 +677,7 @@ void Preheat::do_reset()
 //! @return Number of bytes
 uint16_t Preheat::do_size_of() const
 {
-    return NB_PRESETS * (sizeof(Preset::hotend) + sizeof(Preset::bed));
+    return NB_PRESETS * (sizeof(Preset::hotend1) + sizeof(Preset::hotend2) + sizeof(Preset::bed) + sizeof(Preset::enclosure));
 }
 
 //! Send the presets t the LCD Panel
@@ -685,8 +685,10 @@ void Preheat::send_presets()
 {
     Log::log() << F("Preheat page") << Log::endl();
     WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(presets_[index_].hotend)
+    frame << Uint16(presets_[index_].hotend1)
+          << Uint16(presets_[index_].hotend2)
           << Uint16(presets_[index_].bed)
+          << Uint16(presets_[index_].enclosure)
           << Uint16(presets_[index_].fan);
     frame.send();
 
@@ -707,11 +709,13 @@ void Preheat::retrieve_presets()
         return;
     }
 
-    Uint16 hotend, bed, fan;
-    frame >> hotend >> bed >> fan;
+    Uint16 hotend1, hotend2, bed, enclosure, fan;
+    frame >> hotend1 >> hotend2 >> bed >> enclosure >> fan;
 
-    presets_[index_].hotend = hotend.word;
+    presets_[index_].hotend1 = hotend1.word;
+    presets_[index_].hotend2 = hotend2.word;
     presets_[index_].bed = bed.word;
+    presets_[index_].enclosure = enclosure.word;
     presets_[index_].fan = fan.word;
 }
 
@@ -752,10 +756,16 @@ void Preheat::do_save_command()
 
     ADVString<15> command;
 
-    command = F("M104 S"); command << preset.hotend;
+    command = F("M104 T0 S"); command << preset.hotend1;
+    enqueue_and_echo_command(command.get());
+
+    command = F("M104 T1 S"); command << preset.hotend2;
     enqueue_and_echo_command(command.get());
 
     command = F("M140 S"); command << preset.bed;
+    enqueue_and_echo_command(command.get());
+
+    command = F("M141 S"); command << preset.enclosure;
     enqueue_and_echo_command(command.get());
 
     command = F("M106 S"); command << scale(preset.fan, 100, 255);
@@ -917,8 +927,6 @@ void Move::all_home_command()
 // Sensor Tuning
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
-
 //! Execute a Sensor Tuning command
 //! @param key_value    The sub-action to handle
 //! @return             True if the action was handled
@@ -970,22 +978,9 @@ void SensorTuning::stow_command()
     enqueue_and_echo_commands_P(PSTR("M280 P0 S90"));
 }
 
-#else
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page SensorTuning::do_prepare_page()
-{
-    return Page::NoSensor;
-}
-
-#endif
-
 // --------------------------------------------------------------------
 // Automatic Leveling
 // --------------------------------------------------------------------
-
-#ifdef ADVi3PP_PROBE
 
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
@@ -1045,22 +1040,10 @@ bool AutomaticLeveling::g29_leveling_failed()
     return true;
 }
 
-#else
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page AutomaticLeveling::do_prepare_page()
-{
-    return Page::NoSensor;
-}
-
-#endif
 
 // --------------------------------------------------------------------
 // Leveling Grid
 // --------------------------------------------------------------------
-
-#ifdef ADVi3PP_PROBE
 
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
@@ -1083,16 +1066,6 @@ void LevelingGrid::do_save_command()
     Parent::do_save_command();
 }
 
-#else
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page LevelingGrid::do_prepare_page()
-{
-    return Page::NoSensor;
-}
-
-#endif
 
 // --------------------------------------------------------------------
 // Manual Leveling
@@ -1564,8 +1537,6 @@ bool AdvancedPause::filament_inserted()
 // Sensor Z-Height
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
-
 //! Handle Sensor Z Height command
 //! @param key_value    The sub-action to handle
 //! @return             True if the action was handled
@@ -1708,20 +1679,15 @@ void SensorZHeight::send_data() const
     frame.send();
 }
 
-#else
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page SensorZHeight::do_prepare_page()
-{
-    return Page::NoSensor;
-}
-
-#endif
 
 // --------------------------------------------------------------------
 // Extruder tuning
 // --------------------------------------------------------------------
+
+uint16_t ExtruderTuning::get_current_hotend_index() const
+{
+    return hotend_ == TemperatureKind::Hotend1 ? 0 : 1;
+}
 
 //! Handle Extruder Tuning command
 //! @param key_value    The sub-action to handle
@@ -1746,7 +1712,8 @@ bool ExtruderTuning::do_dispatch(KeyValue key_value)
 Page ExtruderTuning::do_prepare_page()
 {
     WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(advi3pp.get_last_used_temperature(TemperatureKind::Hotend));
+    frame << Uint16(get_current_hotend_index())
+          << Uint16(advi3pp.get_last_used_temperature(TemperatureKind::Hotend1));
     frame.send();
     return Page::ExtruderTuningTemp;
 }
@@ -1754,16 +1721,17 @@ Page ExtruderTuning::do_prepare_page()
 //! Start extruder tuning.
 void ExtruderTuning::start_command()
 {
-    ReadRamData frame{Variable::Value0, 1};
+    ReadRamData frame{Variable::Value0, 2};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Receiving Frame (Target Temperature)") << Log::endl();
         return;
     }
 
-    Uint16 hotend; frame >> hotend;
+    Uint16 hotend, temperature; frame >> hotend >> temperature;
+    hotend_ = hotend.word == 0 ? TemperatureKind::Hotend1 : TemperatureKind::Hotend2;
     wait.show(F("Heating the extruder..."), WaitCallback{this, &ExtruderTuning::cancel}, ShowOptions::None);
-    Temperature::setTargetHotend(hotend.word, 0);
+    Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
 
     task.set_background_task(BackgroundTask(this, &ExtruderTuning::heating_task));
 }
@@ -1771,7 +1739,8 @@ void ExtruderTuning::start_command()
 //! Extruder tuning background task.
 void ExtruderTuning::heating_task()
 {
-    if(Temperature::current_temperature[0] < Temperature::target_temperature[0] - 10)
+    auto hotend_index = get_current_hotend_index();
+    if(Temperature::current_temperature[hotend_index] < Temperature::target_temperature[hotend_index] - 10)
         return;
     task.clear_background_task();
 
@@ -1795,7 +1764,7 @@ void ExtruderTuning::extruding_task()
 
     extruded_ = current_position[E_AXIS];
 
-    Temperature::setTargetHotend(0, 0);
+    Temperature::setTargetHotend(0, get_current_hotend_index());
     task.clear_background_task();
     advi3pp.reset_status();
     finished();
@@ -1810,8 +1779,8 @@ void ExtruderTuning::finished()
 
     task.clear_background_task();
 
-    // Always set ny default 20mm
-    WriteRamDataRequest frame{Variable::Value0};
+    // Always set to default 20mm
+    WriteRamDataRequest frame{Variable::Value1};
     frame << 200_u16; // 20.0
     frame.send();
 
@@ -1823,7 +1792,7 @@ bool ExtruderTuning::cancel()
 {
     ::wait_for_user = ::wait_for_heatup = false;
     task.clear_background_task();
-    Temperature::setTargetHotend(0, 0);
+    Temperature::setTargetHotend(0, get_current_hotend_index());
     return false;
 }
 
@@ -1832,7 +1801,7 @@ void ExtruderTuning::do_back_command()
 {
     task.clear_background_task();
 
-    Temperature::setTargetHotend(0, 0);
+    Temperature::setTargetHotend(0, get_current_hotend_index());
 
     enqueue_and_echo_commands_P(PSTR("M82"));       // absolute E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
@@ -1877,10 +1846,11 @@ bool PidTuning::do_dispatch(KeyValue key_value)
 
     switch(key_value)
     {
-        case KeyValue::PidTuningStep2:  step2_command(); break;
-        case KeyValue::PidTuningHotend: hotend_command(); break;
-        case KeyValue::PidTuningBed:    bed_command(); break;
-        default:                        return false;
+        case KeyValue::PidTuningStep2:      step2_command(); break;
+        case KeyValue::PidTuningHotend1:    hotend1_command(); break;
+        case KeyValue::PidTuningHotend2:    hotend2_command(); break;
+        case KeyValue::PidTuningBed:        bed_command(); break;
+        default:                            return false;
     }
 
     return true;
@@ -1891,7 +1861,7 @@ bool PidTuning::do_dispatch(KeyValue key_value)
 Page PidTuning::do_prepare_page()
 {
     pages.save_forward_page();
-    hotend_command();
+    hotend1_command();
     advi3pp.reset_status();
     return Page::PidTuning;
 }
@@ -1901,15 +1871,23 @@ void PidTuning::send_data()
 {
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(temperature_)
-          << Uint16(kind_ != TemperatureKind::Hotend);
+          << Uint16(static_cast<uint16_t>(kind_));
     frame.send();
 }
 
-//! Select the hotend PID
-void PidTuning::hotend_command()
+//! Select the hotend1 PID
+void PidTuning::hotend1_command()
 {
-    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Hotend);
-    kind_ = TemperatureKind::Hotend;
+    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Hotend1);
+    kind_ = TemperatureKind::Hotend1;
+    send_data();
+}
+
+//! Select the hotend2 PID
+void PidTuning::hotend2_command()
+{
+    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Hotend2);
+    kind_ = TemperatureKind::Hotend2;
     send_data();
 }
 
@@ -1933,14 +1911,23 @@ void PidTuning::step2_command()
         return;
     }
 
-    Uint16 temperature; frame >> temperature; temperature_ = temperature.word;
+    Uint16 temperature, kind; frame >> temperature >> kind; temperature_ = temperature.word;
 
-    if(kind_ == TemperatureKind::Hotend)
-        enqueue_and_echo_commands_P(PSTR("M106 S255")); // Turn on fan (only for hotend)
+    kind_ = kind.word == 0 ? TemperatureKind::Hotend1 : (kind.word == 1 ? TemperatureKind::Hotend2 : TemperatureKind::Bed);
+    if(kind_ == TemperatureKind::Hotend1 || kind_ == TemperatureKind::Hotend2)
+        enqueue_and_echo_commands_P(PSTR("M106 S255")); // Turn on fan (only for hotends)
 
     ADVString<20> auto_pid_command;
-    auto_pid_command << F("M303 S") << temperature_
-                     << (kind_ == TemperatureKind::Hotend ? F(" E0 U1") : F(" E-1 U1"));
+    auto_pid_command << F("M303 S") << temperature_;
+
+    switch(kind_)
+    {
+        case TemperatureKind::Bed:      auto_pid_command << F(" E-1 U1"); break;
+        case TemperatureKind::Hotend1:  auto_pid_command << F(" E0 U1"); break;
+        case TemperatureKind::Hotend2:  auto_pid_command << F(" E1 U1"); break;
+        default: advi3pp::Log::log() << F("Invalid PID kind: ") << static_cast<uint16_t>(kind_) << advi3pp::Log::endl(); return;
+    }
+
     enqueue_and_echo_command(auto_pid_command.get());
 
     inTuning_ = true;
@@ -1988,8 +1975,6 @@ Page LinearAdvanceTuning::do_prepare_page()
 // --------------------------------------------------------------------
 // Sensor Settings
 // --------------------------------------------------------------------
-
-#ifdef ADVi3PP_PROBE
 
 //! Constructor
 SensorSettings::SensorSettings()
@@ -2164,18 +2149,6 @@ int SensorSettings::back_probe_bed_position()
     return min(Y_MAX_BED - MIN_PROBE_EDGE, Y_MAX_POS + y_probe_offset_from_extruder());
 }
 
-#else
-
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page SensorSettings::do_prepare_page()
-{
-    return Page::NoSensor;
-}
-
-#endif
-
-
 
 // --------------------------------------------------------------------
 // LCD Settings
@@ -2255,7 +2228,6 @@ void LcdSettings::send_data() const
     frame.send();
 }
 
-
 // --------------------------------------------------------------------
 // Print Settings
 // --------------------------------------------------------------------
@@ -2267,45 +2239,13 @@ bool PrintSettings::do_dispatch(KeyValue key_value)
 {
     if(Parent::do_dispatch(key_value))
         return true;
-
-    switch(key_value)
-    {
-        case KeyValue::Baby1:       multiplier_ = Multiplier::M1; break;
-        case KeyValue::Baby2:       multiplier_ = Multiplier::M2; break;
-        case KeyValue::Baby3:       multiplier_ = Multiplier::M3; break;
-        default:                    return false;
-    }
-
-    send_data();
     return true;
-}
-
-//! Get the value corresponding the the current multiplier.
-//! @return The value of the current multiplier, or the first one in the case of an invalid multiplier
-double PrintSettings::get_multiplier_value() const
-{
-    if(multiplier_ < Multiplier::M1 || multiplier_ > Multiplier::M3)
-    {
-        Log::error() << F("Invalid multiplier value: ") << static_cast<uint16_t >(multiplier_) << Log::endl();
-        return PRINT_SETTINGS_MULTIPLIERS[0];
-    }
-
-    return PRINT_SETTINGS_MULTIPLIERS[static_cast<uint16_t>(multiplier_)];
-}
-
-//! Send the current data to the LCD panel.
-void PrintSettings::send_data() const
-{
-    WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(static_cast<uint16_t>(multiplier_));
-    frame.send();
 }
 
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
 Page PrintSettings::do_prepare_page()
 {
-    send_data();
     return Page::PrintSettings;
 }
 
@@ -2429,20 +2369,73 @@ void PrintSettings::enclosure_plus_command()
     Temperature::setTargetChamber(temperature + 1);
 }
 
+// --------------------------------------------------------------------
+// BabySteps Settings
+// --------------------------------------------------------------------
+
+//! Handle BabySteps Settings command
+//! @param key_value    The sub-action to handle
+//! @return             True if the action was handled
+bool BabyStepsSettings::do_dispatch(KeyValue key_value)
+{
+    if(Parent::do_dispatch(key_value))
+        return true;
+
+    switch(key_value)
+    {
+        case KeyValue::Baby1:       multiplier_ = Multiplier::M1; break;
+        case KeyValue::Baby2:       multiplier_ = Multiplier::M2; break;
+        case KeyValue::Baby3:       multiplier_ = Multiplier::M3; break;
+        default:                    return false;
+    }
+
+    send_data();
+    return true;
+}
+
+//! Get the value corresponding the the current multiplier.
+//! @return The value of the current multiplier, or the first one in the case of an invalid multiplier
+double BabyStepsSettings::get_multiplier_value() const
+{
+    if(multiplier_ < Multiplier::M1 || multiplier_ > Multiplier::M3)
+    {
+        Log::error() << F("Invalid multiplier value: ") << static_cast<uint16_t >(multiplier_) << Log::endl();
+        return PRINT_SETTINGS_MULTIPLIERS[0];
+    }
+
+    return PRINT_SETTINGS_MULTIPLIERS[static_cast<uint16_t>(multiplier_)];
+}
+
+//! Send the current data to the LCD panel.
+void BabyStepsSettings::send_data() const
+{
+    WriteRamDataRequest frame{Variable::Value0};
+    frame << Uint16(static_cast<uint16_t>(multiplier_));
+    frame.send();
+}
+
+//! Prepare the page before being displayed and return the right Page value
+//! @return The index of the page to display
+Page BabyStepsSettings::do_prepare_page()
+{
+    send_data();
+    return Page::Babystepping;
+}
 
 //! Handle the -Babystep command
-void PrintSettings::baby_minus_command()
+void BabyStepsSettings::minus_command()
 {
     auto distance = static_cast<int16_t>(-get_multiplier_value() * planner.axis_steps_per_mm[Z_AXIS]);
-	Temperature::babystep_axis(Z_AXIS, distance);
+    Temperature::babystep_axis(Z_AXIS, distance);
 }
 
 //! Handle the +Babystep command
-void PrintSettings::baby_plus_command()
+void BabyStepsSettings::plus_command()
 {
     auto distance = static_cast<int16_t>(get_multiplier_value() * planner.axis_steps_per_mm[Z_AXIS]);
     Temperature::babystep_axis(Z_AXIS, distance);
 }
+
 
 // --------------------------------------------------------------------
 // PidSettings
@@ -2463,7 +2456,8 @@ bool PidSettings::do_dispatch(KeyValue key_value)
 
     switch(key_value)
     {
-        case KeyValue::PidSettingsHotend:   hotend_command(); break;
+        case KeyValue::PidSettingsHotend1:  hotend1_command(); break;
+        case KeyValue::PidSettingsHotend2:  hotend2_command(); break;
         case KeyValue::PidSettingsBed:      bed_command(); break;
         case KeyValue::PidSettingPrevious:  previous_command(); break;
         case KeyValue::PidSettingNext:      next_command(); break;
@@ -2473,11 +2467,19 @@ bool PidSettings::do_dispatch(KeyValue key_value)
     return true;
 }
 
-//! Handle the select Hotend PID command
-void PidSettings::hotend_command()
+//! Handle the select Hotend1 PID command
+void PidSettings::hotend1_command()
 {
     save_data();
-    kind_ = TemperatureKind::Hotend;
+    kind_ = TemperatureKind::Hotend1;
+    send_data();
+}
+
+//! Handle the select Hotend2 PID command
+void PidSettings::hotend2_command()
+{
+    save_data();
+    kind_ = TemperatureKind::Hotend2;
     send_data();
 }
 
@@ -2516,7 +2518,8 @@ void PidSettings::do_write(EepromWrite& eeprom) const
     for(size_t i = 0; i < NB_PIDs; ++i)
     {
         eeprom.write(bed_pid_[i]);
-        eeprom.write(hotend_pid_[i]);
+        eeprom.write(hotend1_pid_[i]);
+        eeprom.write(hotend2_pid_[i]);
     }
 }
 
@@ -2527,7 +2530,8 @@ void PidSettings::do_read(EepromRead& eeprom)
     for(size_t i = 0; i < NB_PIDs; ++i)
     {
         eeprom.read(bed_pid_[i]);
-        eeprom.read(hotend_pid_[i]);
+        eeprom.read(hotend1_pid_[i]);
+        eeprom.read(hotend2_pid_[i]);
     }
 }
 
@@ -2541,10 +2545,15 @@ void PidSettings::do_reset()
         bed_pid_[i].Ki_ = DEFAULT_bedKi;
         bed_pid_[i].Kd_ = DEFAULT_bedKd;
 
-        hotend_pid_[i].temperature_ = default_hotend_temperature;
-        hotend_pid_[i].Kp_ = DEFAULT_Kp;
-        hotend_pid_[i].Ki_ = DEFAULT_Ki;
-        hotend_pid_[i].Kd_ = DEFAULT_Kd;
+        hotend1_pid_[i].temperature_ = default_hotend_temperature;
+        hotend1_pid_[i].Kp_ = DEFAULT_Kp;
+        hotend1_pid_[i].Ki_ = DEFAULT_Ki;
+        hotend1_pid_[i].Kd_ = DEFAULT_Kd;
+
+        hotend2_pid_[i].temperature_ = default_hotend_temperature;
+        hotend2_pid_[i].Kp_ = DEFAULT_Kp;
+        hotend2_pid_[i].Ki_ = DEFAULT_Ki;
+        hotend2_pid_[i].Kd_ = DEFAULT_Kd;
     }
 }
 
@@ -2552,61 +2561,103 @@ void PidSettings::do_reset()
 //! @return Number of bytes
 uint16_t PidSettings::do_size_of() const
 {
-    return NB_PIDs * 2 * sizeof(Pid);
+    return NB_PIDs * 3 * sizeof(Pid);
 }
 
 //! Set the current PID values from what is recorded
 void PidSettings::set_current_pid() const
 {
-    if(kind_ == TemperatureKind::Hotend)
+    switch(kind_)
     {
-        const Pid& pid = hotend_pid_[index_];
-
-        Temperature::Kp = pid.Kp_;
-        Temperature::Ki = scalePID_i(pid.Ki_);
-        Temperature::Kd = scalePID_d(pid.Kd_);
-
-        Log::log() << F("Set Hotend PID #") << index_ << F(" for temperature ") << pid.temperature_
-                   << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
+        case TemperatureKind::Hotend1: set_current_hotend_pid(0); break;
+        case TemperatureKind::Hotend2: set_current_hotend_pid(1); break;
+        case TemperatureKind::Bed:     set_current_bed_pid(); break;
+        default: assert("Invalid temperature Kind");
     }
-    else
-    {
-        const Pid& pid = bed_pid_[index_];
+}
 
-        Temperature::bedKp = pid.Kp_;
-        Temperature::bedKi = scalePID_i(pid.Ki_);
-        Temperature::bedKd = scalePID_d(pid.Kd_);
+void PidSettings::set_current_hotend_pid(uint16_t hotend_index) const
+{
+    const Pid& pid = (hotend_index == 0 ? hotend1_pid_ :hotend2_pid_)[index_];
 
-        Log::log() << F("Set Bed PID #") << index_ << F(" for temperature ") << pid.temperature_
-                   << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
-    }
+    Temperature::Kp[hotend_index] = pid.Kp_;
+    Temperature::Ki[hotend_index] = scalePID_i(pid.Ki_);
+    Temperature::Kd[hotend_index] = scalePID_d(pid.Kd_);
+
+    Log::log() << F("Set Hotend ") << hotend_index << (" PID #") << index_ << F(" for temperature ") << pid.temperature_
+               << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
+}
+
+void PidSettings::set_current_bed_pid() const
+{
+    const Pid& pid = bed_pid_[index_];
+
+    Temperature::bedKp = pid.Kp_;
+    Temperature::bedKi = scalePID_i(pid.Ki_);
+    Temperature::bedKd = scalePID_d(pid.Kd_);
+
+    Log::log() << F("Set Bed PID #") << index_ << F(" for temperature ") << pid.temperature_
+               << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
 }
 
 //! Record the current PID values
 void PidSettings::get_current_pid()
 {
-    if(kind_ == TemperatureKind::Hotend)
+    switch(kind_)
     {
-        Pid& pid = hotend_pid_[index_];
-
-        pid.Kp_ = Temperature::Kp;
-        pid.Ki_ = unscalePID_i(Temperature::Ki);
-        pid.Kd_ = unscalePID_d(Temperature::Kd);
-
-        Log::log() << F("Get Hotend PID #") << index_
-                   << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
+        case TemperatureKind::Hotend1: get_current_hotend_pid(0); break;
+        case TemperatureKind::Hotend2: get_current_hotend_pid(1); break;
+        case TemperatureKind::Bed:     get_current_bed_pid(); break;
+        default: assert("Invalid temperature Kind");
     }
-    else
+}
+
+Pid* PidSettings::get_pid(TemperatureKind kind)
+{
+    switch(kind_)
     {
-        Pid& pid = bed_pid_[index_];
-
-        pid.Kp_ = Temperature::bedKp;
-        pid.Ki_ = unscalePID_i(Temperature::bedKi);
-        pid.Kd_ = unscalePID_d(Temperature::bedKd);
-
-        Log::log() << F("Get Hotend PID #") << index_
-                   << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
+        case TemperatureKind::Hotend1: return hotend1_pid_;
+        case TemperatureKind::Hotend2: return hotend2_pid_;
+        case TemperatureKind::Bed:     return bed_pid_;
+        default: assert("Invalid temperature Kind"); return hotend1_pid_;
     }
+}
+
+const Pid* PidSettings::get_pid(TemperatureKind kind) const
+{
+    switch(kind_)
+    {
+        case TemperatureKind::Hotend1: return hotend1_pid_;
+        case TemperatureKind::Hotend2: return hotend2_pid_;
+        case TemperatureKind::Bed:     return bed_pid_;
+        default: assert("Invalid temperature Kind"); return hotend1_pid_;
+    }
+}
+
+//! Record the current PID values
+void PidSettings::get_current_hotend_pid(uint16_t hotend_index)
+{
+    Pid& pid = (hotend_index == 0 ? hotend1_pid_ :hotend2_pid_)[index_];
+
+    pid.Kp_ = Temperature::Kp[hotend_index];
+    pid.Ki_ = unscalePID_i(Temperature::Ki[hotend_index]);
+    pid.Kd_ = unscalePID_d(Temperature::Kd[hotend_index]);
+
+    Log::log() << F("Get Hotend ") << hotend_index << (" PID #") << index_
+               << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
+}
+
+//! Record the current PID values
+void PidSettings::get_current_bed_pid()
+{
+    Pid& pid = bed_pid_[index_];
+
+    pid.Kp_ = Temperature::bedKp;
+    pid.Ki_ = unscalePID_i(Temperature::bedKi);
+    pid.Kd_ = unscalePID_d(Temperature::bedKd);
+
+    Log::log() << F("Get Hotend PID #") << index_
+               << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
 }
 
 //! Record new PID values for a given temperature
@@ -2615,7 +2666,7 @@ void PidSettings::get_current_pid()
 void PidSettings::add_pid(TemperatureKind kind, uint16_t temperature)
 {
     kind_ = kind;
-    Pid* pid = kind_ == TemperatureKind::Hotend ? hotend_pid_ : bed_pid_;
+    Pid* pid = get_pid(kind_);
     for(size_t i = 0; i < NB_PIDs; ++i)
     {
         if(temperature == pid[i].temperature_)
@@ -2647,7 +2698,7 @@ void PidSettings::set_best_pid(TemperatureKind kind, uint16_t temperature)
     kind_ = kind;
 
     uint16_t best_difference = 500;
-    Pid* pid = kind_ == TemperatureKind::Hotend ? hotend_pid_ : bed_pid_;
+    Pid* pid = get_pid(kind_);
 
     for(size_t i = 0; i < NB_PIDs; ++i)
     {
@@ -2667,12 +2718,12 @@ void PidSettings::set_best_pid(TemperatureKind kind, uint16_t temperature)
 //! Send the current data to the LCD panel.
 void PidSettings::send_data() const
 {
-    const Pid& pid = (kind_ == TemperatureKind::Hotend ? hotend_pid_ : bed_pid_)[index_];
+    const Pid& pid = get_pid(kind_)[index_];
     Log::log() << F("Send ") << (kind_ == TemperatureKind::Bed ? F("Bed") : F("Hotend")) << F(" PID #") << index_
                << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
 
     WriteRamDataRequest frame{Variable::Value0};
-    frame << (kind_ == TemperatureKind::Hotend ? 0_u16 : 1_u16)
+    frame << (kind_ == TemperatureKind::Hotend1 ? 0_u16 : 1_u16)
           << Uint16(pid.temperature_)
           << Uint16(pid.Kp_ * 100)
           << Uint16(pid.Ki_ * 100)
@@ -2689,7 +2740,7 @@ void PidSettings::send_data() const
 //! Save the settings from the LCD Panel.
 void PidSettings::save_data()
 {
-    Pid& pid = (kind_ == TemperatureKind::Hotend ? hotend_pid_ : bed_pid_)[index_];
+    Pid& pid = get_pid(kind_)[index_];
 
     ReadRamData response{Variable::Value0, 5};
     if(!response.send_and_receive())
@@ -2723,10 +2774,13 @@ void PidSettings::do_save_command()
 {
     save_data();
 
-    Pid& pid = (kind_ == TemperatureKind::Hotend ? hotend_pid_ : bed_pid_)[index_];
-    Temperature::Kp = pid.Kp_;
-    Temperature::Ki = pid.Ki_;
-    Temperature::Kd = pid.Kd_;
+    switch(kind_)
+    {
+        case TemperatureKind::Hotend1: save_hotend_pid(0); break;
+        case TemperatureKind::Hotend2: save_hotend_pid(0); break;
+        case TemperatureKind::Bed:     save_bed_pid(); break;
+        default: assert("Invalid temperature Kind");
+    }
 
     Parent::do_save_command();
 }
@@ -2737,6 +2791,22 @@ void PidSettings::do_back_command()
     advi3pp.restore_settings();
     pid_tuning.send_data();
     Parent::do_back_command();
+}
+
+void PidSettings::save_hotend_pid(uint16_t hotend_index)
+{
+    Pid& pid = get_pid(kind_)[index_];
+    Temperature::Kp[hotend_index] = pid.Kp_;
+    Temperature::Ki[hotend_index] = pid.Ki_;
+    Temperature::Kd[hotend_index] = pid.Kd_;
+}
+
+void PidSettings::save_bed_pid()
+{
+    Pid& pid = get_pid(kind_)[index_];
+    Temperature::bedKp = pid.Kp_;
+    Temperature::bedKi = pid.Ki_;
+    Temperature::bedKd = pid.Kd_;
 }
 
 // --------------------------------------------------------------------

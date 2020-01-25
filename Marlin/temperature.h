@@ -441,7 +441,7 @@ class Temperature {
         powerManager.power_on();
       #endif
       target_temperature[HOTEND_INDEX] = MIN(celsius, maxttemp[HOTEND_INDEX] - 15);
-      advi3pp::ADVi3pp::on_set_temperature(advi3pp::TemperatureKind::Hotend, celsius);
+      advi3pp::ADVi3pp::on_set_temperature(e == 0 ? advi3pp::TemperatureKind::Hotend1 : advi3pp::TemperatureKind::Hotend2, celsius);
       #if WATCH_HOTENDS
         start_watching_heater(HOTEND_INDEX);
       #endif

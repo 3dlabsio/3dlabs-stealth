@@ -91,6 +91,7 @@ inline namespace singletons
     extern Statistics statistics;
     extern Versions versions;
     extern PrintSettings print_settings;
+    extern BabyStepsSettings babysteps_settings;
     extern PidSettings pid_settings;
     extern StepSettings steps_settings;
     extern FeedrateSettings feedrates_settings;
@@ -397,6 +398,7 @@ void ADVi3pp_::read_lcd_serial()
         case Action::ExtruderTuning:        extruder_tuning.handle(key_value); break;
         case Action::PidTuning:             pid_tuning.handle(key_value); break;
         case Action::SensorSettings:        sensor_settings.handle(key_value); break;
+        case Action::Babysteps:             babysteps_settings.handle(key_value); break;
         case Action::LCD:                   lcd_settings.handle(key_value); break;
         case Action::Statistics:            statistics.handle(key_value); break;
         case Action::Versions:              versions.handle(key_value); break;
@@ -425,9 +427,10 @@ void ADVi3pp_::read_lcd_serial()
         case Action::MoveZMinus:            move.z_minus_command(); break;
         case Action::MoveEPlus:             move.e_plus_command(); break;
         case Action::MoveEMinus:            move.e_minus_command(); break;
-        case Action::LCDBrightness:         lcd_settings.change_brightness(static_cast<int16_t>(key_value)); break;
-        case Action::BabyMinus:             print_settings.baby_minus_command(); break;
-        case Action::BabyPlus:              print_settings.baby_plus_command(); break;
+        case Action::BabyMinus:             babysteps_settings.minus_command(); break;
+        case Action::BabyPlus:              babysteps_settings.plus_command(); break;
+        case Action::ZHeightMinus:          sensor_z_height.minus(); break;
+        case Action::ZHeightPlus:           sensor_z_height.plus(); break;
         case Action::FeedrateMinus:         print_settings.feedrate_minus_command(); break;
         case Action::FeedratePlus:          print_settings.feedrate_plus_command(); break;
         case Action::FanMinus:              print_settings.fan_minus_command(); break;
@@ -440,8 +443,7 @@ void ADVi3pp_::read_lcd_serial()
         case Action::BedPlus:               print_settings.bed_plus_command(); break;
         case Action::EnclosureMinus:        print_settings.enclosure_minus_command(); break;
         case Action::EnclosurePlus:         print_settings.enclosure_plus_command(); break;
-        case Action::ZHeightMinus:          sensor_z_height.minus(); break;
-        case Action::ZHeightPlus:           sensor_z_height.plus(); break;
+        case Action::LCDBrightness:         lcd_settings.change_brightness(static_cast<int16_t>(key_value)); break;
 
         default:                            Log::error() << F("Invalid action ") << static_cast<uint16_t>(action) << Log::endl(); break;
     }
@@ -628,7 +630,7 @@ void ADVi3pp_::change_features(Feature features)
 //! @return The last used themperature
 uint16_t  ADVi3pp_::get_last_used_temperature(TemperatureKind kind) const
 {
-    return last_used_temperature_[kind == TemperatureKind::Hotend];
+    return last_used_temperature_[static_cast<unsigned>(kind)];
 }
 
 //! To be called when a new temperature is selected as a target
@@ -638,7 +640,7 @@ void ADVi3pp_::on_set_temperature(TemperatureKind kind, uint16_t temperature)
 {
     if(temperature == 0)
         return;
-    last_used_temperature_[kind == TemperatureKind::Hotend] = temperature;
+    last_used_temperature_[static_cast<unsigned>(kind)] = temperature;
     pid_settings.set_best_pid(kind, temperature);
 }
 

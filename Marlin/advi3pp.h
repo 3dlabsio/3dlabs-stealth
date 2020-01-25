@@ -35,7 +35,8 @@ using eeprom_read  = void (*)(int &pos, uint8_t* value, uint16_t size, uint16_t*
 
 namespace advi3pp {
 
-enum class TemperatureKind: uint8_t { Bed, Hotend };
+enum class TemperatureKind: uint8_t { Bed, Hotend1, Hotend2, Enclosure };
+constexpr const unsigned nb_temperatures = 4;
 
 //! ADVi3++ public facade, i.e. interface between Marlin code and ADVi3++ code
 struct ADVi3pp

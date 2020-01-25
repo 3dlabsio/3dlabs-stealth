@@ -200,8 +200,9 @@ enum class KeyValue: uint16_t
     TuningSettings          = 0x0002,
 
     PidTuningStep2          = 0x0001,
-    PidTuningHotend         = 0x0002,
-    PidTuningBed            = 0x0003,
+    PidTuningHotend1        = 0x0002,
+    PidTuningHotend2        = 0x0003,
+    PidTuningBed            = 0x0004,
 
     SensorSettingsPrevious  = 0x0001,
     SensorSettingsNext      = 0x0002,
@@ -212,10 +213,11 @@ enum class KeyValue: uint16_t
 
     MismatchForward         = 0x0001,
 
-    PidSettingsHotend       = 0x0001,
-    PidSettingsBed          = 0x0002,
-    PidSettingPrevious      = 0x0003,
-    PidSettingNext          = 0x0004,
+    PidSettingsHotend1      = 0x0001,
+    PidSettingsHotend2      = 0x0002,
+    PidSettingsBed          = 0x0003,
+    PidSettingPrevious      = 0x0004,
+    PidSettingNext          = 0x0005,
 
     SensorSelfTest          = 0x0001,
     SensorReset             = 0x0002,

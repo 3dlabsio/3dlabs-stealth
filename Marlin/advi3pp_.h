@@ -51,6 +51,7 @@ const uint8_t sd_file_length = 26; //!< This is the maximum length handled by th
 
 const uint16_t default_bed_temperature = 50; //!< Default target temperature for the bed
 const uint16_t default_hotend_temperature = 200; //!< Default target temperature for the hotend
+const uint16_t default_enclosure_temperature = 30; //!< Default target temperature for the enclosure
 
 using adv::Callback;
 using BackgroundTask = Callback<void(*)()>;
@@ -59,8 +60,10 @@ using WaitCallback = Callback<bool(*)()>;
 //! Hotend, bed temperature and fan speed preset.
 struct Preset
 {
-    uint16_t hotend;
+    uint16_t hotend1;
+    uint16_t hotend2;
     uint8_t bed;
+    uint8_t enclosure;
     uint8_t fan;
 };
 
@@ -252,6 +255,10 @@ private:
     void unload_start_task();
     void unload_task();
     void start_task(const char* command,  const BackgroundTask& back_task);
+    uint16_t get_current_hotend_index() const;
+
+private:
+    TemperatureKind hotend_ = TemperatureKind::Hotend1;
 
     friend Parent;
 };
@@ -323,7 +330,6 @@ private:
 // Sensor Tuning Page
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
 //! Sensor Tuning Page
 struct SensorTuning: Handler<SensorTuning>
 {
@@ -338,21 +344,11 @@ private:
 private:
     friend Parent;
 };
-#else
-//! Sensor Tuning Page
-struct SensorTuning: Handler<SensorTuning>
-{
-private:
-    Page do_prepare_page();
-    friend Parent;
-};
-#endif
 
 // --------------------------------------------------------------------
 // Automatic Leveling Page
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
 //! Automatic Leveling Page
 struct AutomaticLeveling: Handler<AutomaticLeveling>
 {
@@ -367,23 +363,11 @@ private:
 
     friend Parent;
 };
-#else
-//! Automatic Leveling Page
-struct AutomaticLeveling: Handler<AutomaticLeveling>
-{
-    void g29_leveling_finished(bool) {}
-
-private:
-    Page do_prepare_page();
-    friend Parent;
-};
-#endif
 
 // --------------------------------------------------------------------
 // Leveling Grid Page
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
 //! Leveling Grid Page
 struct LevelingGrid: Handler<LevelingGrid>
 {
@@ -393,15 +377,6 @@ private:
 
     friend Parent;
 };
-#else
-//! Leveling Grid Page
-struct LevelingGrid: Handler<LevelingGrid>
-{
-private:
-    Page do_prepare_page();
-    friend Parent;
-};
-#endif
 
 // --------------------------------------------------------------------
 // Manual Leveling Page
@@ -502,7 +477,6 @@ private:
 // Sensor Z Height Tuning Page
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
 //! Sensor Z Height Tuning Page
 struct SensorZHeight: Handler<SensorZHeight>
 {
@@ -534,18 +508,6 @@ private:
     Multiplier multiplier_ = Multiplier::M1;
     friend Parent;
 };
-#else
-//! Sensor Z Height Tuning Page
-struct SensorZHeight: Handler<SensorZHeight>
-{
-    void minus() {}
-    void plus() {}
-
-private:
-    Page do_prepare_page();
-    friend Parent;
-};
-#endif
 
 // --------------------------------------------------------------------
 // Extruder Tuning Page
@@ -564,11 +526,13 @@ private:
     void extruding_task();
     void finished();
     bool cancel();
+    uint16_t get_current_hotend_index() const;
 
 private:
     static constexpr uint16_t tuning_extruder_filament = 100; //!< Filament to extrude (10 cm)
     static constexpr uint16_t tuning_extruder_delta = 20; //!< Amount of filament supposes tp remain after extruding (2 cm)
 
+    TemperatureKind hotend_ = TemperatureKind::Hotend1;
     float extruded_ = 0.0;
     friend Parent;
 };
@@ -588,12 +552,13 @@ private:
     Page do_prepare_page();
     void step2_command();
     bool cancel_pid();
-    void hotend_command();
+    void hotend1_command();
+    void hotend2_command();
     void bed_command();
 
 private:
     uint16_t temperature_ = 0;
-    TemperatureKind kind_ = TemperatureKind::Hotend;
+    TemperatureKind kind_ = TemperatureKind::Hotend1;
     bool inTuning_ = false;
 
     friend Parent;
@@ -617,7 +582,6 @@ private:
 // Sensor Settings Page
 // --------------------------------------------------------------------
 
-#ifdef ADVi3PP_PROBE
 //! Sensor Settings Page
 struct SensorSettings: Handler<SensorSettings>
 {
@@ -651,18 +615,6 @@ private:
 
     friend Parent;
 };
-#else
-//! Sensor Settings Page
-struct SensorSettings: Handler<SensorSettings>
-{
-    void send_z_height_to_lcd(double) {}
-	void save_lcd_z_height() {}
-
-private:
-    Page do_prepare_page();
-    friend Parent;
-};
-#endif
 
 
 // --------------------------------------------------------------------
@@ -705,8 +657,25 @@ struct PrintSettings: Handler<PrintSettings>
     void bed_plus_command();
     void enclosure_minus_command();
     void enclosure_plus_command();
-    void baby_minus_command();
-    void baby_plus_command();
+
+protected:
+    bool do_dispatch(KeyValue value);
+
+private:
+    Page do_prepare_page();
+
+    friend Parent;
+};
+
+// --------------------------------------------------------------------
+// BabySteps Settings Page
+// --------------------------------------------------------------------
+
+//! Baby steps Settings Page
+struct BabyStepsSettings: Handler<PrintSettings>
+{
+    void minus_command();
+    void plus_command();
 
     enum class Multiplier: uint8_t { M1 = 0, M2 = 1, M3 = 2 };
 
@@ -751,20 +720,30 @@ private:
     uint16_t do_size_of() const;
     void do_save_command();
     void do_back_command();
-    void hotend_command();
+    void save_bed_pid();
+    void save_hotend_pid(uint16_t hotend_index);
+    void hotend1_command();
+    void hotend2_command();
     void bed_command();
     void previous_command();
     void next_command();
     void set_current_pid() const;
+    void set_current_bed_pid() const;
+    void set_current_hotend_pid(uint16_t hotend_index) const;
     void get_current_pid();
+    void get_current_bed_pid();
+    void get_current_hotend_pid(uint16_t hotend_index);
     void send_data() const;
     void save_data();
+    Pid* get_pid(TemperatureKind kind);
+    const Pid* get_pid(TemperatureKind kind) const;
 
 private:
     static const size_t NB_PIDs = 3;
-    Pid hotend_pid_[NB_PIDs] = {};
+    Pid hotend1_pid_[NB_PIDs] = {};
+    Pid hotend2_pid_[NB_PIDs] = {};
     Pid bed_pid_[NB_PIDs] = {};
-    TemperatureKind kind_ = TemperatureKind::Hotend;
+    TemperatureKind kind_ = TemperatureKind::Hotend1;
     size_t index_ = 0;
 
     friend Parent;
@@ -1054,7 +1033,7 @@ private:
     bool init_ = true;
     uint32_t usb_baudrate_ = BAUDRATE;
     Feature features_ = Feature::None;
-    uint16_t last_used_temperature_[2] = {default_bed_temperature, default_hotend_temperature};
+    uint16_t last_used_temperature_[nb_temperatures] = {default_bed_temperature, default_hotend_temperature, default_hotend_temperature, default_enclosure_temperature};
     bool has_status_ = false;
     ADVString<message_length> message_;
     ADVString<message_length> centered_;
