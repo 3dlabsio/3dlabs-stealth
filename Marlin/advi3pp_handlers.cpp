@@ -490,20 +490,39 @@ bool LoadUnload::do_dispatch(KeyValue key_value)
     {
         case KeyValue::Load:    load_command(); break;
         case KeyValue::Unload:  unload_command(); break;
+        case KeyValue::Hotend1: hotend1_command(); break;
+        case KeyValue::Hotend2: hotend2_command(); break;
         default:                return false;
     }
 
     return true;
 }
 
-//! Prepare the page before being displayed and return the right Page value
-//! @return The index of the page to display
-Page LoadUnload::do_prepare_page()
+void LoadUnload::hotend1_command()
+{
+    hotend_ = TemperatureKind::Hotend1;
+    send_data();
+}
+
+void LoadUnload::hotend2_command()
+{
+    hotend_ = TemperatureKind::Hotend2;
+    send_data();
+}
+
+void LoadUnload::send_data()
 {
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(get_current_hotend_index())
           << Uint16(advi3pp.get_last_used_temperature(hotend_));
     frame.send();
+}
+
+//! Prepare the page before being displayed and return the right Page value
+//! @return The index of the page to display
+Page LoadUnload::do_prepare_page()
+{
+    send_data();
     return Page::LoadUnload;
 }
 
@@ -511,17 +530,16 @@ Page LoadUnload::do_prepare_page()
 //! @param background Background task to detect if it is time for step #2
 void LoadUnload::prepare(const BackgroundTask& background)
 {
-    ReadRamData frame{Variable::Value0, 2};
+    ReadRamData frame{Variable::Value0, 1};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Receiving Frame (Target Temperature)") << Log::endl();
         return;
     }
 
-    Uint16 hotend, temperature; frame >> hotend >> temperature;
+    Uint16 temperature; frame >> temperature;
 
-    hotend_ = hotend.word == 0 ? TemperatureKind::Hotend1 : TemperatureKind::Hotend2;
-    Temperature::setTargetHotend(temperature.word, hotend.word);
+    Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
     enqueue_and_echo_commands_P(PSTR("M83"));       // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
 
@@ -573,7 +591,7 @@ void LoadUnload::stop_task()
 void LoadUnload::start_task(const char* command, const BackgroundTask& back_task)
 {
     uint16_t hotend_index = get_current_hotend_index();
-    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10.0)
     {
         Log::log() << F("Load/Unload Filament") << Log::endl();
         advi3pp.buzz(); // Inform the user that the extrusion starts
@@ -593,7 +611,7 @@ void LoadUnload::load_start_task()
 void LoadUnload::load_task()
 {
     uint16_t hotend_index = get_current_hotend_index();
-    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10.0)
         enqueue_and_echo_commands_P(PSTR("G1 E1 F120"));
 }
 
@@ -607,7 +625,7 @@ void LoadUnload::unload_start_task()
 void LoadUnload::unload_task()
 {
     uint16_t hotend_index = get_current_hotend_index();
-    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10)
+    if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10.0)
         enqueue_and_echo_commands_P(PSTR("G1 E-1 F120"));
 }
 

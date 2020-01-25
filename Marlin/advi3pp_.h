@@ -247,6 +247,8 @@ private:
     void prepare(const BackgroundTask& background);
     void load_command();
     void unload_command();
+    void hotend1_command();
+    void hotend2_command();
     bool stop();
     void stop_task();
     void load_start_task();
@@ -255,6 +257,7 @@ private:
     void unload_task();
     void start_task(const char* command,  const BackgroundTask& back_task);
     uint16_t get_current_hotend_index() const;
+    void send_data();
 
 private:
     TemperatureKind hotend_ = TemperatureKind::Hotend1;

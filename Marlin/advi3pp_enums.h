@@ -167,6 +167,8 @@ enum class KeyValue: uint16_t
 
     Load                    = 0x0001,
     Unload                  = 0x0002,
+    Hotend1                 = 0x0003,
+    Hotend2                 = 0x0004,
 
     PresetPrevious          = 0x0001,
     PresetNext              = 0x0002,
