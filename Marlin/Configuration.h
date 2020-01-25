@@ -95,7 +95,7 @@
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
 // @advi3++: Change the author name
-#define STRING_CONFIG_H_AUTHOR "(andrivet)" // Who made the changes.
+#define STRING_CONFIG_H_AUTHOR "(3dlabs)" // Who made the changes.
 #define SHOW_BOOTSCREEN
 #define STRING_SPLASH_LINE1 SHORT_BUILD_VERSION // will be shown during bootup in line 1
 #define STRING_SPLASH_LINE2 WEBSITE_URL         // will be shown during bootup in line 2
@@ -145,7 +145,7 @@
 // The following define selects which electronics board you have.
 // Please choose the name from boards.h that matches your setup
 //#ifndef MOTHERBOARD
-// @advi3++: Wanhao Duplicator i3 Plus or Mark II motherboard
+// @advi3++: 3DLABS_STEALTH
 #define MOTHERBOARD BOARD_3DLABS_STEALTH
 
 
