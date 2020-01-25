@@ -21,17 +21,7 @@
 #ifndef ADVI3PP_DEFINES_H
 #define ADVI3PP_DEFINES_H
 
-// The preferred way to build ADVi3++ is with PlatformIO. With PlatformIO, you can easily build BLTouch and non-BLtouch releases.
-
-// If for whatever reason, you prefer to use Arduino IDE, uncomment the following line to build a BLTouch release.
-// #define ADVi3PP_BLTOUCH
-
-// In a similar way, uncomment the following line to build a Mark II release.
-// #define ADVi3PP_MARK2
-
-// In a similar way, uncomment the following line to build a Aldi UK Balco 2018 release
-// WARNING: For HE180021 models only (2018). For the 2017 models, do not use any #define
-// #define ADVi3PP_HE180021
+// The preferred way to build ADVi3++ is with PlatformIO.
 
 #ifdef DEBUG
 
@@ -50,10 +40,6 @@
 // ---------------------------------------------------------------------------
 // Do not modify the following definitions
 // ---------------------------------------------------------------------------
-
-#if defined(ADVi3PP_BLTOUCH) || defined(ADVi3PP_BLTOUCH3) || defined(ADVi3PP_MARK2)
-#define ADVi3PP_PROBE
-#endif
 
 
 #endif // ADVI3PP_DEFINES_H

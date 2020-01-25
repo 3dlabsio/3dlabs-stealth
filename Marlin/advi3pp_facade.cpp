@@ -25,18 +25,6 @@
 #pragma message "This is a DEBUG build"
 #endif
 
-#if defined(ADVi3PP_BLTOUCH3)
-#pragma message "This is a BLTouch v3 build"
-#elif defined(ADVi3PP_BLTOUCH)
-#pragma message "This is a BLTouch build"
-#elif defined(ADVi3PP_MARK2)
-#pragma message "This is a Mark II build"
-#endif
-
-#if defined(ADVi3PP_HE180021)
-#pragma message "This is a Aldi UK Balco HE180021 build"
-#endif
-
 #if defined(ADVi3PP_SIMULATOR)
 #pragma message "This is a ADVi3++ Simulator build"
 #endif
@@ -203,9 +191,6 @@ void ADVi3pp::process_command(const GCodeParser& parser)
     advi3pp.process_command(parser);
 }
 
-
-#ifdef ADVi3PP_PROBE
-
 double ADVi3pp::x_probe_offset_from_extruder()
 {
     return sensor_settings.x_probe_offset_from_extruder();
@@ -235,8 +220,6 @@ int ADVi3pp::back_probe_bed_position()
 {
     return sensor_settings.back_probe_bed_position();
 }
-
-#endif
 
 // --------------------------------------------------------------------
 

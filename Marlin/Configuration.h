@@ -49,7 +49,6 @@
 // @advi3++: This is only to ensure that Jetbrains CLion is parsing code properly inside the IDE
 #ifdef __CLION_IDE__
 #define DEBUG
-#define ADVi3PP_BLTOUCH
 #endif
 
 
@@ -565,10 +564,7 @@
 //#define USE_ZMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
-// @advi3++: Enable pullups except for Mark II
-#ifdef ADVi3PP_MARK2
-#define ENDSTOPPULLUPS
-#endif
+//#define ENDSTOPPULLUPS
 #if DISABLED(ENDSTOPPULLUPS)
   // Disable ENDSTOPPULLUPS to set pullups individually
   #define ENDSTOPPULLUP_XMAX
@@ -581,7 +577,6 @@
 #endif
 
 // @advi3++: Sets the directions for BLTouch
-#ifdef ADVi3PP_BLTOUCH
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
 #define X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
 #define Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
@@ -590,16 +585,6 @@
 #define Y_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
 #define Z_MIN_PROBE_ENDSTOP_INVERTING true // set to true to invert the logic of the probe.
-#else
-// Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
-#define X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define X_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Y_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Z_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
-#define Z_MIN_PROBE_ENDSTOP_INVERTING true // set to true to invert the logic of the probe.
-#endif
 
 /**
  * Specify Stepper Driver types
@@ -780,10 +765,7 @@
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
  *   (e.g., an inductive probe or a nozzle-based probe-switch.)
  */
-// @advi3++: Mark II probe is fix
-#ifdef ADVi3PP_MARK2
-#define FIX_MOUNTED_PROBE
-#endif
+//#define FIX_MOUNTED_PROBE
 
 /**
  * Z Servo Probe, such as an endstop switch on a rotating arm.
@@ -794,17 +776,12 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#ifdef ADVi3PP_BLTOUCH
-// @advi3++: ADVi3PP_BLTOUCH Build uses BLTOUCH so enable it
+// @advi3++: uses BLTOUCH so enable it
 #define BLTOUCH
-#endif
 
 // @advi3++: BLTouch V3.0 and newer smart series. Backport from Marlin 2
-#ifdef ADVi3PP_BLTOUCH3
-#define ADVi3PP_BLTOUCH
 #define BLTOUCH
 #define BLTOUCH_V3
-#endif
 
 #if ENABLED(BLTOUCH)
 // @advi3++: Set delay for BLTouch
@@ -923,9 +900,7 @@
 
 // Enable the M48 repeatability test to test probe accuracy
 // @advi3++: Enable M48 when BLTouch is enabled
-#ifdef ADVi3PP_PROBE
 #define Z_MIN_PROBE_REPEATABILITY_TEST
-#endif
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 // :{ 0:'Low', 1:'High' }
@@ -1081,23 +1056,19 @@
  *   leveling in steps so you can manually adjust the Z height at each grid-point.
  *   With an LCD controller the process is guided step-by-step.
  */
-#ifdef ADVi3PP_PROBE
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 // @advi3++: Use bilinear leveling (mesh)
 #define AUTO_BED_LEVELING_BILINEAR
 //#define AUTO_BED_LEVELING_UBL
 //#define MESH_BED_LEVELING
-#endif
 
 /**
  * Normally G28 leaves leveling disabled on completion. Enable
  * this option to have G28 restore the prior leveling state.
  */
 // @advi3++: Restore leveling after G28 (only when using a sensor)
-#ifdef ADVi3PP_PROBE
 #define RESTORE_LEVELING_AFTER_G28
-#endif
 
 /**
  * Enable detailed logging of G28, G29, M48, etc.
@@ -1264,19 +1235,12 @@
 // - Prevent Z homing when the Z probe is outside bed area.
 //
 // @advi3++: From v4, use safe homing. From 4.0.1 only for BLTouch
-
-#if defined(ADVi3PP_BLTOUCH) || defined(ADVi3PP_BLTOUCH3)
 #define Z_SAFE_HOMING
-#endif
 
 #if ENABLED(Z_SAFE_HOMING)
-#if ENABLED(ADVi3PP_PROBE) // @advi3++: In the middle of the bed
+// @advi3++: In the middle of the bed
   #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE) / 2)    // X point for Z homing when homing all axes (G28).
   #define Z_SAFE_HOMING_Y_POINT ((Y_BED_SIZE) / 2)    // Y point for Z homing when homing all axes (G28).
-#else // @advi3++: No probe -> in the corner
-  #define Z_SAFE_HOMING_X_POINT ((X_MIN_POS) + 10)    // X point for Z homing when homing all axes (G28).
-  #define Z_SAFE_HOMING_Y_POINT ((Y_MIN_POS) + 10)    // Y point for Z homing when homing all axes (G28).
-#endif
 #endif
 
 // Homing speeds (mm/m)
@@ -2078,10 +2042,8 @@
  * Set this manually if there are extra servos needing manual control.
  * Leave undefined or set to 0 to entirely disable the servo subsystem.
  */
-#ifdef ADVi3PP_BLTOUCH
 // @advi3++: BLTouch is like a servo
 #define NUM_SERVOS 1 // Servo index starts with 0 for M280 command
-#endif
 
 // Delay (in milliseconds) before the next move will start, to give the servo time to reach its target angle.
 // 300ms is a good value but you can try less delay.
