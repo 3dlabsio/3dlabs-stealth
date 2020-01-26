@@ -297,7 +297,6 @@ double ADVi3pp_::get_current_z_layer(int multiply) const
     return height;
 }
 
-
 //! Update the status of the printer on the LCD.
 void ADVi3pp_::send_status_data(bool force_update)
 {

@@ -287,12 +287,12 @@ void Screens::show_print()
         return;
     }
 
-    wait.show(F("Try to access the SD card..."));
-    task.set_background_task(BackgroundTask{this, &Screens::show_sd_or_temp_page});
+    wait.show(F("Accessing the card..."));
+    task.set_background_task(BackgroundTask{this, &Screens::show_card_or_error_page});
 }
 
 //! Show the SD card page (if a SD card is inserted) or the Temperature page
-void Screens::show_sd_or_temp_page()
+void Screens::show_card_or_error_page()
 {
     task.clear_background_task();
 
@@ -301,11 +301,17 @@ void Screens::show_sd_or_temp_page()
     if(!card.cardOK)
     {
         // SD card not accessible so fall back to Temperatures
-        temperatures.show(ShowOptions::None);
+        wait.show(F("Card is not accessible"), WaitCallback{this, &Screens::back}, ShowOptions::None);
         return;
     }
 
     sd_card.show(ShowOptions::None);
+}
+
+bool Screens::back()
+{
+	pages.show_back_page();
+    return false;
 }
 
 // --------------------------------------------------------------------
@@ -2428,7 +2434,8 @@ double BabyStepsSettings::get_multiplier_value() const
 void BabyStepsSettings::send_data() const
 {
     WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(static_cast<uint16_t>(multiplier_));
+    frame << Uint16{static_cast<uint16_t>(multiplier_)}
+          << Uint16{offset_};
     frame.send();
 }
 
@@ -2440,18 +2447,24 @@ Page BabyStepsSettings::do_prepare_page()
     return Page::Babystepping;
 }
 
+void BabyStepsSettings::babystep(uint16_t offset)
+{
+    auto distance = static_cast<int16_t>(offset * planner.axis_steps_per_mm[Z_AXIS]);
+    offset_ += offset;
+    Temperature::babystep_axis(Z_AXIS, distance);
+    send_data();
+}
+
 //! Handle the -Babystep command
 void BabyStepsSettings::minus_command()
 {
-    auto distance = static_cast<int16_t>(-get_multiplier_value() * planner.axis_steps_per_mm[Z_AXIS]);
-    Temperature::babystep_axis(Z_AXIS, distance);
+    babystep(-get_multiplier_value());
 }
 
 //! Handle the +Babystep command
 void BabyStepsSettings::plus_command()
 {
-    auto distance = static_cast<int16_t>(get_multiplier_value() * planner.axis_steps_per_mm[Z_AXIS]);
-    Temperature::babystep_axis(Z_AXIS, distance);
+    babystep(get_multiplier_value());
 }
 
 

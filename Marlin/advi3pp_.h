@@ -182,8 +182,9 @@ private:
     bool do_dispatch(KeyValue value);
     void show_temps();
     void show_print();
-    void show_sd_or_temp_page();
+    void show_card_or_error_page();
     void show_print_settings();
+    bool back();
 
     friend Parent;
 };
@@ -674,7 +675,7 @@ private:
 // --------------------------------------------------------------------
 
 //! Baby steps Settings Page
-struct BabyStepsSettings: Handler<PrintSettings>
+struct BabyStepsSettings: Handler<BabyStepsSettings>
 {
     void minus_command();
     void plus_command();
@@ -688,9 +689,11 @@ private:
     Page do_prepare_page();
     void send_data() const;
     double get_multiplier_value() const;
+    void babystep(uint16_t offset);
 
 private:
     Multiplier multiplier_ = Multiplier::M1;
+    int16_t offset_ = 0;
 
     friend Parent;
 };
