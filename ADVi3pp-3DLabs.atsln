@@ -9,18 +9,18 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "ArduinoCore", "ArduinoCore\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|AVR = Debug|AVR
-		Release|AVR = Release|AVR
+		Simulator Debug|AVR = Simulator Debug|AVR
+		Simulator Release|AVR = Simulator Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.ActiveCfg = Debug|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Debug|AVR.Build.0 = Debug|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.ActiveCfg = Release|AVR
-		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Release|AVR.Build.0 = Release|AVR
-		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Debug|AVR.ActiveCfg = Debug|AVR
-		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Debug|AVR.Build.0 = Debug|AVR
-		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Release|AVR.ActiveCfg = Release|AVR
-		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Release|AVR.Build.0 = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Simulator Debug|AVR.ActiveCfg = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Simulator Debug|AVR.Build.0 = Debug|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Simulator Release|AVR.ActiveCfg = Release|AVR
+		{DCE6C7E3-EE26-4D79-826B-08594B9AD897}.Simulator Release|AVR.Build.0 = Release|AVR
+		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Simulator Debug|AVR.ActiveCfg = Debug|AVR
+		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Simulator Debug|AVR.Build.0 = Debug|AVR
+		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Simulator Release|AVR.ActiveCfg = Release|AVR
+		{4A6CF9D8-992B-4F98-8DB4-3FBF5C3BEDAD}.Simulator Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

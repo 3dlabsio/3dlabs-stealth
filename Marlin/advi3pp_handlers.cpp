@@ -2769,7 +2769,7 @@ void PidSettings::save_data()
 
     Uint16 kind, temperature, p, i, d;
     response >> kind >> temperature >> p >> i >> d;
-    
+
     pid.Kp_ = static_cast<float>(p.word) / 100;
     pid.Ki_ = static_cast<float>(i.word) / 100;
     pid.Kd_ = static_cast<float>(d.word) / 100;
