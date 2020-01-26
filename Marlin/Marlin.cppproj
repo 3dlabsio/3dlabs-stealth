@@ -635,45 +635,6 @@
     <Compile Include="Marlin_main.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="mass_storage\cardusbdiskreader.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\cardusbdiskreader.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\cardusbfile.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\cardusbfile.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_com_arduino_spi_hw.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_com_arduino_uart_hw.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_debug.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_debug_arduino.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_file_sys.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_file_sys.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_hal.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_hal_base_arduino.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="mass_storage\CH376_include.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="Max7219_Debug_LEDs.cpp">
       <SubType>compile</SubType>
     </Compile>
@@ -1043,9 +1004,6 @@
       <Project>4a6cf9d8-992b-4f98-8db4-3fbf5c3bedad</Project>
       <Private>True</Private>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="mass_storage" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

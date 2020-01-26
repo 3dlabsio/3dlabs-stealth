@@ -1528,7 +1528,9 @@
  */
 // @advi3++: Wanhao i3 Plus printer do have a SD card reader
 // @3dlabs: 3DLabs Stealth does not have an SD card slot
-//#define SDSUPPORT
+#ifdef ADVi3PP_SIMULATOR
+#define SDSUPPORT
+#endif
 
 /**
  * USB and SD CARD SUPPORT
@@ -1537,11 +1539,13 @@
  * of a USB thumb drive as an SD card replacement.
  */
 // @3dlabs: ported from FYSETC's F6 board source code
+#ifndef ADVi3PP_SIMULATOR
 #define CH376_STORAGE_SUPPORT
 #ifdef CH376_STORAGE_SUPPORT    
   #undef SDSUPPORT
   #define CH376_STORAGE_SPI     // SPI mode
   #define CH376_STORAGE_USBMODE  // Use USB mode
+#endif
 #endif
 
 // WARNING: enabling this causes the touch screen firmware to do very strange things which are still being traced down. Enable only if absolutely needed.
