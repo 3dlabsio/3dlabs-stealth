@@ -66,10 +66,10 @@ namespace
     };
 
     //! List of multipliers in Print Settings
-    const double PRINT_SETTINGS_MULTIPLIERS[] = {0.05, 0.10, 0.15};
+    const double BABYSTEPS_MULTIPLIERS[] = {0.04, 0.08, 0.12};
 
     //! List of multipliers in Z-height Tuning
-    const double SENSOR_Z_HEIGHT_MULTIPLIERS[] = {0.05, 0.10, 1.0};
+    const double SENSOR_Z_HEIGHT_MULTIPLIERS[] = {0.04, 0.12, 1.0};
 
     //! Get the name of a sensor holder
     //! @param index Index of the holder
@@ -1678,7 +1678,7 @@ double SensorZHeight::get_multiplier_value() const
     if(multiplier_ < Multiplier::M1 || multiplier_ > Multiplier::M3)
     {
         Log::error() << F("Invalid multiplier value: ") << static_cast<uint16_t >(multiplier_) << Log::endl();
-        return PRINT_SETTINGS_MULTIPLIERS[0];
+        return SENSOR_Z_HEIGHT_MULTIPLIERS[0];
     }
 
     return SENSOR_Z_HEIGHT_MULTIPLIERS[static_cast<uint16_t>(multiplier_)];
@@ -2424,10 +2424,10 @@ double BabyStepsSettings::get_multiplier_value() const
     if(multiplier_ < Multiplier::M1 || multiplier_ > Multiplier::M3)
     {
         Log::error() << F("Invalid multiplier value: ") << static_cast<uint16_t >(multiplier_) << Log::endl();
-        return PRINT_SETTINGS_MULTIPLIERS[0];
+        return BABYSTEPS_MULTIPLIERS[0];
     }
 
-    return PRINT_SETTINGS_MULTIPLIERS[static_cast<uint16_t>(multiplier_)];
+    return BABYSTEPS_MULTIPLIERS[static_cast<uint16_t>(multiplier_)];
 }
 
 //! Send the current data to the LCD panel.
@@ -2447,11 +2447,10 @@ Page BabyStepsSettings::do_prepare_page()
     return Page::Babystepping;
 }
 
-void BabyStepsSettings::babystep(uint16_t offset)
+void BabyStepsSettings::babystep(double offset)
 {
-    auto distance = static_cast<int16_t>(offset * planner.axis_steps_per_mm[Z_AXIS]);
-    offset_ += offset;
-    Temperature::babystep_axis(Z_AXIS, distance);
+    offset_ += static_cast<int16_t>(offset * 100);
+    Temperature::babystep_axis(Z_AXIS, static_cast<int16_t>(offset * planner.axis_steps_per_mm[Z_AXIS]));
     send_data();
 }
 

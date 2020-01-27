@@ -689,11 +689,11 @@ private:
     Page do_prepare_page();
     void send_data() const;
     double get_multiplier_value() const;
-    void babystep(uint16_t offset);
+    void babystep(double offset);
 
 private:
     Multiplier multiplier_ = Multiplier::M1;
-    int16_t offset_ = 0;
+    uint16_t offset_ = 0;
 
     friend Parent;
 };
