@@ -1893,9 +1893,11 @@ Page PidTuning::do_prepare_page()
 //! Send the current data to the LCD panel.
 void PidTuning::send_data()
 {
+    uint16_t kind = kind_ == TemperatureKind::Hotend1 ? 0 : (kind_ == TemperatureKind::Hotend2 ? 1 : 2);
+
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(temperature_)
-          << Uint16(static_cast<uint16_t>(kind_));
+          << Uint16(kind);
     frame.send();
 }
 
@@ -1935,9 +1937,7 @@ void PidTuning::step2_command()
         return;
     }
 
-    Uint16 temperature, kind; frame >> temperature >> kind; temperature_ = temperature.word;
-
-    kind_ = kind.word == 0 ? TemperatureKind::Hotend1 : (kind.word == 1 ? TemperatureKind::Hotend2 : TemperatureKind::Bed);
+    Uint16 temperature, kind; frame >> temperature >> kind; temperature_ = temperature.word; // kind is not used here, it is already set
     if(kind_ == TemperatureKind::Hotend1 || kind_ == TemperatureKind::Hotend2)
         enqueue_and_echo_commands_P(PSTR("M106 S255")); // Turn on fan (only for hotends)
 
