@@ -1789,6 +1789,7 @@ void ExtruderTuning::heating_task()
     task.clear_background_task();
 
     advi3pp.set_status(F("Wait until the extrusion is finished..."));
+    advi3pp.switch_tool(hotend_index, true);
     enqueue_and_echo_commands_P(PSTR("G1 Z20 F1200"));   // raise head
     enqueue_and_echo_commands_P(PSTR("M83"));           // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));        // reset E axis
