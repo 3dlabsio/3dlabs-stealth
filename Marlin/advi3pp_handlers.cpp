@@ -105,7 +105,7 @@ inline namespace singletons
     LoadUnload load_unload;
     Preheat preheat;
     Move move;
-    SdCard sd_card;
+    Card sd_card;
     FactoryReset factory_reset;
     ManualLeveling manual_leveling;
     ExtruderTuning extruder_tuning;
@@ -1236,13 +1236,13 @@ void ManualLeveling::pointD_command()
 
 
 // --------------------------------------------------------------------
-// SD Card
+// Card
 // --------------------------------------------------------------------
 
-//! Execute a SD Card command
+//! Execute a Card command
 //! @param key_value    The sub-action to handle
 //! @return             True if the action was handled
-bool SdCard::do_dispatch(KeyValue key_value)
+bool Card::do_dispatch(KeyValue key_value)
 {
     if(Parent::do_dispatch(key_value))
         return true;
@@ -1264,14 +1264,14 @@ bool SdCard::do_dispatch(KeyValue key_value)
 
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
-Page SdCard::do_prepare_page()
+Page Card::do_prepare_page()
 {
     show_first_page();
     return Page::SdCard;
 }
 
 //! Show first SD card page
-void SdCard::show_first_page()
+void Card::show_first_page()
 {
 	if(!card.cardOK)
 		return;
@@ -1284,7 +1284,7 @@ void SdCard::show_first_page()
 }
 
 //! Handle Page Down command.
-void SdCard::down_command()
+void Card::down_command()
 {
 	if(!card.cardOK)
 		return;
@@ -1298,7 +1298,7 @@ void SdCard::down_command()
 }
 
 //! Handle Page Up command.
-void SdCard::up_command()
+void Card::up_command()
 {
 	if(!card.cardOK)
 		return;
@@ -1312,7 +1312,7 @@ void SdCard::up_command()
 }
 
 //! Show the list of files on SD (current page)
-void SdCard::show_current_page()
+void Card::show_current_page()
 {
     WriteRamDataRequest frame{Variable::LongText0};
 
@@ -1335,7 +1335,7 @@ void SdCard::show_current_page()
 //! Get a filename with a given index.
 //! @param index    Index of the filename
 //! @param name     Copy the filename into this Chars
-void SdCard::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& name)
+void Card::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& name)
 {
     name.reset();
 	if(last_file_index_ >= index_in_page)
@@ -1349,7 +1349,7 @@ void SdCard::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& nam
 
 //! Select a filename as sent by the LCD screen.
 //! @param file_index    The index of the filename to select
-void SdCard::select_file_command(uint16_t file_index)
+void Card::select_file_command(uint16_t file_index)
 {
     if(!card.cardOK)
         return;

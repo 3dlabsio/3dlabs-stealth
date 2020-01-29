@@ -411,7 +411,7 @@ private:
 // --------------------------------------------------------------------
 
 //! SD Card Page
-struct SdCard: Handler<SdCard>
+struct Card: Handler<Card>
 {
     void show_first_page();
 

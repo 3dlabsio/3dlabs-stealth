@@ -684,7 +684,7 @@
   //#define SD_REPRINT_LAST_SELECTED_FILE
 
   /**
-   * Auto-report SdCard status with M27 S<seconds>
+   * Auto-report Card status with M27 S<seconds>
    */
   //#define AUTO_REPORT_SD_STATUS
 
