@@ -1914,11 +1914,9 @@ Page PidTuning::do_prepare_page()
 //! Send the current data to the LCD panel.
 void PidTuning::send_data()
 {
-    uint16_t kind = kind_ == TemperatureKind::Hotend1 ? 0 : (kind_ == TemperatureKind::Hotend2 ? 1 : 2);
-
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(temperature_)
-          << Uint16(kind);
+          << (kind_ == TemperatureKind::Hotend1 ? 0_u16 : (kind_ == TemperatureKind::Hotend2 ? 1_u16 : 2_u16));
     frame.send();
 }
 
@@ -2774,7 +2772,7 @@ void PidSettings::send_data() const
                << F(", P = ") << pid.Kp_ << F(", I = ") << pid.Ki_ << F(", D = ") << pid.Kd_ << Log::endl();
 
     WriteRamDataRequest frame{Variable::Value0};
-    frame << (kind_ == TemperatureKind::Hotend1 ? 0_u16 : 1_u16)
+    frame << (kind_ == TemperatureKind::Hotend1 ? 0_u16 : (kind_ == TemperatureKind::Hotend2 ? 1_u16 : 2_u16))
           << Uint16(pid.temperature_)
           << Uint16(pid.Kp_ * 100)
           << Uint16(pid.Ki_ * 100)
