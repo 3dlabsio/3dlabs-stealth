@@ -640,6 +640,11 @@ void ADVi3pp_::process_command(const GCodeParser& parser)
     }
 }
 
+void switch_tool(uint8_t index, bool no_move)
+{
+    tool_change(index, 0, no_move);
+}
+
 
 // --------------------------------------------------------------------
 // Background tasks

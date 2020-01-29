@@ -523,19 +523,22 @@ private:
     bool do_dispatch(KeyValue value);
     Page do_prepare_page();
     void do_back_command();
+    void hotend1_command();
+    void hotend2_command();
     void start_command();
     void settings_command();
     void heating_task();
     void extruding_task();
     void finished();
     bool cancel();
+    void send_data();
     uint16_t get_current_hotend_index() const;
 
 private:
     static constexpr uint16_t tuning_extruder_filament = 100; //!< Filament to extrude (10 cm)
     static constexpr uint16_t tuning_extruder_delta = 20; //!< Amount of filament supposes tp remain after extruding (2 cm)
 
-    TemperatureKind hotend_ = TemperatureKind::Hotend1;
+    TemperatureKind kind_ = TemperatureKind::Hotend1;
     float extruded_ = 0.0;
     friend Parent;
 };
@@ -1021,6 +1024,7 @@ struct ADVi3pp_
     double get_current_z_layer(int multiply = 1) const;
 
     void process_command(const GCodeParser& parser);
+    void switch_tool(uint8_t index, bool no_move = false);
 
 private:
     void buzz_(long duration);

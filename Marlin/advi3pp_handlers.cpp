@@ -546,6 +546,7 @@ void LoadUnload::prepare(const BackgroundTask& background)
     Uint16 temperature; frame >> temperature;
 
     Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
+    advi3pp.switch_tool(get_current_hotend_index(), true); // No move
     enqueue_and_echo_commands_P(PSTR("M83"));       // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
 
@@ -1708,37 +1709,57 @@ void SensorZHeight::send_data() const
 // Extruder tuning
 // --------------------------------------------------------------------
 
-uint16_t ExtruderTuning::get_current_hotend_index() const
-{
-    return hotend_ == TemperatureKind::Hotend1 ? 0 : 1;
-}
-
 //! Handle Extruder Tuning command
 //! @param key_value    The sub-action to handle
 //! @return             True if the action was handled
 bool ExtruderTuning::do_dispatch(KeyValue key_value)
 {
+    switch(key_value)
+    {
+        case KeyValue::ExtreuderTuningHotend1:  hotend1_command(); return true;
+        case KeyValue::ExtreuderTuningHotend2:  hotend2_command(); return true;
+        case KeyValue::ExtruderTuningStep2:     start_command();   return true;
+        case KeyValue::ExtruderTuningSave:      settings_command(); return true;
+        default:                                break;
+    }
+
+    // Do this after since we handle Save before
     if(Parent::do_dispatch(key_value))
         return true;
 
-    switch(key_value)
-    {
-        case KeyValue::TuningStart:     start_command(); break;
-        case KeyValue::TuningSettings:  settings_command(); break;
-        default:                        return false;
-    }
+    return false;
+}
 
-    return true;
+void ExtruderTuning::hotend1_command()
+{
+    kind_ = TemperatureKind::Hotend1;
+    send_data();
+}
+
+void ExtruderTuning::hotend2_command()
+{
+    kind_ = TemperatureKind::Hotend2;
+    send_data();
+}
+
+uint16_t ExtruderTuning::get_current_hotend_index() const
+{
+    return kind_ == TemperatureKind::Hotend1 ? 0 : 1;
+}
+
+void ExtruderTuning::send_data()
+{
+    WriteRamDataRequest frame{Variable::Value0};
+    frame << Uint16(get_current_hotend_index())
+          << Uint16(advi3pp.get_last_used_temperature(kind_));
+    frame.send();
 }
 
 //! Prepare the page before being displayed and return the right Page value
 //! @return The index of the page to display
 Page ExtruderTuning::do_prepare_page()
 {
-    WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(get_current_hotend_index())
-          << Uint16(advi3pp.get_last_used_temperature(TemperatureKind::Hotend1));
-    frame.send();
+    send_data();
     return Page::ExtruderTuningTemp;
 }
 
@@ -1752,8 +1773,7 @@ void ExtruderTuning::start_command()
         return;
     }
 
-    Uint16 hotend, temperature; frame >> hotend >> temperature;
-    hotend_ = hotend.word == 0 ? TemperatureKind::Hotend1 : TemperatureKind::Hotend2;
+    Uint16 kind, temperature; frame >> kind >> temperature; // kind is not used, it is already set
     wait.show(F("Heating the extruder..."), WaitCallback{this, &ExtruderTuning::cancel}, ShowOptions::None);
     Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
 
