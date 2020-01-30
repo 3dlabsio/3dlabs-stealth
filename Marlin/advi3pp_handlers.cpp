@@ -669,6 +669,7 @@ void Preheat::do_write(EepromWrite& eeprom) const
         eeprom.write(preset.hotend2);
         eeprom.write(preset.bed);
         eeprom.write(preset.enclosure);
+        eeprom.write(preset.fan);
     }
 }
 
@@ -682,6 +683,7 @@ void Preheat::do_read(EepromRead& eeprom)
         eeprom.read(preset.hotend2);
         eeprom.read(preset.bed);
         eeprom.read(preset.enclosure);
+        eeprom.read(preset.fan);
     }
 }
 
@@ -693,8 +695,8 @@ void Preheat::do_reset()
         presets_[i].hotend1     = DEFAULT_PREHEAT_PRESET[i].hotend1;
         presets_[i].hotend2     = DEFAULT_PREHEAT_PRESET[i].hotend2;
         presets_[i].bed         = DEFAULT_PREHEAT_PRESET[i].bed;
-        presets_[i].fan         = DEFAULT_PREHEAT_PRESET[i].fan;
         presets_[i].enclosure   = DEFAULT_PREHEAT_PRESET[i].enclosure;
+        presets_[i].fan         = DEFAULT_PREHEAT_PRESET[i].fan;
     }
 }
 
@@ -702,7 +704,7 @@ void Preheat::do_reset()
 //! @return Number of bytes
 uint16_t Preheat::do_size_of() const
 {
-    return NB_PRESETS * (sizeof(Preset::hotend1) + sizeof(Preset::hotend2) + sizeof(Preset::bed) + sizeof(Preset::enclosure));
+    return NB_PRESETS * (sizeof(Preset::hotend1) + sizeof(Preset::hotend2) + sizeof(Preset::bed) + sizeof(Preset::enclosure) + sizeof(Preset::fan));
 }
 
 //! Send the presets t the LCD Panel
