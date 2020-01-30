@@ -729,7 +729,7 @@ void Preheat::send_presets()
 //! Retrieve presets values from the LCD Panel
 void Preheat::retrieve_presets()
 {
-    ReadRamData frame{Variable::Value0, 3};
+    ReadRamData frame{Variable::Value0, 5};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Error receiving presets") << Log::endl();
