@@ -1718,8 +1718,8 @@ bool ExtruderTuning::do_dispatch(KeyValue key_value)
 {
     switch(key_value)
     {
-        case KeyValue::ExtreuderTuningHotend1:  hotend1_command(); return true;
-        case KeyValue::ExtreuderTuningHotend2:  hotend2_command(); return true;
+        case KeyValue::ExtruderTuningHotend1:  hotend1_command(); return true;
+        case KeyValue::ExtruderTuningHotend2:  hotend2_command(); return true;
         case KeyValue::ExtruderTuningStep2:     start_command();   return true;
         case KeyValue::ExtruderTuningSave:      settings_command(); return true;
         default:                                break;

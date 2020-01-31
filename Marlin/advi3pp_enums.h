@@ -198,8 +198,8 @@ enum class KeyValue: uint16_t
     LevelingPointC          = 0x0008,
     LevelingPointD          = 0x0009,
 
-    ExtreuderTuningHotend1  = 0x0001,
-    ExtreuderTuningHotend2  = 0x0002,
+    ExtruderTuningHotend1   = 0x0001,
+    ExtruderTuningHotend2   = 0x0002,
     ExtruderTuningStep2     = 0xFFFD,
     ExtruderTuningSave      = 0xFFFE,
 
