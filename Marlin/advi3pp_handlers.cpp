@@ -1373,7 +1373,7 @@ void Card::select_file_command(uint16_t file_index)
     card.startFileprint();
     PrintCounter::start();
 
-    pages.show_page(Page::Print);
+    pages.show_page(Page::Print, ShowOptions::None);
 }
 
 // --------------------------------------------------------------------
