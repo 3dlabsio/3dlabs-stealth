@@ -536,14 +536,14 @@ Page LoadUnload::do_prepare_page()
 //! @param background Background task to detect if it is time for step #2
 void LoadUnload::prepare(const BackgroundTask& background)
 {
-    ReadRamData frame{Variable::Value0, 1};
+    ReadRamData frame{Variable::Value0, 2};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Receiving Frame (Target Temperature)") << Log::endl();
         return;
     }
 
-    Uint16 temperature; frame >> temperature;
+    Uint16 hotend, temperature; frame >> hotend >> temperature; // hotend not used, already set
 
     Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
     advi3pp.switch_tool(get_current_hotend_index(), true); // No move
