@@ -49,6 +49,8 @@ enum class Variable: uint16_t
     Message                 = 0x0010,
     CenteredMessage         = 0x0028,
     Progress                = 0x0040,
+    ET                      = 0x0058,
+    TC                      = 0x005C,
 
     // 1 - Texts
     ShortText0              = 0x0100,

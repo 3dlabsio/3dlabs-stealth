@@ -47,8 +47,8 @@ const size_t message_length = 48; //!< Size of messages to be displayed on the L
 const size_t progress_name_length = 44; //!< Size of the progress name (i.e. filename) to be displayed on the LCD Panel
 const size_t progress_length = 48; //!< Size of the progress message (filename and percent) to be displayed on the LCD Panel
 const uint8_t sd_file_length = 26; //!< This is the maximum length handled by the SD layer (FILENAME_LENGTH)
-const size_t tc_length = 6; //!< Size of the time to complete message to be displayed on the LCD Panel
-const size_t et_length = 6; //!< Size of the elaplsed time message to be displayed on the LCD Panel
+const size_t tc_length = 8; //!< Size of the time to complete message to be displayed on the LCD Panel
+const size_t et_length = 8; //!< Size of the elaplsed time message to be displayed on the LCD Panel
 
 
 const uint16_t default_bed_temperature = 50; //!< Default target temperature for the bed
@@ -1009,7 +1009,6 @@ struct ADVi3pp_
     void stop_and_wait();
 
     void set_progress_name(const char* name);
-    void reset_progress();
 
     void enable_buzzer(bool enable, bool doIt = true);
     void enable_buzz_on_press(bool enable, bool doIt = true);
@@ -1054,6 +1053,7 @@ private:
     ADVString<tc_length> tc_; // time to complete
     ADVString<et_length> et_; // elapsed_time
     int percent_ = -1;
+    millis_t lastET_ = -1;
     bool buzzer_enabled_ = true;
     bool buzz_on_press_enabled_ = false;
 };

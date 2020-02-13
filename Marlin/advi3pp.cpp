@@ -332,6 +332,7 @@ void ADVi3pp_::send_status_data(bool force_update)
     frame.send(false);
 
     compute_progress();
+
     // If one of the messages has changed, send them to the LCD panel
     if(message_.has_changed(true) || centered_.has_changed(true))
     {
@@ -344,6 +345,12 @@ void ADVi3pp_::send_status_data(bool force_update)
     {
         frame.reset(Variable::Progress);
         frame << progress_ << et_ << tc_;
+        frame.send(false);
+    }
+    else if(et_.has_changed(true) || tc_.has_changed(true))
+    {
+        frame.reset(Variable::ET);
+        frame << et_ << tc_;
         frame.send(false);
     }
 }
@@ -519,31 +526,37 @@ void ADVi3pp_::set_progress_name(const char* name)
 //! Compute the current progress message (name and percentage)
 void ADVi3pp_::compute_progress()
 {
+    bool percentChanged = false, etChanged = false;
+
     auto done = card.percentDone();
-    if(done == percent_)
-        return;
+    if(done != percent_)
+    {
+        percent_ = done;
+        percentChanged = true;
 
-    progress_ = progress_name_;
-	if(progress_.length() > 0)
-		progress_  << " " << done << "%";
-    progress_.align(Alignment::Left);
+        progress_ = progress_name_;
+        if (progress_.length() > 0)
+            progress_ << F(" ") << done << F("%");
+        progress_.align(Alignment::Left);
+    }
 
-    printStatistics stats = PrintCounter::getStats();
-    et_.set(duration_t{stats.printTime});
+    auto durationSec = PrintCounter::duration();
+    auto durationMin = durationSec / 60;
+    if(durationMin != lastET_)
+    {
+        lastET_ = durationMin;
+        etChanged = true;
+        et_.set(duration_t{durationSec}, Duration::digital).align(Alignment::Left);
+    }
 
-    // TODO: TC
-
-    percent_ = done;
-}
-
-//! Clear the progress message
-void ADVi3pp_::reset_progress()
-{
-    progress_name_.reset();
-    progress_.reset().align(Alignment::Left);
-    tc_.reset();
-    et_.reset();
-    percent_ = -1;
+    if(percentChanged || etChanged)
+    {
+        auto tcSec = percent_ <= 0 ? 0 : (durationSec * (100 - percent_) / percent_);
+        if (durationMin < 5 && percent_ < 5)
+            tc_.set(F("...")).align(Alignment::Left);
+        else
+            tc_.set(duration_t{tcSec}, Duration::digital).align(Alignment::Left);
+    }
 }
 
 //! Enable or disable the buzzer
