@@ -45,6 +45,7 @@ enum class Variable: uint16_t
     ProgressHigh            = 0x000C,
     SensorActive            = 0x000D,
     Feedrate                = 0x000E,
+    Fan2Speed               = 0x000F,
     Message                 = 0x0010,
     CenteredMessage         = 0x0028,
     Progress                = 0x0040,

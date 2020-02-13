@@ -327,15 +327,23 @@ void ADVi3pp_::send_status_data(bool force_update)
           << Uint16(progress_bar_low)
           << Uint16(progress_var_high)
           << Uint16(probe_state)
-          << Uint16(feedrate_percentage);
+          << Uint16(feedrate_percentage)
+          << Uint16(scale(fanSpeeds[1], 255, 100));
     frame.send(false);
 
     compute_progress();
     // If one of the messages has changed, send them to the LCD panel
-    if(message_.has_changed(true) || centered_.has_changed(true) || progress_.has_changed(true))
+    if(message_.has_changed(true) || centered_.has_changed(true))
     {
         frame.reset(Variable::Message);
-        frame << message_ << centered_ << progress_;
+        frame << message_ << centered_;
+        frame.send(false);
+    }
+
+    if(progress_.has_changed(true))
+    {
+        frame.reset(Variable::Progress);
+        frame << progress_ << et_ << tc_;
         frame.send(false);
     }
 }
@@ -499,7 +507,7 @@ void ADVi3pp_::stop_and_wait()
     wait.show_continue();
 }
 
-//! Set the name for the progess message. Usually, it is the name of the file printed.
+//! Set the name for the progress message. Usually, it is the name of the file printed.
 void ADVi3pp_::set_progress_name(const char* name)
 {
     progress_name_ = name;
@@ -519,6 +527,12 @@ void ADVi3pp_::compute_progress()
 	if(progress_.length() > 0)
 		progress_  << " " << done << "%";
     progress_.align(Alignment::Left);
+
+    printStatistics stats = PrintCounter::getStats();
+    et_.set(duration_t{stats.printTime});
+
+    // TODO: TC
+
     percent_ = done;
 }
 
@@ -527,6 +541,8 @@ void ADVi3pp_::reset_progress()
 {
     progress_name_.reset();
     progress_.reset().align(Alignment::Left);
+    tc_.reset();
+    et_.reset();
     percent_ = -1;
 }
 
