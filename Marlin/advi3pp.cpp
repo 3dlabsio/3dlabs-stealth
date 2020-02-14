@@ -304,10 +304,13 @@ void ADVi3pp_::send_status_data(bool force_update)
     if(!force_update && !task.is_update_time())
         return;
 
+    // Offset the progressbar so that it is full at 98% or higher
+    auto adjusted_progress_bar = progress_bar_percent >= 98 ? progress_bar_percent : progress_bar_percent + 2;
+
     // The progress bar is split into two parts because of a limitation of the DWIN panel
     // so compute the progress of each part.
-    int16_t progress_bar_low = progress_bar_percent >= 50 ? 5 : progress_bar_percent / 10;
-    int16_t progress_var_high  = progress_bar_percent < 50 ? 0 : (progress_bar_percent / 10) - 5;
+    int16_t progress_bar_low = adjusted_progress_bar >= 50 ? 5 : adjusted_progress_bar / 10;
+    int16_t progress_var_high  = adjusted_progress_bar < 50 ? 0 : (adjusted_progress_bar / 10) - 5;
 
     uint16_t probe_state = planner.leveling_active ? 2 : 1;
 
