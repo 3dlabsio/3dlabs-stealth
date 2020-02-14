@@ -30,7 +30,11 @@
 
 #include "power_loss_recovery.h"
 
+#if ENABLED(CH376_STORAGE_SUPPORT)
+#include "mass_storage/cardusbdiskreader.h"
+#else
 #include "cardreader.h"
+#endif
 #include "planner.h"
 #include "printcounter.h"
 #include "serial.h"

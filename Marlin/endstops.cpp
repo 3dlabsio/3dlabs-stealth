@@ -25,7 +25,11 @@
  */
 
 #include "Marlin.h"
+#if ENABLED(CH376_STORAGE_SUPPORT)
+#include "mass_storage/cardusbdiskreader.h"
+#else
 #include "cardreader.h"
+#endif
 #include "endstops.h"
 #include "temperature.h"
 #include "stepper.h"

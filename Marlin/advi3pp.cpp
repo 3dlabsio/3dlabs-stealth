@@ -22,9 +22,10 @@
 
 #include "serial.h"
 #include "temperature.h"
-#include "cardreader.h"
 #if ENABLED(CH376_STORAGE_SUPPORT)
 #include "mass_storage/cardusbdiskreader.h"
+#else
+#include "cardreader.h"
 #endif
 #include "planner.h"
 #include "parser.h"

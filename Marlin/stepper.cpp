@@ -84,7 +84,11 @@
 #include "temperature.h"
 #include "ultralcd.h"
 #include "language.h"
+#if ENABLED(CH376_STORAGE_SUPPORT)
+#include "mass_storage/cardusbdiskreader.h"
+#else
 #include "cardreader.h"
+#endif
 #include "speed_lookuptable.h"
 #include "delay.h"
 

@@ -27,9 +27,10 @@
 #ifndef _RUNOUT_H_
 #define _RUNOUT_H_
 
-#include "cardreader.h"
 #if ENABLED(CH376_STORAGE_SUPPORT)
 #include "mass_storage/cardusbdiskreader.h"
+#else
+#include "cardreader.h"
 #endif
 #include "printcounter.h"
 #include "stepper.h"
