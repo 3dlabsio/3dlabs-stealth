@@ -395,10 +395,27 @@ void Wait::show_continue(ShowOptions options)
     pages.show_page(Page::WaitContinue, options);
 }
 
+//! Ensure a print is not running and if so, display a message
+void Wait::show_back(const FlashChar* message, ShowOptions options)
+{
+    advi3pp.set_status(message);
+    back_ = WaitCallback{this, &Wait::on_back};
+    continue_ = nullptr;
+    pages.show_page(Page::WaitBack, options);
+}
+
 //! Default action when the continue button is pressed (inform Marlin)
 bool Wait::on_continue()
 {
     ::wait_for_user = false;
+    return false;
+}
+
+//! Action when the back button is pressed
+bool Wait::on_back()
+{
+    advi3pp.reset_status();
+    pages.show_back_page();
     return false;
 }
 
@@ -528,6 +545,8 @@ void LoadUnload::send_data()
 //! @return The index of the page to display
 Page LoadUnload::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     send_data();
     return Page::LoadUnload;
 }
@@ -750,6 +769,8 @@ void Preheat::retrieve_presets()
 //! @return The index of the page to display
 Page Preheat::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     send_presets();
     return Page::Preheat;
 }
@@ -805,6 +826,9 @@ void Preheat::do_save_command()
 //! Cooldown the bed and the nozzle, turn off the fan
 void Preheat::cooldown_command()
 {
+    if(!print.ensure_not_printing())
+        return;
+
     Log::log() << F("Cooldown") << Log::endl();
     advi3pp.reset_status();
     Temperature::disable_all_heaters();
@@ -841,6 +865,8 @@ bool Move::do_dispatch(KeyValue key_value)
 //! @return The index of the page to display
 Page Move::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     Planner::finish_and_disable(); // To circumvent homing problems
     return Page::Move;
 }
@@ -978,6 +1004,8 @@ bool SensorTuning::do_dispatch(KeyValue key_value)
 //! @return The index of the page to display
 Page SensorTuning::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     return Page::SensorTuning;
 }
 
@@ -1013,6 +1041,8 @@ void SensorTuning::stow_command()
 //! @return The index of the page to display
 Page AutomaticLeveling::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     sensor_interactive_leveling_ = true;
     pages.save_forward_page();
     wait.show(F("Homing..."));
@@ -1134,6 +1164,8 @@ void ManualLeveling::do_back_command()
 //! @return The index of the page to display
 Page ManualLeveling::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     wait.show(F("Homing..."));
     ::axis_homed = 0;
     ::axis_known_position = 0;
@@ -1513,6 +1545,15 @@ bool Print::is_printing() const
         return print_job_timer.isRunning();
 }
 
+bool Print::ensure_not_printing()
+{
+    if(!is_printing())
+        return true;
+
+    wait.show_back(F("Not accessible when printing"));
+    return false;
+}
+
 // --------------------------------------------------------------------
 // Advance pause
 // --------------------------------------------------------------------
@@ -1589,6 +1630,8 @@ bool SensorZHeight::do_dispatch(KeyValue key_value)
 //! @return The index of the page to display
 Page SensorZHeight::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     pages.save_forward_page();
 
     zprobe_zoffset = 0;  // reset offset
@@ -1763,6 +1806,8 @@ void ExtruderTuning::send_data()
 //! @return The index of the page to display
 Page ExtruderTuning::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     send_data();
     return Page::ExtruderTuningTemp;
 }
@@ -1909,6 +1954,8 @@ bool PidTuning::do_dispatch(KeyValue key_value)
 //! @return The index of the page to display
 Page PidTuning::do_prepare_page()
 {
+    if(!print.ensure_not_printing())
+        return Page::None;
     pages.save_forward_page();
     hotend1_command();
     advi3pp.reset_status();
