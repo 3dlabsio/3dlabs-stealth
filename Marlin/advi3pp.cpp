@@ -305,7 +305,7 @@ void ADVi3pp_::send_status_data(bool force_update)
         return;
 
     // Offset the progressbar so that it is full at 98% or higher
-    auto adjusted_progress_bar = progress_bar_percent >= 98 ? progress_bar_percent : progress_bar_percent + 2;
+    auto adjusted_progress_bar = progress_bar_percent >= 98 ? 100 : progress_bar_percent + 2;
 
     // The progress bar is split into two parts because of a limitation of the DWIN panel
     // so compute the progress of each part.
