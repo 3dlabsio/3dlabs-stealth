@@ -1343,6 +1343,7 @@ void Card::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& name)
 	if(last_file_index_ >= index_in_page)
 	{
 		card.getfilename(last_file_index_ - index_in_page);
+        card.getLongnameFromShort();
         if(card.filenameIsDir) name = "[";
 		name += (card.longFilename[0] == 0) ? card.filename : card.longFilename;
 		if(card.filenameIsDir) name += "]";
@@ -1360,6 +1361,7 @@ void Card::select_file_command(uint16_t file_index)
         return;
 
     card.getfilename(last_file_index_ - file_index);
+    card.getLongnameFromShort();
     if(card.filenameIsDir)
         return;
 
