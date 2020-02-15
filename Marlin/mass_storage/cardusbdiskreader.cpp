@@ -609,7 +609,7 @@ void USBReader::initsd() {
 
   for ( i = 0; i < 100; i ++ ) {  /* 最长等待时间,100*50mS */
 		CH376Delayms( 50 );
-		SERIAL_ECHOLN( "USB Mouting" );
+		SERIAL_ECHOLN( "USB Mounting" );
 		s = CH376DiskMount( );  /* 初始化磁盘并测试磁盘是否就绪 */
 		//SERIAL_ECHOLNPAIR("s:", s);
 		if ( s == USB_INT_SUCCESS ) break;  /* 准备好 */
