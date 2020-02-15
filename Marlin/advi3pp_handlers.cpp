@@ -2370,7 +2370,7 @@ void PrintSettings::hotend2_minus_command()
 void PrintSettings::hotend2_plus_command()
 {
     auto temperature = Temperature::degTargetHotend(1);
-    if(temperature >= 300)
+    if(temperature >= 420)
         return;
 
     Temperature::setTargetHotend(temperature + 1, 1);
@@ -2410,7 +2410,7 @@ void PrintSettings::enclosure_minus_command()
 void PrintSettings::enclosure_plus_command()
 {
     auto temperature = Temperature::degTargetChamber();
-    if(temperature >= 180)
+    if(temperature >= 90)
         return;
 
     Temperature::setTargetChamber(temperature + 1);
