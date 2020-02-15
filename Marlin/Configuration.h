@@ -786,7 +786,7 @@
 #if ENABLED(BLTOUCH)
 // @advi3++: Set delay for BLTouch
 // Increase the delay as it was too short for some BLTouch especially version 3.1
-  #define BLTOUCH_DELAY 500   // (ms) Enable and increase if needed
+  #define BLTOUCH_DELAY 100   // (ms) Enable and increase if needed
 
   /**
    * BLTouch V3.0 and newer smart series
@@ -812,7 +812,7 @@
 #if ENABLED(PROBING_HEATERS_OFF)
   //#define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy)
 #endif
-#define PROBING_FANS_OFF          // Turn fans off when probing
+//#define PROBING_FANS_OFF          // Turn fans off when probing
 // #advi3++: Apparently, on some printers, vibrations are triggering the BLTouch, especially BLTouch 3.1
 #define DELAY_BEFORE_PROBING 400  // (ms) To prevent vibrations from triggering piezo sensors
 
@@ -1095,7 +1095,7 @@
   /**
    * Enable the G26 Mesh Validation Pattern tool.
    */
-  #define G26_MESH_VALIDATION
+  //#define G26_MESH_VALIDATION
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
@@ -1528,6 +1528,7 @@
  */
 // @advi3++: Wanhao i3 Plus printer do have a SD card reader
 // @3dlabs: 3DLabs Stealth does not have an SD card slot
+//#define ADVi3PP_SIMULATOR
 #ifdef ADVi3PP_SIMULATOR
 #define SDSUPPORT
 #endif
