@@ -145,6 +145,8 @@ enum class Action: uint16_t
     EnclosureMinus          = 0x0516,
     EnclosurePlus           = 0x0517,
     LCDBrightness           = 0x0518,
+    Fan2Minus               = 0x0519,
+    Fan2Plus                = 0x051A,
 
     Undefined               = 0xFFFF
 };

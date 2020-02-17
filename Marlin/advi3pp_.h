@@ -659,8 +659,10 @@ struct PrintSettings: Handler<PrintSettings>
 {
     void feedrate_minus_command();
     void feedrate_plus_command();
-    void fan_minus_command();
-    void fan_plus_command();
+    void fan1_minus_command();
+    void fan1_plus_command();
+    void fan2_minus_command();
+    void fan2_plus_command();
     void hotend1_minus_command();
     void hotend1_plus_command();
     void hotend2_minus_command();
@@ -672,6 +674,8 @@ struct PrintSettings: Handler<PrintSettings>
 
 protected:
     bool do_dispatch(KeyValue value);
+    void fan_minus_command(int fan);
+    void fan_plus_command(int fan);
 
 private:
     Page do_prepare_page();

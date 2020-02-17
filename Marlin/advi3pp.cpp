@@ -437,8 +437,8 @@ void ADVi3pp_::read_lcd_serial()
         case Action::ZHeightPlus:           sensor_z_height.plus(); break;
         case Action::FeedrateMinus:         print_settings.feedrate_minus_command(); break;
         case Action::FeedratePlus:          print_settings.feedrate_plus_command(); break;
-        case Action::FanMinus:              print_settings.fan_minus_command(); break;
-        case Action::FanPlus:               print_settings.fan_plus_command(); break;
+        case Action::FanMinus:              print_settings.fan1_minus_command(); break;
+        case Action::FanPlus:               print_settings.fan1_plus_command(); break;
         case Action::Hotend1Minus:          print_settings.hotend1_minus_command(); break;
         case Action::Hotend1Plus:           print_settings.hotend1_plus_command(); break;
         case Action::Hotend2Minus:          print_settings.hotend2_minus_command(); break;
@@ -448,6 +448,8 @@ void ADVi3pp_::read_lcd_serial()
         case Action::EnclosureMinus:        print_settings.enclosure_minus_command(); break;
         case Action::EnclosurePlus:         print_settings.enclosure_plus_command(); break;
         case Action::LCDBrightness:         lcd_settings.change_brightness(static_cast<int16_t>(key_value)); break;
+        case Action::Fan2Minus:             print_settings.fan2_minus_command(); break;
+        case Action::Fan2Plus:              print_settings.fan2_plus_command(); break;
 
         default:                            Log::error() << F("Invalid action ") << static_cast<uint16_t>(action) << Log::endl(); break;
     }

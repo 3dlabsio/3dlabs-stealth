@@ -2363,25 +2363,49 @@ void PrintSettings::feedrate_plus_command()
 }
 
 //! Handle the -Fan command
-void PrintSettings::fan_minus_command()
+void PrintSettings::fan_minus_command(int fan)
 {
-    auto speed = scale(fanSpeeds[0], 255, 100);
+    auto speed = scale(fanSpeeds[fan], 255, 100);
     if(speed <= 0)
         return;
 
-	speed = speed <= 5 ? 0 : speed - 5;
-    fanSpeeds[0] = scale(speed, 100, 255);
+    speed = speed <= 5 ? 0 : speed - 5;
+    fanSpeeds[fan] = scale(speed, 100, 255);
 }
 
 //! Handle the +Fan command
-void PrintSettings::fan_plus_command()
+void PrintSettings::fan_plus_command(int fan)
 {
-    auto speed = scale(fanSpeeds[0], 255, 100);
+    auto speed = scale(fanSpeeds[fan], 255, 100);
     if(speed >= 100)
         return;
 
     speed = speed >= 100 - 5 ? 100 : speed + 5;
-    fanSpeeds[0] = scale(speed, 100, 255);
+    fanSpeeds[fan] = scale(speed, 100, 255);
+}
+
+//! Handle the -Fan command
+void PrintSettings::fan1_minus_command()
+{
+    fan_minus_command(0);
+}
+
+//! Handle the +Fan command
+void PrintSettings::fan1_plus_command()
+{
+    fan_plus_command(0);
+}
+
+//! Handle the -Fan 2 command
+void PrintSettings::fan2_minus_command()
+{
+    fan_minus_command(1);
+}
+
+//! Handle the +Fan 2 command
+void PrintSettings::fan2_plus_command()
+{
+    fan_plus_command(1);
 }
 
 //! Handle the -Hotend Temperature command
