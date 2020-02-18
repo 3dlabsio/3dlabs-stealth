@@ -255,6 +255,12 @@ enum class Feature: uint16_t
 };
 ENABLE_BITMASK_OPERATOR(Feature);
 
+enum class FanIndex: uint8_t
+{
+    Fan1 = 0,
+    Fan2 = 2
+};
+
 }
 
 #endif //ADV_I3_PLUS_PLUS_ENUMS_H

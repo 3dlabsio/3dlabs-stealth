@@ -674,8 +674,8 @@ struct PrintSettings: Handler<PrintSettings>
 
 protected:
     bool do_dispatch(KeyValue value);
-    void fan_minus_command(int fan);
-    void fan_plus_command(int fan);
+    void fan_minus_command(FanIndex fan);
+    void fan_plus_command(FanIndex fan);
 
 private:
     Page do_prepare_page();

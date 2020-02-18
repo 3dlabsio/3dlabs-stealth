@@ -1485,7 +1485,8 @@ void Print::process_stop_code()
     pause_print(PAUSE_PARK_RETRACT_LENGTH, NOZZLE_PARK_POINT, 0, true);
 
     thermalManager.disable_all_heaters();
-    fanSpeeds[0] = 0;
+    fanSpeeds[static_cast<int>(FanIndex::Fan1)] = 0;
+    fanSpeeds[static_cast<int>(FanIndex::Fan2)] = 0;
     planner.quick_stop();
     print_job_timer.stop();
     clear_command_queue();
@@ -2371,49 +2372,51 @@ void PrintSettings::feedrate_plus_command()
 }
 
 //! Handle the -Fan command
-void PrintSettings::fan_minus_command(int fan)
+void PrintSettings::fan_minus_command(FanIndex fan)
 {
-    auto speed = scale(fanSpeeds[fan], 255, 100);
+    int index = static_cast<int>(fan);
+    auto speed = scale(fanSpeeds[index], 255, 100);
     if(speed <= 0)
         return;
 
     speed = speed <= 5 ? 0 : speed - 5;
-    fanSpeeds[fan] = scale(speed, 100, 255);
+    fanSpeeds[index] = scale(speed, 100, 255);
 }
 
 //! Handle the +Fan command
-void PrintSettings::fan_plus_command(int fan)
+void PrintSettings::fan_plus_command(FanIndex fan)
 {
-    auto speed = scale(fanSpeeds[fan], 255, 100);
+    int index = static_cast<int>(fan);
+    auto speed = scale(fanSpeeds[index], 255, 100);
     if(speed >= 100)
         return;
 
     speed = speed >= 100 - 5 ? 100 : speed + 5;
-    fanSpeeds[fan] = scale(speed, 100, 255);
+    fanSpeeds[index] = scale(speed, 100, 255);
 }
 
 //! Handle the -Fan command
 void PrintSettings::fan1_minus_command()
 {
-    fan_minus_command(0);
+    fan_minus_command(FanIndex::Fan1);
 }
 
 //! Handle the +Fan command
 void PrintSettings::fan1_plus_command()
 {
-    fan_plus_command(0);
+    fan_plus_command(FanIndex::Fan1);
 }
 
 //! Handle the -Fan 2 command
 void PrintSettings::fan2_minus_command()
 {
-    fan_minus_command(1);
+    fan_minus_command(FanIndex::Fan2);
 }
 
 //! Handle the +Fan 2 command
 void PrintSettings::fan2_plus_command()
 {
-    fan_plus_command(1);
+    fan_plus_command(FanIndex::Fan2);
 }
 
 //! Handle the -Hotend Temperature command

@@ -325,14 +325,14 @@ void ADVi3pp_::send_status_data(bool force_update)
           << Uint16(Temperature::degHotend(0))
           << Uint16(Temperature::degTargetHotend(1))
           << Uint16(Temperature::degHotend(1))
-          << Uint16(scale(fanSpeeds[0], 255, 100))
+          << Uint16(scale(fanSpeeds[static_cast<int>(FanIndex::Fan1)], 255, 100))
           << Uint16(get_current_z_height(100))
           << Uint16(get_current_z_layer(100))
           << Uint16(progress_bar_low)
           << Uint16(progress_var_high)
           << Uint16(probe_state)
           << Uint16(feedrate_percentage)
-          << Uint16(scale(fanSpeeds[1], 255, 100));
+          << Uint16(scale(fanSpeeds[static_cast<int>(FanIndex::Fan2)], 255, 100));
     frame.send(false);
 
     compute_progress();
