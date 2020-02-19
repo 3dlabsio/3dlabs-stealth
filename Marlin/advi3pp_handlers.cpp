@@ -689,7 +689,8 @@ void Preheat::do_write(EepromWrite& eeprom) const
         eeprom.write(preset.hotend2);
         eeprom.write(preset.bed);
         eeprom.write(preset.enclosure);
-        eeprom.write(preset.fan);
+        eeprom.write(preset.fan1);
+        eeprom.write(preset.fan2);
     }
 }
 
@@ -703,7 +704,8 @@ void Preheat::do_read(EepromRead& eeprom)
         eeprom.read(preset.hotend2);
         eeprom.read(preset.bed);
         eeprom.read(preset.enclosure);
-        eeprom.read(preset.fan);
+        eeprom.read(preset.fan1);
+        eeprom.read(preset.fan2);
     }
 }
 
@@ -716,7 +718,8 @@ void Preheat::do_reset()
         presets_[i].hotend2     = DEFAULT_PREHEAT_PRESET[i].hotend2;
         presets_[i].bed         = DEFAULT_PREHEAT_PRESET[i].bed;
         presets_[i].enclosure   = DEFAULT_PREHEAT_PRESET[i].enclosure;
-        presets_[i].fan         = DEFAULT_PREHEAT_PRESET[i].fan;
+        presets_[i].fan1        = DEFAULT_PREHEAT_PRESET[i].fan1;
+        presets_[i].fan2        = DEFAULT_PREHEAT_PRESET[i].fan2;
     }
 }
 
@@ -724,7 +727,8 @@ void Preheat::do_reset()
 //! @return Number of bytes
 uint16_t Preheat::do_size_of() const
 {
-    return NB_PRESETS * (sizeof(Preset::hotend1) + sizeof(Preset::hotend2) + sizeof(Preset::bed) + sizeof(Preset::enclosure) + sizeof(Preset::fan));
+    return NB_PRESETS * (sizeof(Preset::hotend1) + sizeof(Preset::hotend2) + sizeof(Preset::bed) +
+        sizeof(Preset::enclosure) + sizeof(Preset::fan1) + sizeof(Preset::fan2));
 }
 
 //! Send the presets t the LCD Panel
@@ -736,7 +740,8 @@ void Preheat::send_presets()
           << Uint16(presets_[index_].hotend2)
           << Uint16(presets_[index_].bed)
           << Uint16(presets_[index_].enclosure)
-          << Uint16(presets_[index_].fan);
+          << Uint16(presets_[index_].fan1)
+          << Uint16(presets_[index_].fan2);
     frame.send();
 
     ADVString<8> preset;
@@ -749,21 +754,22 @@ void Preheat::send_presets()
 //! Retrieve presets values from the LCD Panel
 void Preheat::retrieve_presets()
 {
-    ReadRamData frame{Variable::Value0, 5};
+    ReadRamData frame{Variable::Value0, 6};
     if(!frame.send_and_receive())
     {
         Log::error() << F("Error receiving presets") << Log::endl();
         return;
     }
 
-    Uint16 hotend1, hotend2, bed, enclosure, fan;
-    frame >> hotend1 >> hotend2 >> bed >> enclosure >> fan;
+    Uint16 hotend1, hotend2, bed, enclosure, fan1, fan2;
+    frame >> hotend1 >> hotend2 >> bed >> enclosure >> fan1 >> fan2;
 
     presets_[index_].hotend1 = hotend1.word;
     presets_[index_].hotend2 = hotend2.word;
     presets_[index_].bed = bed.word;
     presets_[index_].enclosure = enclosure.word;
-    presets_[index_].fan = fan.word;
+    presets_[index_].fan1 = fan1.word;
+    presets_[index_].fan2 = fan2.word;
 }
 
 //! Prepare the page before being displayed and return the right Page value
@@ -803,22 +809,14 @@ void Preheat::do_save_command()
 
     const Preset& preset = presets_[index_];
 
-    ADVString<15> command;
+    // Avoid using queue functions because the buffer is small
 
-    command = F("M104 T0 S"); command << preset.hotend1;
-    enqueue_and_echo_command(command.get());
-
-    command = F("M104 T1 S"); command << preset.hotend2;
-    enqueue_and_echo_command(command.get());
-
-    command = F("M140 S"); command << preset.bed;
-    enqueue_and_echo_command(command.get());
-
-    command = F("M141 S"); command << preset.enclosure;
-    enqueue_and_echo_command(command.get());
-
-    command = F("M106 S"); command << scale(preset.fan, 100, 255);
-    enqueue_and_echo_command(command.get());
+    thermalManager.setTargetHotend(preset.hotend1, 0);
+    thermalManager.setTargetHotend(preset.hotend2, 1);
+    thermalManager.setTargetBed(preset.bed);
+    thermalManager.setTargetChamber(preset.enclosure);
+    fanSpeeds[static_cast<int>(FanIndex::Fan1)] = scale(preset.fan1, 100, 255);
+    fanSpeeds[static_cast<int>(FanIndex::Fan2)] = scale(preset.fan2, 100, 255);
 
     advi3pp.save_settings();
     temperatures.show(ShowOptions::None);

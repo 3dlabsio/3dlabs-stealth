@@ -66,7 +66,8 @@ struct Preset
     uint16_t hotend2;
     uint8_t bed;
     uint8_t enclosure;
-    uint8_t fan;
+    uint8_t fan1;
+    uint8_t fan2;
 };
 
 //! Position of a sensor.
