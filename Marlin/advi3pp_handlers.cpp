@@ -831,7 +831,8 @@ void Preheat::cooldown_command()
     Log::log() << F("Cooldown") << Log::endl();
     advi3pp.reset_status();
     Temperature::disable_all_heaters();
-    enqueue_and_echo_commands_P(PSTR("M106 S0")); // Turn off fan
+    fanSpeeds[static_cast<int>(FanIndex::Fan1)] = 0; // Turn off fan
+    fanSpeeds[static_cast<int>(FanIndex::Fan2)] = 0; // Turn off 2nd fan
 }
 
 
