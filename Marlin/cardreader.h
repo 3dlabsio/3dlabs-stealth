@@ -64,6 +64,7 @@ public:
   #endif
 
   void getfilename(uint16_t nr, const char* const match=NULL);
+  void getLongnameFromShort() {} // @advi3++ to be able to compile the Simulator
   uint16_t getnrfilenames();
 
   void getAbsFilename(char *t);
