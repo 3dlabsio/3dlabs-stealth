@@ -243,7 +243,7 @@
  *
  * Define one or both of these to override the default 0-255 range.
  */
-//#define FAN_MIN_PWM 50
+//#define FAN_MIN_PWM 26
 //#define FAN_MAX_PWM 128
 
 // @section extruder
@@ -265,7 +265,7 @@
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
 #define E4_AUTO_FAN_PIN -1
-#define CHAMBER_AUTO_FAN_PIN FAN2_PIN
+//#define CHAMBER_AUTO_FAN_PIN FAN2_PIN
 #define EXTRUDER_AUTO_FAN_TEMPERATURE 50
 #define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
 
@@ -621,8 +621,8 @@
    */
   //#define POWER_LOSS_RECOVERY
   #if ENABLED(POWER_LOSS_RECOVERY)
-    //#define POWER_LOSS_PIN   44     // Pin to detect power loss
-    //#define POWER_LOSS_STATE HIGH   // State of pin indicating power loss
+    #define POWER_LOSS_PIN   84     // Pin to detect power loss
+    #define POWER_LOSS_STATE HIGH   // State of pin indicating power loss
   #endif
 
   /**
