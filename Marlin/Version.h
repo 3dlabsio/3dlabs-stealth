@@ -36,7 +36,7 @@
 #else
 
   // @advi3++: Change the name depending of the model of the printer and the model of the sensor
-  #define ADVi3PP_NAME "ADVi3++3DLabs"
+  #define ADVi3PP_NAME "3D Labs Stealth"
 
   /**
    * Marlin release version identifier
@@ -87,8 +87,8 @@
    * has a distinct Github fork— the Source Code URL should just be the main
    * Marlin repository.
    */
-  // @advi3++: ADVi3++ sources 
-  #define SOURCE_CODE_URL "https://github.com/andrivet/ADVi3pp"
+  // @advi3++: 3dlabs sources 
+  #define SOURCE_CODE_URL "https://github.com/3dlabsio/3dlabs-stealth"
 
   /**
    * Default generic printer UUID.
@@ -101,6 +101,6 @@
    * documentation about a specific Marlin release.
    */
   // @advi3++: ADVi3++ User Manual
-  #define WEBSITE_URL "https://community.advi3pp.com/c/user-manual"
+  #define WEBSITE_URL "https://www.3dlabs.io"
 
 #endif // USE_AUTOMATIC_VERSIONING
