@@ -146,7 +146,7 @@
 // Please choose the name from boards.h that matches your setup
 //#ifndef MOTHERBOARD
 // @advi3++: 3DLABS_STEALTH
-#define MOTHERBOARD BOARD_3DLABS_STEALTH
+#define MOTHERBOARD BOARD_3DLABS_STEALTH_r2
 
 
 // Optional custom name for your RepStrap or other custom machine

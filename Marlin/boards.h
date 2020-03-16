@@ -108,6 +108,7 @@
 #define BOARD_I3_PLUS_MARK2     889   // Wanhao Duplicator i3 Plus Mark II @advi3++
 #define BOARD_I3_PLUS_HE180021  890   // Aldi UK Balco 2018 (HE180021)
 #define BOARD_3DLABS_STEALTH    1001  // 3DLabs Stealth
+#define BOARD_3DLABS_STEALTH_r2  1002  // 3DLabs Stealth revision 2 (9.5.5)
 
 //
 // ATmega1281, ATmega2561
