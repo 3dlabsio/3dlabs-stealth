@@ -107,7 +107,7 @@
   /**
    * As described above, except for the bed (M140/M190/M303).
    */
-  #define WATCH_BED_TEMP_PERIOD 60                // Seconds
+  #define WATCH_BED_TEMP_PERIOD 180                // Seconds
   #define WATCH_BED_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
@@ -128,7 +128,9 @@
 
 // Heated chamber settings for bang-bang. PID is not currently implemented.
 #define CHAMBER_CHECK_INTERVAL 2000 // ms between checks in bang-bang control
-#define MAX_CHAMBER_POWER 255 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
+#define MAX_CHAMBER_POWER 200 // Max bang power for the heated chamber heater. 200 keeps amp spikes low vs 255.
+#define CHAMBER_WAIT_FOR_BED // Enable this to force the chamber heater to allow the bed to heat up first. This is designed to avoid 
+                             // large power spikes on the 3DLabs Stealth printer.
 
 #if ENABLED(PIDTEMP)
   // this adds an experimental additional term to the heating power, proportional to the extrusion speed.

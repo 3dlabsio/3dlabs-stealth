@@ -146,7 +146,7 @@
 // Please choose the name from boards.h that matches your setup
 //#ifndef MOTHERBOARD
 // @advi3++: 3DLABS_STEALTH
-#define MOTHERBOARD BOARD_3DLABS_STEALTH_r2
+#define MOTHERBOARD BOARD_3DLABS_STEALTH
 
 
 // Optional custom name for your RepStrap or other custom machine
@@ -460,7 +460,7 @@
  * When set to any value below 255, enables a form of PWM to the bed that acts like a divider
  * so don't use it unless you are OK with PWM on your bed. (See the comment on enabling PIDTEMPBED)
  */
-#define MAX_BED_POWER 255 // limits duty cycle to bed; 255=full current
+#define MAX_BED_POWER 200 // limits duty cycle to bed; 255=full current
 
 #if ENABLED(PIDTEMPBED)
 
@@ -603,8 +603,8 @@
 #define X2_DRIVER_TYPE A4988
 #define Y2_DRIVER_TYPE A4988
 #define Z2_DRIVER_TYPE A4988
-#define E0_DRIVER_TYPE TMC2208_STANDALONE
-#define E1_DRIVER_TYPE TMC2208_STANDALONE
+#define E0_DRIVER_TYPE A4988
+#define E1_DRIVER_TYPE A4988
 #define E2_DRIVER_TYPE A4988
 #define E3_DRIVER_TYPE A4988
 #define E4_DRIVER_TYPE A4988
@@ -934,8 +934,8 @@
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
-#define INVERT_E0_DIR true
-#define INVERT_E1_DIR true
+#define INVERT_E0_DIR false
+#define INVERT_E1_DIR false
 #define INVERT_E2_DIR false
 #define INVERT_E3_DIR false
 #define INVERT_E4_DIR false
