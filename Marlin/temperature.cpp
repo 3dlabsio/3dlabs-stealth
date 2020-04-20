@@ -149,6 +149,10 @@ int16_t Temperature::current_temperature_raw[HOTENDS] = { 0 },
       millis_t Temperature::watch_chamber_next_ms = 0;
       millis_t Temperature::next_chamber_check_ms;
     #endif
+
+    #if ENABLED(CHAMBER_WAIT_FOR_BED)
+      static int16_t previous_target_temperature_chamber = 0;
+    #endif
   #endif // HAS_HEATED_CHAMBER
   float Temperature::current_temperature_chamber = 0.0;
   int16_t Temperature::current_temperature_chamber_raw = 0;
@@ -942,7 +946,13 @@ void Temperature::manage_heater() {
 
 	#if HAS_TEMP_CHAMBER
     #if HAS_HEATED_CHAMBER
-
+      #if ENABLED(CHAMBER_WAIT_FOR_BED)
+      // Make sure the bed is reasonably close to it's target temperature before engaging the chamber heater.
+      if (isHeatingBed() && (previous_target_temperature_chamber == 0)) {
+        if ((degTargetBed() - degBed()) > 10) return;
+      } else {
+        previous_target_temperature_chamber = 1;
+      #endif // CHAMBER_WAIT_FOR_BED
       #if WATCH_THE_CHAMBER
         // Make sure temperature is increasing
         if (watch_chamber_next_ms && ELAPSED(ms, watch_chamber_next_ms)) {        // Time to check the chamber?
@@ -980,7 +990,10 @@ void Temperature::manage_heater() {
       //soft_pwm_amount_bed = WITHIN(current_temperature_chamber, CHAMBER_MINTEMP, CHAMBER_MAXTEMP) ? (int)get_pid_output_chamber() >> 1 : 0;
 
     #endif // HAS_HEATED_CHAMBER
-	#endif //HAS_TEMP_CHAMBER  
+	#endif //HAS_TEMP_CHAMBER
+  #if ENABLED(CHAMBER_WAIT_FOR_BED)
+  }
+  #endif // CHAMBER_WAIT_FOR_BED
 }
 
 #define TEMP_AD595(RAW)  ((RAW) * 5.0 * 100.0 / 1024.0 / (OVERSAMPLENR) * (TEMP_SENSOR_AD595_GAIN) + TEMP_SENSOR_AD595_OFFSET)
