@@ -342,7 +342,10 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
 
     SERIAL_ECHOLNPGM(MSG_PID_AUTOTUNE_START);
 
-    disable_all_heaters(); // switch off all heaters.
+    // Allow heaters to stay engaged when PID tuning the bed, etc.
+    // Our machines bed will not be as accurately PID tuned without the chamber heater on the desired temperature.
+    // TODO: make a new function that disables all but the chamber heater.
+    // disable_all_heaters(); // switch off all heaters.
 
     SHV(soft_pwm_amount, bias = d = (MAX_BED_POWER) >> 1, bias = d = (PID_MAX) >> 1);
 
