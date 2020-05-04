@@ -18,8 +18,8 @@
  *
  */
 
-#include "advi3pp_defines.h"
-#include "advi3pp_log.h"
+#include "3dlabs_defines.h"
+#include "3dlabs_log.h"
 
 #include <HardwareSerial.h>
 #include "serial.h"

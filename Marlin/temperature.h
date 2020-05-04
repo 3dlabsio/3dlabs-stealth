@@ -30,7 +30,7 @@
 #include "thermistortables.h"
 
 #include "MarlinConfig.h"
-#include "advi3pp.h"
+#include "3dlabs.h"
 
 #if ENABLED(AUTO_POWER_CONTROL)
   #include "power.h"

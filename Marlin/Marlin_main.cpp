@@ -277,8 +277,8 @@
 #include "duration_t.h"
 #include "types.h"
 #include "parser.h"
-#include "advi3pp.h" // @advi3++
-#include "advi3pp_log.h"
+#include "3dlabs.h" // @advi3++
+#include "3dlabs_log.h"
 
 // @advi3++: This is only to ensure that Jetbrains CLion is parsing code properly inside the IDE
 #ifdef __CLION_IDE__

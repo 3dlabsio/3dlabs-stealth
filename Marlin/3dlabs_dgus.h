@@ -25,7 +25,7 @@
 #include "Marlin.h"
 #endif
 #include "duration_t.h"
-#include "ADVstring.h"
+#include "3DLstring.h"
 
 namespace advi3pp {
 

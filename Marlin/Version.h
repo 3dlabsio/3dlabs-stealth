@@ -27,7 +27,7 @@
  */
 
 // @advi3++: ADVi3++ specific defines to ease the compilation of BLTouch firmware
-#include "advi3pp_defines.h"
+#include "3dlabs_defines.h"
 
 #if ENABLED(USE_AUTOMATIC_VERSIONING)
 

@@ -18,8 +18,8 @@
  *
  */
 
-#include "advi3pp.h"
-#include "advi3pp_.h"
+#include "3dlabs.h"
+#include "3dlabs_.h"
 
 #ifdef DEBUG
 #pragma message "This is a DEBUG build"

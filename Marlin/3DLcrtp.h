@@ -19,7 +19,7 @@
  *
  */
 
-#include "ADVstd.h"
+#include "3DLstd.h"
 
 #ifndef ADVLIB_ADVPOLY_H
 #define ADVLIB_ADVPOLY_H

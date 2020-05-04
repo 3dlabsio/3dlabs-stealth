@@ -26,7 +26,7 @@
 #include "MarlinConfig.h"
 
 // @advi3++: ADVi3++ is similar to ULTRA LCD but with a different implementation
-#include "advi3pp.h"
+#include "3dlabs.h"
 
 #if ENABLED(I3PLUS_LCD)
     inline void lcd_init() { /* Nothing to do */ }

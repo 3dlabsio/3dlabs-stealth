@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include "enum.h"
-#include "advi3pp_pages.h"
+#include "3dlabs_pages.h"
 
 class MarlinSettings;
 class GCodeParser;

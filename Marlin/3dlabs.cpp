@@ -32,11 +32,11 @@
 #include "printcounter.h"
 #include "duration_t.h"
 
-#include "advi3pp.h"
-#include "advi3pp_log.h"
-#include "advi3pp_dgus.h"
-#include "advi3pp_stack.h"
-#include "advi3pp_.h"
+#include "3dlabs.h"
+#include "3dlabs_log.h"
+#include "3dlabs_dgus.h"
+#include "3dlabs_stack.h"
+#include "3dlabs_.h"
 
 
 extern uint8_t progress_bar_percent;

@@ -44,7 +44,7 @@
 //===========================================================================
 
 // @advi3++: To help build BLTouch releases
-#include "advi3pp_defines.h"
+#include "3dlabs_defines.h"
 
 // @advi3++: This is only to ensure that Jetbrains CLion is parsing code properly inside the IDE
 #ifdef __CLION_IDE__

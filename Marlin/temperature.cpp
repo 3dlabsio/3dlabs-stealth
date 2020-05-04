@@ -33,7 +33,7 @@
 #include "printcounter.h"
 #include "delay.h"
 #include "endstops.h"
-#include "advi3pp.h" // @advi3++
+#include "3dlabs.h"
 
 #if ENABLED(HEATER_0_USES_MAX6675)
   #include "MarlinSPI.h"
@@ -49,7 +49,7 @@
 
 #if ENABLED(EMERGENCY_PARSER)
   #include "emergency_parser.h"
-#include "advi3pp_.h"
+#include "3dlabs_.h"
 
 #endif
 

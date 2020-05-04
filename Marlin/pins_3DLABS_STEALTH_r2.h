@@ -24,7 +24,7 @@
  * 3D Labs Stealth pin assignments (Rumba derivative)
  */
 
-#include "advi3pp_defines.h"
+#include "3dlabs_defines.h"
 
 #ifndef __AVR_ATmega2560__
   #error "Oops!  Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu."

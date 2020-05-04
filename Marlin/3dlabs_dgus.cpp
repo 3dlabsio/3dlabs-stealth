@@ -20,9 +20,9 @@
  */
 
 #include <string.h>
-#include "advi3pp_defines.h"
-#include "advi3pp_dgus.h"
-#include "advi3pp_log.h"
+#include "3dlabs_defines.h"
+#include "3dlabs_dgus.h"
+#include "3dlabs_log.h"
 
 namespace advi3pp {
 

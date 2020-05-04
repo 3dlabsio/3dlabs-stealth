@@ -54,7 +54,7 @@
 #include "planner.h"
 #include "temperature.h"
 #include "ultralcd.h"
-#include "advi3pp.h" // @advi3++
+#include "3dlabs.h" // @advi3++
 #include "stepper.h"
 #include "parser.h"
 #include "vector_3.h"

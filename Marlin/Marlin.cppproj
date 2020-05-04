@@ -425,55 +425,55 @@
     <OutputPath>bin\BLTouch-Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ADVcallback.h">
+    <Compile Include="3DLcallback.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp.cpp">
+    <Compile Include="3dlabs.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp.h">
+    <Compile Include="3dlabs.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_.h">
+    <Compile Include="3dlabs_.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_bitmasks.h">
+    <Compile Include="3dlabs_bitmasks.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_defines.h">
+    <Compile Include="3dlabs_defines.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_dgus.cpp">
+    <Compile Include="3dlabs_dgus.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_dgus.h">
+    <Compile Include="3dlabs_dgus.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_enums.h">
+    <Compile Include="3dlabs_enums.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_facade.cpp">
+    <Compile Include="3dlabs_facade.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_handlers.cpp">
+    <Compile Include="3dlabs.handlers.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_log.cpp">
+    <Compile Include="3dlabs_log.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_log.h">
+    <Compile Include="3dlabs_log.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_pages.h">
+    <Compile Include="3dlabs_pages.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="advi3pp_stack.h">
+    <Compile Include="3dlabs_stack.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ADVstd.h">
+    <Compile Include="3DLstd.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ADVunique_ptr.h">
+    <Compile Include="3DLunique_ptr.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="bitmap_flags.h">

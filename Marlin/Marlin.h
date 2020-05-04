@@ -43,7 +43,7 @@
 #include "fastio.h"
 #include "utility.h"
 #include "serial.h"
-#include "advi3pp.h"
+#include "3dlabs.h"
 
 void idle(
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
