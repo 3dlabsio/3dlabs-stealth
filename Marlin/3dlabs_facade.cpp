@@ -29,7 +29,7 @@
 #pragma message "This is a ADVi3++ Simulator build"
 #endif
 
-namespace advi3pp {
+namespace _3dlabs {
 
 inline namespace singletons
 {
@@ -46,23 +46,23 @@ inline namespace singletons
 //! Initialize the printer and its LCD.
 void ADVi3pp::setup()
 {
-    advi3pp.setup();
+    _3dlabs.setup();
 }
 
 void ADVi3pp::setup_lcd_serial()
 {
-    advi3pp.setup_lcd_serial();
+    _3dlabs.setup_lcd_serial();
 }
 
 void ADVi3pp::change_baudrate()
 {
-    advi3pp.change_baudrate();
+    _3dlabs.change_baudrate();
 }
 
 //! Read data from the LCD and act accordingly.
 void ADVi3pp::idle()
 {
-    advi3pp.idle();
+    _3dlabs.idle();
 }
 
 //! PID automatic tuning is finished.
@@ -87,7 +87,7 @@ void ADVi3pp::pause_finished()
 //! @param working_crc
 void ADVi3pp::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc)
 {
-    advi3pp.write(write, eeprom_index, working_crc);
+    _3dlabs.write(write, eeprom_index, working_crc);
 }
 
 //! Restore presets from permanent memory.
@@ -96,61 +96,61 @@ void ADVi3pp::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc
 //! @param working_crc
 bool ADVi3pp::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
 {
-    return advi3pp.read(read, eeprom_index, working_crc);
+    return _3dlabs.read(read, eeprom_index, working_crc);
 }
 
 //! Reset presets.
 void ADVi3pp::reset()
 {
-    advi3pp.reset();
+    _3dlabs.reset();
 }
 
 //! Return the size of data specific to ADVi3++
 uint16_t ADVi3pp::size_of()
 {
-    return advi3pp.size_of();
+    return _3dlabs.size_of();
 }
 
 //! Inform the user that the EEPROM data are not compatible and have been reset
 void ADVi3pp::eeprom_settings_mismatch()
 {
-    advi3pp.eeprom_settings_mismatch();
+    _3dlabs.eeprom_settings_mismatch();
 }
 
 //! Called when a temperature error occurred and display the error on the LCD.
 void ADVi3pp::temperature_error(const FlashChar* message)
 {
-    advi3pp.temperature_error(message);
+    _3dlabs.temperature_error(message);
 }
 
 void ADVi3pp::set_brightness(int16_t britghness)
 {
-    advi3pp.set_brightness(britghness);
+    _3dlabs.set_brightness(britghness);
 }
 
 bool ADVi3pp::has_status()
 {
-    return advi3pp.has_status();
+    return _3dlabs.has_status();
 }
 
 void ADVi3pp::set_status(const char* message)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
 }
 
 void ADVi3pp::set_status(const FlashChar* message)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
 }
 
 void ADVi3pp::set_status(const char * const fmt, va_list& args)
 {
-    advi3pp.set_status(fmt, args);
+    _3dlabs.set_status(fmt, args);
 }
 
 void ADVi3pp::set_status(const FlashChar* const fmt, va_list& args)
 {
-    advi3pp.set_status(fmt, args);
+    _3dlabs.set_status(fmt, args);
 }
 
 void ADVi3pp::set_status_v(const FlashChar* fmt, ...)
@@ -163,32 +163,32 @@ void ADVi3pp::set_status_v(const FlashChar* fmt, ...)
 
 void  ADVi3pp::advanced_pause_show_message(AdvancedPauseMessage message)
 {
-    advi3pp.advanced_pause_show_message(message);
+    _3dlabs.advanced_pause_show_message(message);
 }
 
 void ADVi3pp::reset_status()
 {
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
 }
 
 void ADVi3pp::buzz(long duration, uint16_t)
 {
-    advi3pp.buzz(duration);
+    _3dlabs.buzz(duration);
 }
 
 void ADVi3pp::on_set_temperature(TemperatureKind kind, uint16_t temperature)
 {
-    advi3pp.on_set_temperature(kind, temperature);
+    _3dlabs.on_set_temperature(kind, temperature);
 }
 
 void ADVi3pp::stop_and_wait()
 {
-    advi3pp.stop_and_wait();
+    _3dlabs.stop_and_wait();
 }
 
 void ADVi3pp::process_command(const GCodeParser& parser)
 {
-    advi3pp.process_command(parser);
+    _3dlabs.process_command(parser);
 }
 
 double ADVi3pp::x_probe_offset_from_extruder()

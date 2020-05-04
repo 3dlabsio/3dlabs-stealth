@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include "3dlabs_bitmasks.h"
 
-namespace advi3pp {
+namespace _3dlabs {
 
 
 //! List of variables and their addresses.

@@ -634,7 +634,7 @@ void do_blocking_move_to_xy(const float &rx, const float &ry, const float &fr_mm
      */
     // @advi3++: Probe position is dynamic. Min, max are based on _MIN_PROBE_, _MAX_PROBE_ macros
     inline bool position_is_reachable_by_probe(const float &rx, const float &ry) {
-        using namespace advi3pp;
+        using namespace _3dlabs;
         auto min_probe_x = ADVi3pp::left_probe_bed_position();
         auto min_probe_y = ADVi3pp::front_probe_bed_position();
         auto max_probe_x = ADVi3pp::right_probe_bed_position();

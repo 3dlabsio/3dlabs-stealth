@@ -343,7 +343,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
     SHV(soft_pwm_amount, bias = d = (MAX_BED_POWER) >> 1, bias = d = (PID_MAX) >> 1);
 
     wait_for_heatup = true; // Can be interrupted with M108
-    advi3pp::ADVi3pp::set_status(F("PID tuning: waiting for heatup"));
+    _3dlabs::ADVi3pp::set_status(F("PID tuning: waiting for heatup"));
 
     // PID Tuning loop
     while (wait_for_heatup) {
@@ -377,7 +377,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
 
         if (!heating && current < target) {
           if (ELAPSED(ms, t1 + 5000UL)) {
-            advi3pp::ADVi3pp::set_status_v(F("PID tuning: cycle %i / %i"), cycles + 1, ncycles);
+            _3dlabs::ADVi3pp::set_status_v(F("PID tuning: cycle %i / %i"), cycles + 1, ncycles);
             heating = true;
             t2 = ms;
             t_low = t2 - t1;
@@ -442,7 +442,7 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
         #if HAS_TEMP_SENSOR
           print_heaterstates();
           SERIAL_EOL();
-          advi3pp::ADVi3pp::idle(); // @advi3++: Update temperatures
+          _3dlabs::ADVi3pp::idle(); // @advi3++: Update temperatures
         #endif
         next_temp_ms = ms + 2000UL;
 
@@ -525,12 +525,12 @@ uint8_t Temperature::soft_pwm_amount[HOTENDS];
             _SET_BED_PID();
           #endif
         }
-        advi3pp::ADVi3pp::auto_pid_finished(true); // @advi3++: PID tuning finished
+        _3dlabs::ADVi3pp::auto_pid_finished(true); // @advi3++: PID tuning finished
         return;
       }
       lcd_update();
     }
-    advi3pp::ADVi3pp::auto_pid_finished(false); // @advi3++: PID tuning failed and cancelled
+    _3dlabs::ADVi3pp::auto_pid_finished(false); // @advi3++: PID tuning failed and cancelled
     disable_all_heaters();
   }
 
@@ -604,7 +604,7 @@ int Temperature::getHeaterPower(const int heater) {
 //
 void Temperature::_temp_error(const int8_t e, const char * const serial_msg, const char * const lcd_msg) {
   // @advi3++: Display the error on the LCD panel
-  advi3pp::ADVi3pp::temperature_error(reinterpret_cast<const __FlashStringHelper*>(lcd_msg));
+  _3dlabs::ADVi3pp::temperature_error(reinterpret_cast<const __FlashStringHelper*>(lcd_msg));
   /*
   if (IsRunning()) {
     SERIAL_ERROR_START();

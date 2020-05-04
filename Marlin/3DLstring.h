@@ -29,7 +29,7 @@
 class __FlashStringHelper;
 using FlashChar = __FlashStringHelper;
 
-namespace advi3pp {
+namespace _3dlabs {
 
 // --------------------------------------------------------------------
 // String without dynamic allocation and a fixed maximum size

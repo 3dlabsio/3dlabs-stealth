@@ -2494,8 +2494,8 @@ void clean_up_after_endstop_or_probe_move() {
     if (probe_relative) {
       if (!position_is_reachable_by_probe(rx, ry)) return NAN;  // The given position is in terms of the probe
       // @advi3++
-      nx -= (advi3pp::ADVi3pp::x_probe_offset_from_extruder());                     // Get the nozzle position
-      ny -= (advi3pp::ADVi3pp::y_probe_offset_from_extruder());
+      nx -= (_3dlabs::ADVi3pp::x_probe_offset_from_extruder());                     // Get the nozzle position
+      ny -= (_3dlabs::ADVi3pp::y_probe_offset_from_extruder());
     }
     else if (!position_is_reachable(nx, ny)) return NAN;        // The given position is in terms of the nozzle
 
@@ -4219,8 +4219,8 @@ inline void gcode_G4() {
 
     #if HOMING_Z_WITH_PROBE
       // @advi3++
-      destination[X_AXIS] -= advi3pp::ADVi3pp::x_probe_offset_from_extruder();
-      destination[Y_AXIS] -= advi3pp::ADVi3pp::y_probe_offset_from_extruder();
+      destination[X_AXIS] -= _3dlabs::ADVi3pp::x_probe_offset_from_extruder();
+      destination[Y_AXIS] -= _3dlabs::ADVi3pp::y_probe_offset_from_extruder();
     #endif
 
     if (position_is_reachable(destination[X_AXIS], destination[Y_AXIS])) {
@@ -4744,7 +4744,7 @@ void home_all_axes() { gcode_G28(true); }
 
   void abort_G29()
   {
-	  advi3pp::ADVi3pp::g29_leveling_finished(false);
+	  _3dlabs::ADVi3pp::g29_leveling_finished(false);
   }
 
   /**
@@ -5061,10 +5061,10 @@ void home_all_axes() { gcode_G28(true); }
         xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_SPEED));
 
         // @advi3++: Get the default values from ADVi3++ since the probe support is selectable at runtime
-        left_probe_bed_position  = parser.seenval('L') ? int(RAW_X_POSITION(parser.value_linear_units())) : advi3pp::ADVi3pp::left_probe_bed_position();
-        right_probe_bed_position = parser.seenval('R') ? int(RAW_X_POSITION(parser.value_linear_units())) : advi3pp::ADVi3pp::right_probe_bed_position();
-        front_probe_bed_position = parser.seenval('F') ? int(RAW_Y_POSITION(parser.value_linear_units())) : advi3pp::ADVi3pp::front_probe_bed_position();
-        back_probe_bed_position  = parser.seenval('B') ? int(RAW_Y_POSITION(parser.value_linear_units())) : advi3pp::ADVi3pp::back_probe_bed_position();
+        left_probe_bed_position  = parser.seenval('L') ? int(RAW_X_POSITION(parser.value_linear_units())) : _3dlabs::ADVi3pp::left_probe_bed_position();
+        right_probe_bed_position = parser.seenval('R') ? int(RAW_X_POSITION(parser.value_linear_units())) : _3dlabs::ADVi3pp::right_probe_bed_position();
+        front_probe_bed_position = parser.seenval('F') ? int(RAW_Y_POSITION(parser.value_linear_units())) : _3dlabs::ADVi3pp::front_probe_bed_position();
+        back_probe_bed_position  = parser.seenval('B') ? int(RAW_Y_POSITION(parser.value_linear_units())) : _3dlabs::ADVi3pp::back_probe_bed_position();
 
         if (
           #if IS_SCARA || ENABLED(DELTA)
@@ -5687,7 +5687,7 @@ void home_all_axes() { gcode_G28(true); }
 
     report_current_position();
     // @advi3++
-    advi3pp::ADVi3pp::g29_leveling_finished(!isnan(measured_z));
+    _3dlabs::ADVi3pp::g29_leveling_finished(!isnan(measured_z));
   }
 
 #endif // OLDSCHOOL_ABL
@@ -5705,8 +5705,8 @@ void home_all_axes() { gcode_G28(true); }
    */
   inline void gcode_G30() {
     // @advi3++
-    const float xpos = parser.linearval('X', current_position[X_AXIS] + advi3pp::ADVi3pp::x_probe_offset_from_extruder()),
-                ypos = parser.linearval('Y', current_position[Y_AXIS] + advi3pp::ADVi3pp::y_probe_offset_from_extruder());
+    const float xpos = parser.linearval('X', current_position[X_AXIS] + _3dlabs::ADVi3pp::x_probe_offset_from_extruder()),
+                ypos = parser.linearval('Y', current_position[Y_AXIS] + _3dlabs::ADVi3pp::y_probe_offset_from_extruder());
 
     if (!position_is_reachable_by_probe(xpos, ypos)) return;
 
@@ -6515,8 +6515,8 @@ void home_all_axes() { gcode_G28(true); }
       if (hasJ) destination[Y_AXIS] = _GET_MESH_Y(iy);
       if (parser.boolval('P')) {
         // @advi3++
-        if (hasI) destination[X_AXIS] -= advi3pp::ADVi3pp::x_probe_offset_from_extruder();
-        if (hasJ) destination[Y_AXIS] -= advi3pp::ADVi3pp::y_probe_offset_from_extruder();
+        if (hasI) destination[X_AXIS] -= _3dlabs::ADVi3pp::x_probe_offset_from_extruder();
+        if (hasJ) destination[Y_AXIS] -= _3dlabs::ADVi3pp::y_probe_offset_from_extruder();
       }
 
       const float fval = parser.linearval('F');
@@ -6822,7 +6822,7 @@ void report_xyz_from_stepper_position() {
         #endif
       }
 
-      advi3pp::ADVi3pp::stop_and_wait(); // @advi3++: Display Wait screen
+      _3dlabs::ADVi3pp::stop_and_wait(); // @advi3++: Display Wait screen
 
     #else
 
@@ -8203,8 +8203,8 @@ inline void gcode_M42() {
           Y_current = current_position[Y_AXIS];
 
     // @advi3++
-    const float X_probe_location = parser.linearval('X', X_current + advi3pp::ADVi3pp::x_probe_offset_from_extruder()),
-                Y_probe_location = parser.linearval('Y', Y_current + advi3pp::ADVi3pp::y_probe_offset_from_extruder());
+    const float X_probe_location = parser.linearval('X', X_current + _3dlabs::ADVi3pp::x_probe_offset_from_extruder()),
+                Y_probe_location = parser.linearval('Y', Y_current + _3dlabs::ADVi3pp::y_probe_offset_from_extruder());
 
     if (!position_is_reachable_by_probe(X_probe_location, Y_probe_location)) {
       SERIAL_PROTOCOLLNPGM("? (X,Y) out of bounds.");
@@ -8290,8 +8290,8 @@ inline void gcode_M42() {
               angle += 360.0;       // numbers outside of the range, but just to be safe we clamp them.
 
             // @advi3++
-            X_current = X_probe_location - (advi3pp::ADVi3pp::x_probe_offset_from_extruder()) + cos(RADIANS(angle)) * radius;
-            Y_current = Y_probe_location - (advi3pp::ADVi3pp::y_probe_offset_from_extruder()) + sin(RADIANS(angle)) * radius;
+            X_current = X_probe_location - (_3dlabs::ADVi3pp::x_probe_offset_from_extruder()) + cos(RADIANS(angle)) * radius;
+            Y_current = Y_probe_location - (_3dlabs::ADVi3pp::y_probe_offset_from_extruder()) + sin(RADIANS(angle)) * radius;
 
             #if DISABLED(DELTA)
               X_current = constrain(X_current, X_MIN_POS, X_MAX_POS);
@@ -11281,7 +11281,7 @@ inline void gcode_M502() {
     // Resume the print job timer if it was running
     if (job_running) print_job_timer.start();
 
-    advi3pp::ADVi3pp::pause_finished();
+    _3dlabs::ADVi3pp::pause_finished();
   }
 
   /**
@@ -12891,7 +12891,7 @@ void process_parsed_command() {
 
   // Handle a known G, M, or T
   switch (parser.command_letter) {
-	case 'A': advi3pp::ADVi3pp::process_command(parser); break; // @advi3++: Put back ADVi3++ own command codes
+	case 'A': _3dlabs::ADVi3pp::process_command(parser); break; // @advi3++: Put back ADVi3++ own command codes
     case 'G': switch (parser.codenum) {
 
       case 0: case 1: gcode_G0_G1(                                // G0: Fast Move, G1: Linear Move
@@ -15169,7 +15169,7 @@ void idle(
 
   lcd_update();
   // @advi3++: ADVi3++ idle tasks
-  advi3pp::ADVi3pp::idle();
+  _3dlabs::ADVi3pp::idle();
 
   host_keepalive();
 
@@ -15319,7 +15319,7 @@ void setup() {
   SERIAL_ECHO_START();
 
   // @advi3++: setup second serial (LCD panel)
-  advi3pp::ADVi3pp::setup_lcd_serial();
+  _3dlabs::ADVi3pp::setup_lcd_serial();
 
   // Prepare communication for TMC drivers
   #if HAS_DRIVER(TMC2130)
@@ -15364,7 +15364,7 @@ void setup() {
   (void)settings.load();
 
   // @advi3++: change baudrate if necessary
-  advi3pp::ADVi3pp::change_baudrate();
+  _3dlabs::ADVi3pp::change_baudrate();
 
   #if HAS_M206_COMMAND
     // Initialize current position based on home_offset
@@ -15529,7 +15529,7 @@ void setup() {
   #endif
 
   // @advi3++: ADVi3++ setup
-  advi3pp::ADVi3pp::setup();
+  _3dlabs::ADVi3pp::setup();
 
   #if ENABLED(USE_WATCHDOG)
     watchdog_init();

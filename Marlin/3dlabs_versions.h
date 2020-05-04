@@ -43,7 +43,7 @@
 #define SEC__  (((__TIME__[6] - '0') * 10) + (__TIME__[7] - '0'))
 
 
-namespace advi3pp
+namespace _3dlabs
 {
     const uint16_t advi3_pp_version = 0x110;
     const uint16_t settings_version = 0x0003; // Version of ADVi3++ settings stored in EEPROM

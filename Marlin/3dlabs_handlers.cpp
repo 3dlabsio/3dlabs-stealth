@@ -58,7 +58,7 @@ extern float zprobe_zoffset;
 namespace
 {
     //! Default preheat values
-    const advi3pp::Preset DEFAULT_PREHEAT_PRESET[advi3pp::Preheat::NB_PRESETS] = {
+    const _3dlabs::Preset DEFAULT_PREHEAT_PRESET[_3dlabs::Preheat::NB_PRESETS] = {
         {160, 160, 90,  0, 0},
         {160, 160, 50,  0, 0},
         {160, 160, 150, 0, 0},
@@ -80,20 +80,20 @@ namespace
         // Note: F macro can be used only in a function, this is why this is coded like this
         auto custom   = F("Custom");
         auto stealth  = F("Stealth");
-        static const FlashChar* names[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] = {stealth, custom};
-        assert(index < advi3pp::SensorSettings::NB_SENSOR_POSITIONS);
+        static const FlashChar* names[_3dlabs::SensorSettings::NB_SENSOR_POSITIONS] = {stealth, custom};
+        assert(index < _3dlabs::SensorSettings::NB_SENSOR_POSITIONS);
         return names[index];
     }
 
     //! Default position of the sensor for the different holders
-    const advi3pp::SensorPosition DEFAULT_SENSOR_POSITION[advi3pp::SensorSettings::NB_SENSOR_POSITIONS] =
+    const _3dlabs::SensorPosition DEFAULT_SENSOR_POSITION[_3dlabs::SensorSettings::NB_SENSOR_POSITIONS] =
     {
         {  3600,  7000 },    // 3D Labs Stealth
         {     0,     0 }     // Custom
     };
 }
 
-namespace advi3pp {
+namespace _3dlabs {
 
 inline namespace singletons
 {
@@ -298,7 +298,7 @@ void Screens::show_card_or_error_page()
     task.clear_background_task();
 
     card.initsd(); // Can take some time
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     if(!card.cardOK)
     {
         // SD card not accessible so fall back to Temperatures
@@ -331,7 +331,7 @@ Page Wait::do_prepare_page()
 //! @param options  Options when displaying the page (i.e. save the current page or not)
 void Wait::show(const FlashChar* message, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = nullptr;
     continue_ = nullptr;
     pages.show_page(Page::Waiting, options);
@@ -343,7 +343,7 @@ void Wait::show(const FlashChar* message, ShowOptions options)
 //! @param options  Options when displaying the page (i.e. save the current page or not)
 void Wait::show(const FlashChar* message, const WaitCallback& back, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = back;
     continue_ = nullptr;
     pages.show_page(Page::WaitBack, options);
@@ -356,7 +356,7 @@ void Wait::show(const FlashChar* message, const WaitCallback& back, ShowOptions 
 //! @param options  Options when displaying the page (i.e. save the current page or not)
 void Wait::show(const FlashChar* message, const WaitCallback& back, const WaitCallback& cont, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = back;
     continue_ = cont;
     pages.show_page(Page::WaitBackContinue, options);
@@ -368,7 +368,7 @@ void Wait::show(const FlashChar* message, const WaitCallback& back, const WaitCa
 //! @param options  Options when displaying the page (i.e. save the current page or not)
 void Wait::show_continue(const FlashChar* message, const WaitCallback& cont, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = nullptr;
     continue_ = cont;
     pages.show_page(Page::WaitContinue, options);
@@ -379,7 +379,7 @@ void Wait::show_continue(const FlashChar* message, const WaitCallback& cont, Sho
 //! @param options  Options when displaying the page (i.e. save the current page or not)
 void Wait::show_continue(const FlashChar* message, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = nullptr;
     continue_ = WaitCallback{this, &Wait::on_continue};
     pages.show_page(Page::WaitContinue, options);
@@ -392,14 +392,14 @@ void Wait::show_continue(ShowOptions options)
 {
     back_ = nullptr;
     continue_ = WaitCallback{this, &Wait::on_continue};
-    advi3pp.buzz();
+    _3dlabs.buzz();
     pages.show_page(Page::WaitContinue, options);
 }
 
 //! Ensure a print is not running and if so, display a message
 void Wait::show_back(const FlashChar* message, ShowOptions options)
 {
-    advi3pp.set_status(message);
+    _3dlabs.set_status(message);
     back_ = WaitCallback{this, &Wait::on_back};
     continue_ = nullptr;
     pages.show_page(Page::WaitBack, options);
@@ -415,7 +415,7 @@ bool Wait::on_continue()
 //! Action when the back button is pressed
 bool Wait::on_back()
 {
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     pages.show_back_page();
     return false;
 }
@@ -538,7 +538,7 @@ void LoadUnload::send_data()
 {
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(get_current_hotend_index())
-          << Uint16(advi3pp.get_last_used_temperature(hotend_));
+          << Uint16(_3dlabs.get_last_used_temperature(hotend_));
     frame.send();
 }
 
@@ -566,7 +566,7 @@ void LoadUnload::prepare(const BackgroundTask& background)
     Uint16 hotend, temperature; frame >> hotend >> temperature; // hotend not used, already set
 
     Temperature::setTargetHotend(temperature.word, get_current_hotend_index());
-    advi3pp.switch_tool(get_current_hotend_index(), true); // No move
+    _3dlabs.switch_tool(get_current_hotend_index(), true); // No move
     enqueue_and_echo_commands_P(PSTR("M83"));       // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
 
@@ -592,7 +592,7 @@ bool LoadUnload::stop()
 {
     Log::log() << F("Load/Unload Stop") << Log::endl();
 
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     task.set_background_task(BackgroundTask(this, &LoadUnload::stop_task));
     clear_command_queue();
     Temperature::setTargetHotend(0, get_current_hotend_index());
@@ -602,7 +602,7 @@ bool LoadUnload::stop()
 //! Check if the process is actually stopped and reset E axis
 void LoadUnload::stop_task()
 {
-    if(advi3pp.is_busy() || !task.has_background_task())
+    if(_3dlabs.is_busy() || !task.has_background_task())
         return;
 
     task.clear_background_task();
@@ -621,10 +621,10 @@ void LoadUnload::start_task(const char* command, const BackgroundTask& back_task
     if(Temperature::current_temperature[hotend_index] >= Temperature::target_temperature[hotend_index] - 10.0)
     {
         Log::log() << F("Load/Unload Filament") << Log::endl();
-        advi3pp.buzz(); // Inform the user that the extrusion starts
+        _3dlabs.buzz(); // Inform the user that the extrusion starts
         enqueue_and_echo_commands_P(command);
         task.set_background_task(back_task);
-        advi3pp.set_status(F("Press Back when the filament comes out..."));
+        _3dlabs.set_status(F("Press Back when the filament comes out..."));
     }
 }
 
@@ -818,7 +818,7 @@ void Preheat::do_save_command()
     fanSpeeds[static_cast<int>(FanIndex::Fan1)] = scale(preset.fan1, 100, 255);
     fanSpeeds[static_cast<int>(FanIndex::Fan2)] = scale(preset.fan2, 100, 255);
 
-    advi3pp.save_settings();
+    _3dlabs.save_settings();
     temperatures.show(ShowOptions::None);
 }
 
@@ -829,7 +829,7 @@ void Preheat::cooldown_command()
         return;
 
     Log::log() << F("Cooldown") << Log::endl();
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     Temperature::disable_all_heaters();
     fanSpeeds[static_cast<int>(FanIndex::Fan1)] = 0; // Turn off fan
     fanSpeeds[static_cast<int>(FanIndex::Fan2)] = 0; // Turn off 2nd fan
@@ -1063,13 +1063,13 @@ void AutomaticLeveling::g29_leveling_finished(bool success)
         if(sensor_interactive_leveling_)
             wait.show(F("Leveling failed"), WaitCallback{this, &AutomaticLeveling::g29_leveling_failed});
         else
-            advi3pp.set_status(F("Leveling failed"));
+            _3dlabs.set_status(F("Leveling failed"));
 
         sensor_interactive_leveling_ = false;
         return;
     }
 
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
 
     if(sensor_interactive_leveling_)
     {
@@ -1182,7 +1182,7 @@ void ManualLeveling::leveling_task()
         return;
 
     Log::log() << F("Leveling Homed, start process") << Log::endl();
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     task.clear_background_task();
     pages.show_page(Page::ManualLeveling, ShowOptions::None);
 }
@@ -1409,7 +1409,7 @@ void Card::select_file_command(uint16_t file_index)
     if(filename == nullptr) // If the SD card is not readable
         return;
 
-    advi3pp.set_progress_name(filename);
+    _3dlabs.set_progress_name(filename);
 
     card.openFile(card.filename, true); // use always short filename so it will work even if the filename is long
     card.startFileprint();
@@ -1490,7 +1490,7 @@ void Print::process_stop_code()
     print_job_timer.stop();
     clear_command_queue();
 
-    advi3pp.set_status(F("Print Stopped"));
+    _3dlabs.set_status(F("Print Stopped"));
     pages.show_back_page();
     pages.show_back_page();
 }
@@ -1585,16 +1585,16 @@ void AdvancedPause::advanced_pause_show_message(const AdvancedPauseMessage messa
     switch (message)
     {
         case ADVANCED_PAUSE_MESSAGE_INIT:                       wait.show(F("Pausing...")); break;
-        case ADVANCED_PAUSE_MESSAGE_UNLOAD:                     advi3pp.set_status(F("Unloading filament...")); break;
+        case ADVANCED_PAUSE_MESSAGE_UNLOAD:                     _3dlabs.set_status(F("Unloading filament...")); break;
         case ADVANCED_PAUSE_MESSAGE_INSERT:                     insert_filament(); break;
-        case ADVANCED_PAUSE_MESSAGE_LOAD:                       advi3pp.set_status(F("Loading...")); break;
-        case ADVANCED_PAUSE_MESSAGE_PURGE:                      advi3pp.set_status(F("Extruding some filament...")); break;
-        case ADVANCED_PAUSE_MESSAGE_CLICK_TO_HEAT_NOZZLE:       advi3pp.set_status(F("Press continue to heat")); break;
-        case ADVANCED_PAUSE_MESSAGE_RESUME:                     advi3pp.set_status(F("Resuming print...")); break;
+        case ADVANCED_PAUSE_MESSAGE_LOAD:                       _3dlabs.set_status(F("Loading...")); break;
+        case ADVANCED_PAUSE_MESSAGE_PURGE:                      _3dlabs.set_status(F("Extruding some filament...")); break;
+        case ADVANCED_PAUSE_MESSAGE_CLICK_TO_HEAT_NOZZLE:       _3dlabs.set_status(F("Press continue to heat")); break;
+        case ADVANCED_PAUSE_MESSAGE_RESUME:                     _3dlabs.set_status(F("Resuming print...")); break;
         case ADVANCED_PAUSE_MESSAGE_STATUS:                     break;
-        case ADVANCED_PAUSE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT:   advi3pp.set_status(F("Waiting for heat...")); break;
+        case ADVANCED_PAUSE_MESSAGE_WAIT_FOR_NOZZLES_TO_HEAT:   _3dlabs.set_status(F("Waiting for heat...")); break;
         case ADVANCED_PAUSE_MESSAGE_OPTION:                     advanced_pause_menu_response = ADVANCED_PAUSE_RESPONSE_RESUME_PRINT; break;
-        default: advi3pp::Log::log() << F("Unknown AdvancedPauseMessage: ") << static_cast<uint16_t>(message) << advi3pp::Log::endl(); break;
+        default: _3dlabs::Log::log() << F("Unknown AdvancedPauseMessage: ") << static_cast<uint16_t>(message) << _3dlabs::Log::endl(); break;
     }
 }
 
@@ -1661,11 +1661,11 @@ void SensorZHeight::post_home_task()
 {
     if(!TEST(axis_homed, X_AXIS) || !TEST(axis_homed, Y_AXIS) || !TEST(axis_homed, Z_AXIS))
         return;
-    if(advi3pp.is_busy())
+    if(_3dlabs.is_busy())
         return;
 
     task.clear_background_task();
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
 
     reset();
 
@@ -1689,7 +1689,7 @@ void SensorZHeight::do_back_command()
 //! Handles the Save (Continue) command
 void SensorZHeight::do_save_command()
 {
-    zprobe_zoffset = advi3pp.get_current_z_height();
+    zprobe_zoffset = _3dlabs.get_current_z_height();
     enqueue_and_echo_commands_P(PSTR("M211 S1")); // enable enstops
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));  // raise head
     enqueue_and_echo_commands_P(PSTR("G28 X Y F6000")); // homing
@@ -1745,7 +1745,7 @@ double SensorZHeight::get_multiplier_value() const
 //! @param offset Offset for the adjustment.
 void SensorZHeight::adjust_height(double offset)
 {
-	auto new_height = advi3pp.get_current_z_height() + offset;
+	auto new_height = _3dlabs.get_current_z_height() + offset;
     ADVString<10> command;
     command << F("G1 Z") << new_height << F(" F1200");
     enqueue_and_echo_command(command.get());
@@ -1807,7 +1807,7 @@ void ExtruderTuning::send_data()
 {
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(get_current_hotend_index())
-          << Uint16(advi3pp.get_last_used_temperature(kind_));
+          << Uint16(_3dlabs.get_last_used_temperature(kind_));
     frame.send();
 }
 
@@ -1846,8 +1846,8 @@ void ExtruderTuning::heating_task()
         return;
     task.clear_background_task();
 
-    advi3pp.set_status(F("Wait until the extrusion is finished..."));
-    advi3pp.switch_tool(hotend_index, true);
+    _3dlabs.set_status(F("Wait until the extrusion is finished..."));
+    _3dlabs.switch_tool(hotend_index, true);
     enqueue_and_echo_commands_P(PSTR("G1 Z20 F1200"));   // raise head
     enqueue_and_echo_commands_P(PSTR("M83"));           // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));        // reset E axis
@@ -1861,7 +1861,7 @@ void ExtruderTuning::heating_task()
 //! Extruder tuning background task.
 void ExtruderTuning::extruding_task()
 {
-    if(current_position[E_AXIS] < tuning_extruder_filament || advi3pp.is_busy())
+    if(current_position[E_AXIS] < tuning_extruder_filament || _3dlabs.is_busy())
         return;
     task.clear_background_task();
 
@@ -1869,7 +1869,7 @@ void ExtruderTuning::extruding_task()
 
     Temperature::setTargetHotend(0, get_current_hotend_index());
     task.clear_background_task();
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     finished();
 }
 
@@ -1967,7 +1967,7 @@ Page PidTuning::do_prepare_page()
         return Page::None;
     pages.save_forward_page();
     hotend1_command();
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     return Page::PidTuning;
 }
 
@@ -1983,7 +1983,7 @@ void PidTuning::send_data()
 //! Select the hotend1 PID
 void PidTuning::hotend1_command()
 {
-    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Hotend1);
+    temperature_ = _3dlabs.get_last_used_temperature(TemperatureKind::Hotend1);
     kind_ = TemperatureKind::Hotend1;
     send_data();
 }
@@ -1991,7 +1991,7 @@ void PidTuning::hotend1_command()
 //! Select the hotend2 PID
 void PidTuning::hotend2_command()
 {
-    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Hotend2);
+    temperature_ = _3dlabs.get_last_used_temperature(TemperatureKind::Hotend2);
     kind_ = TemperatureKind::Hotend2;
     send_data();
 }
@@ -1999,7 +1999,7 @@ void PidTuning::hotend2_command()
 //! Select the bed PID
 void PidTuning::bed_command()
 {
-    temperature_ = advi3pp.get_last_used_temperature(TemperatureKind::Bed);
+    temperature_ = _3dlabs.get_last_used_temperature(TemperatureKind::Bed);
     kind_ = TemperatureKind::Bed;
     send_data();
 }
@@ -2007,7 +2007,7 @@ void PidTuning::bed_command()
 //! Show step #2 of PID tuning
 void PidTuning::step2_command()
 {
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
 
     ReadRamData frame{Variable::Value0, 2};
     if(!frame.send_and_receive())
@@ -2028,7 +2028,7 @@ void PidTuning::step2_command()
         case TemperatureKind::Bed:      auto_pid_command << F(" E-1 U1"); break;
         case TemperatureKind::Hotend1:  auto_pid_command << F(" E0 U1"); break;
         case TemperatureKind::Hotend2:  auto_pid_command << F(" E1 U1"); break;
-        default: advi3pp::Log::log() << F("Invalid PID kind: ") << static_cast<uint16_t>(kind_) << advi3pp::Log::endl(); return;
+        default: _3dlabs::Log::log() << F("Invalid PID kind: ") << static_cast<uint16_t>(kind_) << _3dlabs::Log::endl(); return;
     }
 
     enqueue_and_echo_command(auto_pid_command.get());
@@ -2052,11 +2052,11 @@ void PidTuning::finished(bool success)
     enqueue_and_echo_commands_P(PSTR("M106 S0"));
     if(!success)
     {
-        advi3pp.set_status(F("PID tuning failed"));
+        _3dlabs.set_status(F("PID tuning failed"));
         return;
     }
 
-    advi3pp.reset_status();
+    _3dlabs.reset_status();
     pid_settings.add_pid(kind_, temperature_);
     bool inTuning = inTuning_;
     inTuning_ = false;
@@ -2280,7 +2280,7 @@ bool LcdSettings::do_dispatch(KeyValue key_value)
 //! @return The index of the page to display
 Page LcdSettings::do_prepare_page()
 {
-    features_ = advi3pp.get_current_features();
+    features_ = _3dlabs.get_current_features();
     send_data();
     return Page::LCD;
 }
@@ -2291,8 +2291,8 @@ void LcdSettings::dimming_command()
     flip_bits(features_, Feature::Dimming);
     dimming.enable(test_one_bit(features_, Feature::Dimming));
     send_data();
-    advi3pp.change_features(features_);
-    advi3pp.save_settings();
+    _3dlabs.change_features(features_);
+    _3dlabs.save_settings();
 }
 
 //! Handle the change brightness command.
@@ -2300,27 +2300,27 @@ void LcdSettings::change_brightness(uint16_t brightness)
 {
     dimming.change_brightness(brightness);
     send_data();
-    advi3pp.save_settings();
+    _3dlabs.save_settings();
 }
 
 //! Handle the Buzz on Action command
 void LcdSettings::buzz_on_action_command()
 {
     flip_bits(features_, Feature::Buzzer);
-    advi3pp.enable_buzzer(test_one_bit(features_, Feature::Buzzer));
+    _3dlabs.enable_buzzer(test_one_bit(features_, Feature::Buzzer));
     send_data();
-    advi3pp.change_features(features_);
-    advi3pp.save_settings();
+    _3dlabs.change_features(features_);
+    _3dlabs.save_settings();
 }
 
 //! Handle the Buzz on Press command
 void LcdSettings::buzz_on_press_command()
 {
     flip_bits(features_, Feature::BuzzOnPress);
-    advi3pp.enable_buzz_on_press(test_one_bit(features_, Feature::BuzzOnPress));
+    _3dlabs.enable_buzz_on_press(test_one_bit(features_, Feature::BuzzOnPress));
     send_data();
-    advi3pp.change_features(features_);
-    advi3pp.save_settings();
+    _3dlabs.change_features(features_);
+    _3dlabs.save_settings();
 }
 
 //! Send the current data to the LCD panel.
@@ -2921,7 +2921,7 @@ void PidSettings::do_save_command()
 //! Execute the Back command
 void PidSettings::do_back_command()
 {
-    advi3pp.restore_settings();
+    _3dlabs.restore_settings();
     pid_tuning.send_data();
     Parent::do_back_command();
 }
@@ -3314,7 +3314,7 @@ Page EepromMismatch::do_prepare_page()
 //! Handles the Save (Continue) command
 void EepromMismatch::do_save_command()
 {
-    advi3pp.save_settings();
+    _3dlabs.save_settings();
     pages.show_page(Page::Main);
 }
 

@@ -33,7 +33,7 @@ using FlashChar = __FlashStringHelper;
 using eeprom_write = void (*)(int &pos, const uint8_t* value, uint16_t size, uint16_t* crc);
 using eeprom_read  = void (*)(int &pos, uint8_t* value, uint16_t size, uint16_t* crc, const bool force);
 
-namespace advi3pp {
+namespace _3dlabs {
 
 enum class TemperatureKind: uint8_t { Bed, Hotend1, Hotend2, Enclosure };
 constexpr const unsigned nb_temperatures = 4;

@@ -41,7 +41,7 @@
 #include "3dlabs_bitmasks.h"
 
 
-namespace advi3pp {
+namespace _3dlabs {
 
 const size_t message_length = 48; //!< Size of messages to be displayed on the LCD Panel
 const size_t progress_name_length = 44; //!< Size of the progress name (i.e. filename) to be displayed on the LCD Panel
@@ -1072,7 +1072,7 @@ private:
 
 inline namespace singletons
 {
-    extern ADVi3pp_ advi3pp;
+    extern ADVi3pp_ _3dlabs;
     extern Pages pages;
     extern Task task;
 }
@@ -1164,7 +1164,7 @@ void Handler<Self>::do_show_command()
 template<typename Self>
 void Handler<Self>::do_save_command()
 {
-    advi3pp.save_settings();
+    _3dlabs.save_settings();
     pages.show_forward_page();
 }
 

@@ -24,7 +24,7 @@
 #include <HardwareSerial.h>
 #include "serial.h"
 
-namespace advi3pp {
+namespace _3dlabs {
 
 // --------------------------------------------------------------------
 // Logging

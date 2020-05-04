@@ -47,9 +47,9 @@ namespace
 {
     const unsigned long advi3_pp_baudrate = 115200; // Between the LCD panel and the mainboard
 
-    const advi3pp::Feature DEFAULT_FEATURES =
-        advi3pp::Feature::Dimming |
-        advi3pp::Feature::Buzzer;
+    const _3dlabs::Feature DEFAULT_FEATURES =
+        _3dlabs::Feature::Dimming |
+        _3dlabs::Feature::Buzzer;
 
     const uint32_t DEFAULT_USB_BAUDRATE = BAUDRATE;
 
@@ -60,11 +60,11 @@ bool set_probe_deployed(bool);
 float run_z_probe();
 extern float zprobe_zoffset;
 
-namespace advi3pp {
+namespace _3dlabs {
 
 inline namespace singletons
 {
-    ADVi3pp_ advi3pp;
+    ADVi3pp_ _3dlabs;
     Pages pages;
     Task task;
     Feature features;
@@ -476,7 +476,7 @@ void ADVi3pp_::temperature_error(const FlashChar* message)
 {
     ADVi3pp_::set_status(message);
     send_status_data(true);
-    pages.show_page(advi3pp::Page::ThermalRunawayError);
+    pages.show_page(_3dlabs::Page::ThermalRunawayError);
 }
 
 //! Check if there is currently a status to be displayed

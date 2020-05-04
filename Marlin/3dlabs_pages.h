@@ -21,7 +21,7 @@
 #ifndef ADV_I3_PLUS_PLUS_PAGES_H
 #define ADV_I3_PLUS_PLUS_PAGES_H
 
-namespace advi3pp {
+namespace _3dlabs {
 
 enum class Page: uint8_t
 {

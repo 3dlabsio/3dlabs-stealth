@@ -27,7 +27,7 @@
 #include "duration_t.h"
 #include "3DLstring.h"
 
-namespace advi3pp {
+namespace _3dlabs {
 
 
 //! List of commands and their values (DGUS Mini)

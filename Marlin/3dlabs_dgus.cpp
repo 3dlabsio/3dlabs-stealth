@@ -24,7 +24,7 @@
 #include "3dlabs_dgus.h"
 #include "3dlabs_log.h"
 
-namespace advi3pp {
+namespace _3dlabs {
 
 namespace { const size_t MAX_GARBAGE_BYTES = 5; }
 

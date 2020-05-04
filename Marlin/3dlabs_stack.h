@@ -23,7 +23,7 @@
 #include <stddef.h>
 #include "3dlabs_log.h"
 
-namespace advi3pp {
+namespace _3dlabs {
 
 // --------------------------------------------------------------------
 // Stack - Simple Stack

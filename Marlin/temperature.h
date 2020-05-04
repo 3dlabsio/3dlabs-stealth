@@ -441,7 +441,7 @@ class Temperature {
         powerManager.power_on();
       #endif
       target_temperature[HOTEND_INDEX] = MIN(celsius, maxttemp[HOTEND_INDEX] - 15);
-      advi3pp::ADVi3pp::on_set_temperature(e == 0 ? advi3pp::TemperatureKind::Hotend1 : advi3pp::TemperatureKind::Hotend2, celsius);
+      _3dlabs::ADVi3pp::on_set_temperature(e == 0 ? _3dlabs::TemperatureKind::Hotend1 : _3dlabs::TemperatureKind::Hotend2, celsius);
       #if WATCH_HOTENDS
         start_watching_heater(HOTEND_INDEX);
       #endif
@@ -506,7 +506,7 @@ class Temperature {
             celsius
           #endif
         ;
-        advi3pp::ADVi3pp::on_set_temperature(advi3pp::TemperatureKind::Bed, target_temperature_bed);
+        _3dlabs::ADVi3pp::on_set_temperature(_3dlabs::TemperatureKind::Bed, target_temperature_bed);
         #if WATCH_THE_BED
           start_watching_bed();
         #endif

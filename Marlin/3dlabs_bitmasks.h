@@ -36,7 +36,7 @@
 #ifndef MARLIN_ADVI3PP_BITMASKS_H
 #define MARLIN_ADVI3PP_BITMASKS_H
 
-namespace advi3pp {
+namespace _3dlabs {
 
 template<bool B, class T = void>
 struct enable_if {};
