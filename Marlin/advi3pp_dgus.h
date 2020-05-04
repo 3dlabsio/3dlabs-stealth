@@ -1,8 +1,8 @@
 /**
- * Marlin 3D Printer Firmware For Wanhao Duplicator i3 Plus (ADVi3++)
+ * Marlin 3D Printer Firmware For 3D Labs Stealth
  * DWIN DGUS utility classes
  *
- * Copyright (C) 2017-2019 Sebastien Andrivet [https://github.com/andrivet/]
+ * Copyright (C) 2020 3D Labs [https://github.com/3dlabsio/]
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
