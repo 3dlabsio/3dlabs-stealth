@@ -23,7 +23,7 @@
 
 #include "3DLstd.h"
 
-namespace adv
+namespace _3dl
 {
 
 namespace internal {

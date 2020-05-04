@@ -157,7 +157,7 @@ struct Frame
     friend Frame& operator<<(Frame& frame, const Uint32& data);
     friend Frame& operator<<(Frame& frame, Page page);
     friend Frame& operator<<(Frame& frame, const char* s);
-	template<size_t L> friend Frame& operator<<(Frame& frame, const ADVString<L>& data) { frame << data.get(); return frame; }
+	template<size_t L> friend Frame& operator<<(Frame& frame, const _3DLString<L>& data) { frame << data.get(); return frame; }
 
     friend Frame& operator>>(Frame& frame, Uint8& data);
     friend Frame& operator>>(Frame& frame, Uint16& data);

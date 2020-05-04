@@ -25,7 +25,7 @@
 inline void* operator new(size_t, void* p) noexcept { return p; }
 inline void* operator new[](size_t, void* p) noexcept { return p; }
 
-namespace adv {
+namespace _3dl {
 
 using size_t = decltype(sizeof(int));
 using nullptr_t = decltype(nullptr);

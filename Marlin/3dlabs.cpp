@@ -64,7 +64,7 @@ namespace _3dlabs {
 
 inline namespace singletons
 {
-    ADVi3pp_ _3dlabs;
+    _3DLabs_ _3dlabs;
     Pages pages;
     Task task;
     Feature features;
@@ -122,26 +122,26 @@ int16_t scale(int16_t value, int16_t valueScale, int16_t targetScale)
 // --------------------------------------------------------------------
 
 //! Initialize the printer and its LCD
-void ADVi3pp_::setup_lcd_serial()
+void _3DLabs_::setup_lcd_serial()
 {
     Serial3.begin(advi3_pp_baudrate);
 }
 
 //! Change the baudrate. Check before that it is actually different.
-void ADVi3pp_::change_baudrate()
+void _3DLabs_::change_baudrate()
 {
     if(usb_baudrate_ != BAUDRATE)
         change_usb_baudrate(usb_baudrate_, false);
 }
 
 //! Initialize the printer and its LCD
-void ADVi3pp_::setup()
+void _3DLabs_::setup()
 {
     init_ = true;
 }
 
 //! Display the Boot animation (page)
-void ADVi3pp_::show_boot_page()
+void _3DLabs_::show_boot_page()
 {
     if(!eeprom_mismatch.check())
         return;
@@ -153,7 +153,7 @@ void ADVi3pp_::show_boot_page()
 
 //! Note to forks author:
 //! Under GPLv3 provision 7(b), you are not authorized to remove or alter this notice.
-void ADVi3pp_::send_gplv3_7b_notice()
+void _3DLabs_::send_gplv3_7b_notice()
 {
     SERIAL_ECHOLNPGM("Based on ADVi3++, Copyright (C) 2017-2020 Sebastien Andrivet");
 }
@@ -162,7 +162,7 @@ void ADVi3pp_::send_gplv3_7b_notice()
 //! @param write Function to use for the actual writing
 //! @param eeprom_index
 //! @param working_crc
-void ADVi3pp_::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc)
+void _3DLabs_::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc)
 {
     EepromWrite eeprom{write, eeprom_index, working_crc};
 
@@ -178,7 +178,7 @@ void ADVi3pp_::write(eeprom_write write, int& eeprom_index, uint16_t& working_cr
 //! @param read Function to use for the actual reading
 //! @param eeprom_index
 //! @param working_crc
-bool ADVi3pp_::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
+bool _3DLabs_::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
 {
     EepromRead eeprom{read, eeprom_index, working_crc};
 
@@ -197,7 +197,7 @@ bool ADVi3pp_::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
 }
 
 //! Reset presets.
-void ADVi3pp_::reset()
+void _3DLabs_::reset()
 {
     version_ = settings_version;
     preheat.reset();
@@ -208,7 +208,7 @@ void ADVi3pp_::reset()
 }
 
 //! Return the size of data specific to ADVi3++
-uint16_t ADVi3pp_::size_of() const
+uint16_t _3DLabs_::size_of() const
 {
     return
         sizeof(version_) +
@@ -221,7 +221,7 @@ uint16_t ADVi3pp_::size_of() const
 
 
 //! Inform the user that the EEPROM data are not compatible and have been reset
-void ADVi3pp_::eeprom_settings_mismatch()
+void _3DLabs_::eeprom_settings_mismatch()
 {
     // It is not possible to show the Mismatch page now since nothing is yet initialized.
     // It will be done in the setup method.
@@ -229,14 +229,14 @@ void ADVi3pp_::eeprom_settings_mismatch()
 }
 
 //! Save the current settings permanently in EEPROM memory
-void ADVi3pp_::save_settings()
+void _3DLabs_::save_settings()
 {
     eeprom_mismatch.reset_mismatch();
     enqueue_and_echo_commands_P(PSTR("M500"));
 }
 
 //! Restore settings from EEPROM memory
-void ADVi3pp_::restore_settings()
+void _3DLabs_::restore_settings()
 {
     // Note: Previously, M420 (bed leveling compensation) was reset by M501. It is no more the case.
     enqueue_and_echo_commands_P(PSTR("M501"));
@@ -247,7 +247,7 @@ void ADVi3pp_::restore_settings()
 // --------------------------------------------------------------------
 
 //! Do not do too many things in setup so do things here
-void ADVi3pp_::init()
+void _3DLabs_::init()
 {
     init_ = false;
 
@@ -263,7 +263,7 @@ void ADVi3pp_::init()
 }
 
 //! Background idle tasks
-void ADVi3pp_::idle()
+void _3DLabs_::idle()
 {
     if(init_)
         init();
@@ -277,13 +277,13 @@ void ADVi3pp_::idle()
 
 //! Check if the printer is doing something or is idle
 //! @return true if the printer is busy or has some blocks queued
-bool ADVi3pp_::is_busy()
+bool _3DLabs_::is_busy()
 {
     return busy_state != NOT_BUSY || Planner::has_blocks_queued();
 }
 
 //! Update the progress bar if the printer is printing for the SD card
-void ADVi3pp_::update_progress()
+void _3DLabs_::update_progress()
 {
     // Progress bar % comes from SD when actively printing
     if(card.sdprinting)
@@ -292,7 +292,7 @@ void ADVi3pp_::update_progress()
 
 //! Get the current Z height (optionally multiplied by a factor)
 //! @return The current Z height in mm
-double ADVi3pp_::get_current_z_height(int multiply) const
+double _3DLabs_::get_current_z_height(int multiply) const
 {
 	auto height = LOGICAL_Z_POSITION(current_position[Z_AXIS]) * multiply;
 	if(multiply != 1)
@@ -302,7 +302,7 @@ double ADVi3pp_::get_current_z_height(int multiply) const
 
 //! Get the current Z layer (optionally multiplied by a factor)
 //! @return The current Z layer
-double ADVi3pp_::get_current_z_layer(int multiply) const
+double _3DLabs_::get_current_z_layer(int multiply) const
 {
     auto height = current_position[Z_AXIS] * multiply;
     if(multiply != 1)
@@ -311,7 +311,7 @@ double ADVi3pp_::get_current_z_layer(int multiply) const
 }
 
 //! Update the status of the printer on the LCD.
-void ADVi3pp_::send_status_data(bool force_update)
+void _3DLabs_::send_status_data(bool force_update)
 {
     // Right time for an update or force update?
     if(!force_update && !task.is_update_time())
@@ -372,7 +372,7 @@ void ADVi3pp_::send_status_data(bool force_update)
 }
 
 //! Read a frame from the LCD and act accordingly.
-void ADVi3pp_::read_lcd_serial()
+void _3DLabs_::read_lcd_serial()
 {
     // Format of the frame (example):
     // header | length | command | action | nb words | key code
@@ -472,22 +472,22 @@ void ADVi3pp_::read_lcd_serial()
 // --------------------------------------------------------------------
 
 //! Display the Thermal Runaway Error screen.
-void ADVi3pp_::temperature_error(const FlashChar* message)
+void _3DLabs_::temperature_error(const FlashChar* message)
 {
-    ADVi3pp_::set_status(message);
+    _3DLabs_::set_status(message);
     send_status_data(true);
     pages.show_page(_3dlabs::Page::ThermalRunawayError);
 }
 
 //! Check if there is currently a status to be displayed
 //! @return true if there is a status (i.e. a message) to display
-bool ADVi3pp_::has_status()
+bool _3DLabs_::has_status()
 {
     return has_status_;
 }
 
 //! Set a status to display (a message)
-void ADVi3pp_::set_status(const char* message)
+void _3DLabs_::set_status(const char* message)
 {
     message_.set(message).align(Alignment::Left);
     centered_.set(message).align(Alignment::Center);
@@ -495,7 +495,7 @@ void ADVi3pp_::set_status(const char* message)
 }
 
 //! Set a status to display (a message)
-void ADVi3pp_::set_status(const char* fmt, va_list& args)
+void _3DLabs_::set_status(const char* fmt, va_list& args)
 {
     message_.set(fmt, args).align(Alignment::Left);
     centered_.set(fmt, args).align(Alignment::Center);
@@ -503,7 +503,7 @@ void ADVi3pp_::set_status(const char* fmt, va_list& args)
 }
 
 //! Set a status to display (a message)
-void ADVi3pp_::set_status(const FlashChar* message)
+void _3DLabs_::set_status(const FlashChar* message)
 {
     message_.set(message).align(Alignment::Left);
     centered_.set(message).align(Alignment::Center);
@@ -511,7 +511,7 @@ void ADVi3pp_::set_status(const FlashChar* message)
 }
 
 //! Set a status to display (a message)
-void ADVi3pp_::set_status(const FlashChar* fmt, va_list& args)
+void _3DLabs_::set_status(const FlashChar* fmt, va_list& args)
 {
     message_.set(fmt, args).align(Alignment::Left);
     centered_.set(fmt, args).align(Alignment::Center);
@@ -519,7 +519,7 @@ void ADVi3pp_::set_status(const FlashChar* fmt, va_list& args)
 }
 
 //! Clear the status (nothing to display)
-void ADVi3pp_::reset_status()
+void _3DLabs_::reset_status()
 {
     message_.reset().align(Alignment::Left);
     centered_.reset().align(Alignment::Left);
@@ -527,13 +527,13 @@ void ADVi3pp_::reset_status()
 }
 
 //! Handle Stop and Wait from the host: display a wait/continue page
-void ADVi3pp_::stop_and_wait()
+void _3DLabs_::stop_and_wait()
 {
     wait.show_continue();
 }
 
 //! Set the name for the progress message. Usually, it is the name of the file printed.
-void ADVi3pp_::set_progress_name(const char* name)
+void _3DLabs_::set_progress_name(const char* name)
 {
     progress_name_ = name;
     progress_.reset().align(Alignment::Left);
@@ -542,7 +542,7 @@ void ADVi3pp_::set_progress_name(const char* name)
 }
 
 //! Compute the current progress message (name and percentage)
-void ADVi3pp_::compute_progress()
+void _3DLabs_::compute_progress()
 {
     bool percentChanged = false, etChanged = false;
 
@@ -578,13 +578,13 @@ void ADVi3pp_::compute_progress()
 }
 
 //! Enable or disable the buzzer
-void ADVi3pp_::enable_buzzer(bool enable, bool /*doIt*/)
+void _3DLabs_::enable_buzzer(bool enable, bool /*doIt*/)
 {
     buzzer_enabled_ = enable;
 }
 
 //! Enable or disable the buzzer when the LCD panel is presses
-void ADVi3pp_::enable_buzz_on_press(bool enable, bool doIt)
+void _3DLabs_::enable_buzz_on_press(bool enable, bool doIt)
 {
     buzz_on_press_enabled_ = enable;
     if(enable && doIt)
@@ -593,7 +593,7 @@ void ADVi3pp_::enable_buzz_on_press(bool enable, bool doIt)
 
 //! Activate the LCD internal buzzer for the given duration.
 //! Note: If the buzzer is disabled, does nothing.
-void ADVi3pp_::buzz(long duration)
+void _3DLabs_::buzz(long duration)
 {
     dimming.reset();
     if(!buzzer_enabled_)
@@ -607,7 +607,7 @@ void ADVi3pp_::buzz(long duration)
 
 //! Send the buzz command to the LCD panel
 //! @param duration Duration of the sound
-void ADVi3pp_::buzz_(long duration)
+void _3DLabs_::buzz_(long duration)
 {
     duration /= 10;
 
@@ -618,7 +618,7 @@ void ADVi3pp_::buzz_(long duration)
 
 //! Buzz briefly when the LCD panel is pressed.
 //! Note: If buzz on press is disabled, does nothing
-void ADVi3pp_::buzz_on_press()
+void _3DLabs_::buzz_on_press()
 {
     if(!buzz_on_press_enabled_)
     {
@@ -631,7 +631,7 @@ void ADVi3pp_::buzz_on_press()
 //! Change the USB baudrate between the printer and the host
 //! @param baudrate New baudrate
 //! @param disconnect Disconnect or not the host
-void ADVi3pp_::change_usb_baudrate(uint32_t baudrate, bool disconnect)
+void _3DLabs_::change_usb_baudrate(uint32_t baudrate, bool disconnect)
 {
     if(disconnect)
         SERIAL_ECHOLNPGM("//action:disconnect");
@@ -652,7 +652,7 @@ void ADVi3pp_::change_usb_baudrate(uint32_t baudrate, bool disconnect)
 }
 
 //! Change the current set of features of ADVi3++ (thermal protection, dimming, ...)
-void ADVi3pp_::change_features(Feature features)
+void _3DLabs_::change_features(Feature features)
 {
     features_ = features;
 }
@@ -660,7 +660,7 @@ void ADVi3pp_::change_features(Feature features)
 //! Get the last used temperature for the hotend or the bad
 //! @param kind Kind of temperature: hotend or bed
 //! @return The last used themperature
-uint16_t  ADVi3pp_::get_last_used_temperature(TemperatureKind kind) const
+uint16_t  _3DLabs_::get_last_used_temperature(TemperatureKind kind) const
 {
     return last_used_temperature_[static_cast<unsigned>(kind)];
 }
@@ -668,7 +668,7 @@ uint16_t  ADVi3pp_::get_last_used_temperature(TemperatureKind kind) const
 //! To be called when a new temperature is selected as a target
 //! @param kind Kind of temperature: hotend or bed
 //! @param temperature The new target temperature
-void ADVi3pp_::on_set_temperature(TemperatureKind kind, uint16_t temperature)
+void _3DLabs_::on_set_temperature(TemperatureKind kind, uint16_t temperature)
 {
     if(temperature == 0)
         return;
@@ -677,7 +677,7 @@ void ADVi3pp_::on_set_temperature(TemperatureKind kind, uint16_t temperature)
 }
 
 //! Process G-Codes specific to this firmware (Ax)
-void ADVi3pp_::process_command(const GCodeParser& parser)
+void _3DLabs_::process_command(const GCodeParser& parser)
 {
     switch(parser.codenum)
     {
@@ -687,7 +687,7 @@ void ADVi3pp_::process_command(const GCodeParser& parser)
     }
 }
 
-void ADVi3pp_::switch_tool(uint8_t index, bool no_move)
+void _3DLabs_::switch_tool(uint8_t index, bool no_move)
 {
     tool_change(index, 0, no_move);
 }

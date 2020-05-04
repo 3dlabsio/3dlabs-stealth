@@ -288,7 +288,7 @@ MarlinSettings settings;
 #endif
 
 // @advi3++: Add the size of ADVi3++ specific data
-uint16_t MarlinSettings::datasize() { return sizeof(SettingsData) + _3dlabs::ADVi3pp::size_of(); }
+uint16_t MarlinSettings::datasize() { return sizeof(SettingsData) + _3dlabs::_3DLabs::size_of(); }
 
 /**
  * Post-process after Retrieve or Reset
@@ -972,7 +972,7 @@ void MarlinSettings::postprocess() {
     #endif
 
     // @advi3++: Store data specific to ADVi3++
-    _3dlabs::ADVi3pp::write(&write_data, eeprom_index, working_crc);
+    _3dlabs::_3DLabs::write(&write_data, eeprom_index, working_crc);
 
     //
     // Validate CRC and Data Size
@@ -1587,7 +1587,7 @@ void MarlinSettings::postprocess() {
       #endif
 
       // @advi3++: Load data specific to ADVi3++
-      if(!_3dlabs::ADVi3pp::read(&read_data, eeprom_index, working_crc))
+      if(!_3dlabs::_3DLabs::read(&read_data, eeprom_index, working_crc))
           eeprom_error = true;
 
       eeprom_error = size_error(eeprom_index - (EEPROM_OFFSET));
@@ -1675,7 +1675,7 @@ void MarlinSettings::postprocess() {
     if (validate()) return _load();
     reset();
     // @advi3++: Display a message on the LCD panel when it is not possible to use the data stored in EEPROM (incompatible)
-    _3dlabs::ADVi3pp::eeprom_settings_mismatch();
+    _3dlabs::_3DLabs::eeprom_settings_mismatch();
     return true;
   }
 
@@ -1999,7 +1999,7 @@ void MarlinSettings::reset() {
   #endif
 
   // @advi3++: Reset data specific to ADVi3++
-  _3dlabs::ADVi3pp::reset();
+  _3dlabs::_3DLabs::reset();
 
   postprocess();
 

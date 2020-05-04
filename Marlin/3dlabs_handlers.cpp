@@ -731,7 +731,7 @@ uint16_t Preheat::do_size_of() const
         sizeof(Preset::enclosure) + sizeof(Preset::fan1) + sizeof(Preset::fan2));
 }
 
-//! Send the presets t the LCD Panel
+//! Send the presets to the LCD Panel
 void Preheat::send_presets()
 {
     Log::log() << F("Preheat page") << Log::endl();
@@ -744,7 +744,7 @@ void Preheat::send_presets()
           << Uint16(presets_[index_].fan2);
     frame.send();
 
-    ADVString<8> preset;
+    _3DLString<8> preset;
     preset << index_ + 1 << F(" / ") << NB_PRESETS;
     frame.reset(Variable::ShortText0);
     frame << preset;
@@ -1350,8 +1350,8 @@ void Card::show_current_page()
 {
     WriteRamDataRequest frame{Variable::LongText0};
 
-    ADVString<sd_file_length> name;
-    ADVString<48> aligned_name;
+    _3DLString<sd_file_length> name;
+    _3DLString<48> aligned_name;
 
     for(uint8_t index = 0; index < nb_visible_sd_files; ++index)
     {
@@ -1369,7 +1369,7 @@ void Card::show_current_page()
 //! Get a filename with a given index.
 //! @param index    Index of the filename
 //! @param name     Copy the filename into this Chars
-void Card::get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& name)
+void Card::get_file_name(uint8_t index_in_page, _3DLString<sd_file_length>& name)
 {
     name.reset();
 	if(last_file_index_ >= index_in_page)
@@ -1569,7 +1569,7 @@ bool Print::ensure_not_printing()
 
 //! Show Advance Pause message (called from Marlin).
 //! @param message Message to dislay.
-void ADVi3pp_::advanced_pause_show_message(const AdvancedPauseMessage message)
+void _3DLabs_::advanced_pause_show_message(const AdvancedPauseMessage message)
 {
     pause.advanced_pause_show_message(message);
 }
@@ -1746,7 +1746,7 @@ double SensorZHeight::get_multiplier_value() const
 void SensorZHeight::adjust_height(double offset)
 {
 	auto new_height = _3dlabs.get_current_z_height() + offset;
-    ADVString<10> command;
+    _3DLString<10> command;
     command << F("G1 Z") << new_height << F(" F1200");
     enqueue_and_echo_command(command.get());
     send_data();
@@ -1852,7 +1852,7 @@ void ExtruderTuning::heating_task()
     enqueue_and_echo_commands_P(PSTR("M83"));           // relative E mode
     enqueue_and_echo_commands_P(PSTR("G92 E0"));        // reset E axis
 
-    ADVString<20> command; command << F("G1 E") << tuning_extruder_filament << " F50"; // Extrude slowly
+    _3DLString<20> command; command << F("G1 E") << tuning_extruder_filament << " F50"; // Extrude slowly
     enqueue_and_echo_command(command.get());
 
     task.set_background_task(BackgroundTask(this, &ExtruderTuning::extruding_task));
@@ -2020,7 +2020,7 @@ void PidTuning::step2_command()
     if(kind_ == TemperatureKind::Hotend1 || kind_ == TemperatureKind::Hotend2)
         enqueue_and_echo_commands_P(PSTR("M106 S255")); // Turn on fan (only for hotends)
 
-    ADVString<20> auto_pid_command;
+    _3DLString<20> auto_pid_command;
     auto_pid_command << F("M303 S") << temperature_;
 
     switch(kind_)
@@ -2181,7 +2181,7 @@ void SensorSettings::next_command()
 //! Send current data to the LCD Panel.
 void SensorSettings::send_data() const
 {
-    ADVString<32> title{get_sensor_name(index_)};
+    _3DLString<32> title{get_sensor_name(index_)};
 
     WriteRamDataRequest frame{Variable::Value0};
     frame << Uint16(positions_[index_].x) << Uint16(positions_[index_].y) << Uint16(zprobe_zoffset * 100);
@@ -2865,7 +2865,7 @@ void PidSettings::send_data() const
           << Uint16(pid.Kd_ * 100);
     frame.send();
 
-    ADVString<8> indexes;
+    _3DLString<8> indexes;
     indexes << index_ + 1 << F(" / ") << NB_PIDs;
     frame.reset(Variable::ShortText0);
     frame << indexes;
@@ -3173,10 +3173,10 @@ void Statistics::send_stats()
 {
     printStatistics stats = PrintCounter::getStats();
 
-    ADVString<48> printTime{duration_t{stats.printTime}};
-    ADVString<48> longestPrint{duration_t{stats.longestPrint}};
+    _3DLString<48> printTime{duration_t{stats.printTime}};
+    _3DLString<48> longestPrint{duration_t{stats.longestPrint}};
 
-    ADVString<48> filament_used;
+    _3DLString<48> filament_used;
     filament_used << static_cast<unsigned int>(stats.filamentUsed / 1000)
                   << '.'
                   << (static_cast<unsigned int>(stats.filamentUsed / 100) % 10)
@@ -3202,7 +3202,7 @@ void Statistics::send_stats()
 //! Get the current DGUS firmware version.
 //! @return     The version as a string.
 template<size_t L>
-ADVString<L>& get_lcd_firmware_version(ADVString<L>& lcd_version)
+_3DLString<L>& get_lcd_firmware_version(_3DLString<L>& lcd_version)
 {
     ReadRegister response{Register::Version, 1};
     if(!response.send_and_receive())
@@ -3222,7 +3222,7 @@ ADVString<L>& get_lcd_firmware_version(ADVString<L>& lcd_version)
 //! @param hex_version  Hexadecimal representation of the version
 //! @return             Version as a string
 template<size_t L>
-ADVString<L>& convert_version(ADVString<L>& version, uint16_t hex_version)
+_3DLString<L>& convert_version(_3DLString<L>& version, uint16_t hex_version)
 {
     version << hex_version / 0x0100 << '.' << (hex_version % 0x100) / 0x10 << '.' << hex_version % 0x10;
     return version;
@@ -3231,12 +3231,12 @@ ADVString<L>& convert_version(ADVString<L>& version, uint16_t hex_version)
 //! Send the different versions to the LCD screen.
 void Versions::send_versions() const
 {
-    ADVString<16> advi3pp_version;
-    ADVString<16> advi3pp_build;
-    ADVString<16> dgus_version;
-    ADVString<16> marlin_version{SHORT_BUILD_VERSION};
+    _3DLString<16> _3dlabs_version;
+    _3DLString<16> _3dlabs_build;
+    _3DLString<16> dgus_version;
+    _3DLString<16> marlin_version{SHORT_BUILD_VERSION};
 
-    advi3pp_build
+    _3dlabs_build
         << (YEAR__ - 2000)
         << (MONTH__ < 10 ? "0" : "") << MONTH__
         << (DAY__   < 10 ? "0" : "") << DAY__
@@ -3244,14 +3244,14 @@ void Versions::send_versions() const
         << (MIN__   < 10 ? "0" : "") << MIN__
         << (SEC__   < 10 ? "0" : "") << SEC__;
 
-    convert_version(advi3pp_version, advi3_pp_version).align(Alignment::Left);
-    advi3pp_build.align(Alignment::Left);
+    convert_version(_3dlabs_version, advi3_pp_version).align(Alignment::Left);
+    _3dlabs_build.align(Alignment::Left);
     get_lcd_firmware_version(dgus_version).align(Alignment::Left);
     marlin_version.align(Alignment::Left);
 
-    WriteRamDataRequest frame{Variable::ADVi3ppVersion};
-    frame << advi3pp_version
-          << advi3pp_build
+    WriteRamDataRequest frame{Variable::_3DLabsVersion};
+    frame << _3dlabs_version
+          << _3dlabs_build
           << dgus_version
           << marlin_version;
     frame.send();
@@ -3343,7 +3343,7 @@ void EepromMismatch::reset_mismatch()
 
 //! Set LCD Panel brightness
 //! @param brightness New brightness
-void ADVi3pp_::set_brightness(int16_t brightness)
+void _3DLabs_::set_brightness(int16_t brightness)
 {
     dimming.change_brightness(brightness);
 }

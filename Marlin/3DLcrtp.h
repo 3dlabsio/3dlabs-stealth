@@ -24,7 +24,7 @@
 #ifndef ADVLIB_ADVPOLY_H
 #define ADVLIB_ADVPOLY_H
 
-namespace adv {
+namespace _3dl {
 
 // --------------------------------------------------------------------
 // Curiously Recurring Template Pattern

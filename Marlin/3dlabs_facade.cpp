@@ -44,39 +44,39 @@ inline namespace singletons
 // --------------------------------------------------------------------
 
 //! Initialize the printer and its LCD.
-void ADVi3pp::setup()
+void _3DLabs::setup()
 {
     _3dlabs.setup();
 }
 
-void ADVi3pp::setup_lcd_serial()
+void _3DLabs::setup_lcd_serial()
 {
     _3dlabs.setup_lcd_serial();
 }
 
-void ADVi3pp::change_baudrate()
+void _3DLabs::change_baudrate()
 {
     _3dlabs.change_baudrate();
 }
 
 //! Read data from the LCD and act accordingly.
-void ADVi3pp::idle()
+void _3DLabs::idle()
 {
     _3dlabs.idle();
 }
 
 //! PID automatic tuning is finished.
-void ADVi3pp::auto_pid_finished(bool success)
+void _3DLabs::auto_pid_finished(bool success)
 {
     pid_tuning.finished(success);
 }
 
-void ADVi3pp::g29_leveling_finished(bool success)
+void _3DLabs::g29_leveling_finished(bool success)
 {
     automatic_leveling.g29_leveling_finished(success);
 }
 
-void ADVi3pp::pause_finished()
+void _3DLabs::pause_finished()
 {
     print.pause_finished();
 }
@@ -85,7 +85,7 @@ void ADVi3pp::pause_finished()
 //! @param write Function to use for the actual writing
 //! @param eeprom_index
 //! @param working_crc
-void ADVi3pp::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc)
+void _3DLabs::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc)
 {
     _3dlabs.write(write, eeprom_index, working_crc);
 }
@@ -94,66 +94,66 @@ void ADVi3pp::write(eeprom_write write, int& eeprom_index, uint16_t& working_crc
 //! @param read Function to use for the actual reading
 //! @param eeprom_index
 //! @param working_crc
-bool ADVi3pp::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
+bool _3DLabs::read(eeprom_read read, int& eeprom_index, uint16_t& working_crc)
 {
     return _3dlabs.read(read, eeprom_index, working_crc);
 }
 
 //! Reset presets.
-void ADVi3pp::reset()
+void _3DLabs::reset()
 {
     _3dlabs.reset();
 }
 
 //! Return the size of data specific to ADVi3++
-uint16_t ADVi3pp::size_of()
+uint16_t _3DLabs::size_of()
 {
     return _3dlabs.size_of();
 }
 
 //! Inform the user that the EEPROM data are not compatible and have been reset
-void ADVi3pp::eeprom_settings_mismatch()
+void _3DLabs::eeprom_settings_mismatch()
 {
     _3dlabs.eeprom_settings_mismatch();
 }
 
 //! Called when a temperature error occurred and display the error on the LCD.
-void ADVi3pp::temperature_error(const FlashChar* message)
+void _3DLabs::temperature_error(const FlashChar* message)
 {
     _3dlabs.temperature_error(message);
 }
 
-void ADVi3pp::set_brightness(int16_t britghness)
+void _3DLabs::set_brightness(int16_t britghness)
 {
     _3dlabs.set_brightness(britghness);
 }
 
-bool ADVi3pp::has_status()
+bool _3DLabs::has_status()
 {
     return _3dlabs.has_status();
 }
 
-void ADVi3pp::set_status(const char* message)
+void _3DLabs::set_status(const char* message)
 {
     _3dlabs.set_status(message);
 }
 
-void ADVi3pp::set_status(const FlashChar* message)
+void _3DLabs::set_status(const FlashChar* message)
 {
     _3dlabs.set_status(message);
 }
 
-void ADVi3pp::set_status(const char * const fmt, va_list& args)
+void _3DLabs::set_status(const char * const fmt, va_list& args)
 {
     _3dlabs.set_status(fmt, args);
 }
 
-void ADVi3pp::set_status(const FlashChar* const fmt, va_list& args)
+void _3DLabs::set_status(const FlashChar* const fmt, va_list& args)
 {
     _3dlabs.set_status(fmt, args);
 }
 
-void ADVi3pp::set_status_v(const FlashChar* fmt, ...)
+void _3DLabs::set_status_v(const FlashChar* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -161,62 +161,62 @@ void ADVi3pp::set_status_v(const FlashChar* fmt, ...)
     va_end(args);
 }
 
-void  ADVi3pp::advanced_pause_show_message(AdvancedPauseMessage message)
+void  _3DLabs::advanced_pause_show_message(AdvancedPauseMessage message)
 {
     _3dlabs.advanced_pause_show_message(message);
 }
 
-void ADVi3pp::reset_status()
+void _3DLabs::reset_status()
 {
     _3dlabs.reset_status();
 }
 
-void ADVi3pp::buzz(long duration, uint16_t)
+void _3DLabs::buzz(long duration, uint16_t)
 {
     _3dlabs.buzz(duration);
 }
 
-void ADVi3pp::on_set_temperature(TemperatureKind kind, uint16_t temperature)
+void _3DLabs::on_set_temperature(TemperatureKind kind, uint16_t temperature)
 {
     _3dlabs.on_set_temperature(kind, temperature);
 }
 
-void ADVi3pp::stop_and_wait()
+void _3DLabs::stop_and_wait()
 {
     _3dlabs.stop_and_wait();
 }
 
-void ADVi3pp::process_command(const GCodeParser& parser)
+void _3DLabs::process_command(const GCodeParser& parser)
 {
     _3dlabs.process_command(parser);
 }
 
-double ADVi3pp::x_probe_offset_from_extruder()
+double _3DLabs::x_probe_offset_from_extruder()
 {
     return sensor_settings.x_probe_offset_from_extruder();
 }
 
-double ADVi3pp::y_probe_offset_from_extruder()
+double _3DLabs::y_probe_offset_from_extruder()
 {
     return sensor_settings.y_probe_offset_from_extruder();
 }
 
-int ADVi3pp::left_probe_bed_position()
+int _3DLabs::left_probe_bed_position()
 {
     return sensor_settings.left_probe_bed_position();
 }
 
-int ADVi3pp::right_probe_bed_position()
+int _3DLabs::right_probe_bed_position()
 {
     return sensor_settings.right_probe_bed_position();
 }
 
-int ADVi3pp::front_probe_bed_position()
+int _3DLabs::front_probe_bed_position()
 {
     return sensor_settings.front_probe_bed_position();
 }
 
-int ADVi3pp::back_probe_bed_position()
+int _3DLabs::back_probe_bed_position()
 {
     return sensor_settings.back_probe_bed_position();
 }

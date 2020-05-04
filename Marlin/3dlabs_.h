@@ -55,7 +55,7 @@ const uint16_t default_bed_temperature = 50; //!< Default target temperature for
 const uint16_t default_hotend_temperature = 200; //!< Default target temperature for the hotend
 const uint16_t default_enclosure_temperature = 30; //!< Default target temperature for the enclosure
 
-using adv::Callback;
+using _3dl::Callback;
 using BackgroundTask = Callback<void(*)()>;
 using WaitCallback = Callback<bool(*)()>;
 
@@ -143,7 +143,7 @@ private:
 
 //! Handle inputs from the LCD Panel
 template<typename Self>
-struct Handler: adv::Crtp<Self, Handler>
+struct Handler: _3dl::Crtp<Self, Handler>
 {
 public:
     void handle(KeyValue value);
@@ -425,7 +425,7 @@ private:
     bool do_dispatch(KeyValue value);
     Page do_prepare_page();
     void show_current_page();
-    void get_file_name(uint8_t index_in_page, ADVString<sd_file_length>& name);
+    void get_file_name(uint8_t index_in_page, _3DLString<sd_file_length>& name);
     void up_command();
     void down_command();
     void select_file_command(uint16_t file_index);
@@ -990,7 +990,7 @@ private:
 // --------------------------------------------------------------------
 
 //! ADVi3++ class
-struct ADVi3pp_
+struct _3DLabs_
 {
     void setup_lcd_serial();
     void change_baudrate();
@@ -1054,12 +1054,12 @@ private:
     Feature features_ = Feature::None;
     uint16_t last_used_temperature_[nb_temperatures] = {default_bed_temperature, default_hotend_temperature, default_hotend_temperature, default_enclosure_temperature};
     bool has_status_ = false;
-    ADVString<message_length> message_;
-    ADVString<message_length> centered_;
-    ADVString<progress_name_length> progress_name_;
-    ADVString<progress_length> progress_;
-    ADVString<tc_length> tc_; // time to complete
-    ADVString<et_length> et_; // elapsed_time
+    _3DLString<message_length> message_;
+    _3DLString<message_length> centered_;
+    _3DLString<progress_name_length> progress_name_;
+    _3DLString<progress_length> progress_;
+    _3DLString<tc_length> tc_; // time to complete
+    _3DLString<et_length> et_; // elapsed_time
     int percent_ = -1;
     millis_t lastET_ = -1;
     bool buzzer_enabled_ = true;
@@ -1072,7 +1072,7 @@ private:
 
 inline namespace singletons
 {
-    extern ADVi3pp_ _3dlabs;
+    extern _3DLabs_ _3dlabs;
     extern Pages pages;
     extern Task task;
 }

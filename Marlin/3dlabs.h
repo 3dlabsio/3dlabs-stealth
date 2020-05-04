@@ -38,8 +38,8 @@ namespace _3dlabs {
 enum class TemperatureKind: uint8_t { Bed, Hotend1, Hotend2, Enclosure };
 constexpr const unsigned nb_temperatures = 4;
 
-//! ADVi3++ public facade, i.e. interface between Marlin code and ADVi3++ code
-struct ADVi3pp
+//! 3DLabs public facade, i.e. interface between Marlin code and 3DLabs code
+struct _3DLabs
 {
     static void setup_lcd_serial();
     static void change_baudrate();

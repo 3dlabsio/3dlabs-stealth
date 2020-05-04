@@ -65,7 +65,7 @@ enum class Variable: uint16_t
     LongTextCentered0       = 0x0198,
 
     // 2 - Versions
-    ADVi3ppVersion          = 0x0200,
+    _3DLabsVersion          = 0x0200,
     ADVi3ppBuild            = 0x0208,
     ADVi3ppDGUSVersion      = 0x0210,
     ADVi3ppMarlinVersion    = 0x0218,
