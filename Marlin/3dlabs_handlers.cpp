@@ -571,7 +571,7 @@ void LoadUnload::prepare(const BackgroundTask& background)
     enqueue_and_echo_commands_P(PSTR("G92 E0"));    // reset E axis
 
     task.set_background_task(background);
-    wait.show(F("Wait until the target temp is reached..."), WaitCallback{this, &LoadUnload::stop});
+    wait.show(F("Nozzle heating, please wait."), WaitCallback{this, &LoadUnload::stop});
 }
 
 //! Start Load action.
@@ -2432,7 +2432,7 @@ void PrintSettings::hotend1_minus_command()
 void PrintSettings::hotend1_plus_command()
 {
     auto temperature = Temperature::degTargetHotend(0);
-    if(temperature >= 420)
+    if(temperature >= 435)
         return;
 
     Temperature::setTargetHotend(temperature + 1, 0);
@@ -2452,7 +2452,7 @@ void PrintSettings::hotend2_minus_command()
 void PrintSettings::hotend2_plus_command()
 {
     auto temperature = Temperature::degTargetHotend(1);
-    if(temperature >= 420)
+    if(temperature >= 435)
         return;
 
     Temperature::setTargetHotend(temperature + 1, 1);
@@ -2472,7 +2472,7 @@ void PrintSettings::bed_minus_command()
 void PrintSettings::bed_plus_command()
 {
     auto temperature = Temperature::degTargetBed();
-    if(temperature >= 180)
+    if(temperature >= 205)
         return;
 
     Temperature::setTargetBed(temperature + 1);
