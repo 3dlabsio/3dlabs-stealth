@@ -959,8 +959,8 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 400
-#define Y_BED_SIZE 300
+#define X_BED_SIZE 430
+#define Y_BED_SIZE 305
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 // @advi3++: Adjust bed offets if necessary
@@ -1010,7 +1010,6 @@
  */
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  // 3dlabs: set to 1 until second extruder is working
   #define NUM_RUNOUT_SENSORS   2
   //#define NUM_RUNOUT_SENSORS   2     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
   #define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
