@@ -402,11 +402,6 @@ private:
     void point2_command();
     void point3_command();
     void point4_command();
-    void point5_command();
-    void pointA_command();
-    void pointB_command();
-    void pointC_command();
-    void pointD_command();
     void leveling_task();
 
     friend Parent;

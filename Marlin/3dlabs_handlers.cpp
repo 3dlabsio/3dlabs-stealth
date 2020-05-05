@@ -1142,11 +1142,6 @@ bool ManualLeveling::do_dispatch(KeyValue key_value)
         case KeyValue::LevelingPoint2:  point2_command(); break;
         case KeyValue::LevelingPoint3:  point3_command(); break;
         case KeyValue::LevelingPoint4:  point4_command(); break;
-        case KeyValue::LevelingPoint5:  point5_command(); break;
-        case KeyValue::LevelingPointA:  pointA_command(); break;
-        case KeyValue::LevelingPointB:  pointB_command(); break;
-        case KeyValue::LevelingPointC:  pointC_command(); break;
-        case KeyValue::LevelingPointD:  pointD_command(); break;
         default:                        return false;
     }
 
@@ -1221,52 +1216,6 @@ void ManualLeveling::point4_command()
     enqueue_and_echo_commands_P(PSTR("G1 X370 Y30 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
-
-//! Handle leveling point #5.
-void ManualLeveling::point5_command()
-{
-    Log::log() << F("Level point 5") << Log::endl();
-    enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X215 Y152 F6000"));
-    enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
-}
-
-//! Handle leveling point #A.
-void ManualLeveling::pointA_command()
-{
-    Log::log() << F("Level point A") << Log::endl();
-    enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X100 Y30 F6000"));
-    enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
-}
-
-//! Handle leveling point #B.
-void ManualLeveling::pointB_command()
-{
-    Log::log() << F("Level point B") << Log::endl();
-    enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X30 Y100 F6000"));
-    enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
-}
-
-//! Handle leveling point #C.
-void ManualLeveling::pointC_command()
-{
-    Log::log() << F("Level point C") << Log::endl();
-    enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X100 Y170 F6000"));
-    enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
-}
-
-//! Handle leveling point #D.
-void ManualLeveling::pointD_command()
-{
-    Log::log() << F("Level point D") << Log::endl();
-    enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X170 Y100 F6000"));
-    enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
-}
-
 
 // --------------------------------------------------------------------
 // Card
