@@ -1187,12 +1187,11 @@ void ManualLeveling::leveling_task()
     pages.show_page(Page::ManualLeveling, ShowOptions::None);
 }
 
-//! Handle leveling point #1.
 void ManualLeveling::point1_command()
 {
     Log::log() << F("Level point 1") << Log::endl();
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X30 Y30 F6000"));
+    enqueue_and_echo_commands_P(PSTR("G1 X60 Y30 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
 
@@ -1201,7 +1200,7 @@ void ManualLeveling::point2_command()
 {
     Log::log() << F("Level point 2") << Log::endl();
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X30 Y170 F6000"));
+    enqueue_and_echo_commands_P(PSTR("G1 X60 Y275 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
 
@@ -1210,7 +1209,7 @@ void ManualLeveling::point3_command()
 {
     Log::log() << F("Level point 3") << Log::endl();
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X170 Y170 F6000"));
+    enqueue_and_echo_commands_P(PSTR("G1 X370 Y275 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
 
@@ -1219,7 +1218,7 @@ void ManualLeveling::point4_command()
 {
     Log::log() << F("Level point 4") << Log::endl();
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X170 Y30 F6000"));
+    enqueue_and_echo_commands_P(PSTR("G1 X370 Y30 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
 
@@ -1228,7 +1227,7 @@ void ManualLeveling::point5_command()
 {
     Log::log() << F("Level point 5") << Log::endl();
     enqueue_and_echo_commands_P(PSTR("G1 Z4 F1200"));
-    enqueue_and_echo_commands_P(PSTR("G1 X100 Y100 F6000"));
+    enqueue_and_echo_commands_P(PSTR("G1 X215 Y152 F6000"));
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));
 }
 
