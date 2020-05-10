@@ -814,6 +814,7 @@ void Preheat::do_save_command()
     fanSpeeds[static_cast<int>(FanIndex::Fan2)] = scale(preset.fan2, 100, 255);
 
     _3dlabs.save_settings();
+    _3dlabs.set_status(F("Preheat..."));
     temperatures.show(ShowOptions::None);
 }
 
@@ -824,7 +825,7 @@ void Preheat::cooldown_command()
         return;
 
     Log::log() << F("Cooldown") << Log::endl();
-    _3dlabs.reset_status();
+    _3dlabs.set_status(F("Cooldown"));
     Temperature::disable_all_heaters();
     fanSpeeds[static_cast<int>(FanIndex::Fan1)] = 0; // Turn off fan
     fanSpeeds[static_cast<int>(FanIndex::Fan2)] = 0; // Turn off 2nd fan
