@@ -148,22 +148,14 @@ void _3DLabs::set_status(const FlashChar* const fmt, va_list& args)
     _3dlabs.set_status(fmt, args);
 }
 
-void _3DLabs::set_auto_pid_status(const FlashChar* message)
+void _3DLabs::set_auto_pid_progress(int index, int nb)
 {
-    _3dlabs.set_auto_pid_status(message);
+    _3dlabs.set_auto_pid_progress(index, nb);
 }
 
-void _3DLabs::set_auto_pid_status(const FlashChar* fmt, va_list& args)
+void _3DLabs::set_auto_bed_leveling_progress(int index, int nb, int x, int y)
 {
-    _3dlabs.set_auto_pid_status(fmt, args);
-}
-
-void _3DLabs::set_auto_pid_status_v(const FlashChar* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    set_auto_pid_status(fmt, args);
-    va_end(args);
+    _3dlabs.set_auto_bed_leveling_progress(index, nb, x, y);
 }
 
 void  _3DLabs::advanced_pause_show_message(AdvancedPauseMessage message)
