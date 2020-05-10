@@ -330,6 +330,17 @@ void Wait::set_message(const FlashChar* message)
 {
     WriteRamDataRequest frame{Variable::LongText0};
     _3DLString<48> message_to_send{message};
+    message_to_send.align(Alignment::Left);
+    frame << message_to_send;
+    frame.send();
+}
+
+void Wait::set_message(const FlashChar* fmt, va_list& args)
+{
+    WriteRamDataRequest frame{Variable::LongText0};
+    _3DLString<48> message_to_send;
+    message_to_send.set(fmt, args);
+    message_to_send.align(Alignment::Left);
     frame << message_to_send;
     frame.send();
 }

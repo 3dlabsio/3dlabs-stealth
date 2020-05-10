@@ -143,21 +143,26 @@ void _3DLabs::set_status(const FlashChar* message)
     _3dlabs.set_status(message);
 }
 
-void _3DLabs::set_status(const char * const fmt, va_list& args)
-{
-    _3dlabs.set_status(fmt, args);
-}
-
 void _3DLabs::set_status(const FlashChar* const fmt, va_list& args)
 {
     _3dlabs.set_status(fmt, args);
 }
 
-void _3DLabs::set_status_v(const FlashChar* fmt, ...)
+void _3DLabs::set_auto_pid_status(const FlashChar* message)
+{
+    _3dlabs.set_auto_pid_status(message);
+}
+
+void _3DLabs::set_auto_pid_status(const FlashChar* fmt, va_list& args)
+{
+    _3dlabs.set_auto_pid_status(fmt, args);
+}
+
+void _3DLabs::set_auto_pid_status_v(const FlashChar* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    set_status(fmt, args);
+    set_auto_pid_status(fmt, args);
     va_end(args);
 }
 

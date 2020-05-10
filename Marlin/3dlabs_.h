@@ -209,6 +209,7 @@ struct Wait: Handler<Wait>
     template<size_t L> void show_continue(const _3DLString<L>& message, ShowOptions options = ShowOptions::SaveBack);
     void show_back(const FlashChar* message, ShowOptions options = ShowOptions::SaveBack);
     void set_message(const FlashChar* message);
+    void set_message(const FlashChar* fmt, va_list& args);
 
 private:
     Page do_prepare_page();
@@ -1007,7 +1008,8 @@ struct _3DLabs_
 
     bool has_status();
     void set_status(const char* message);
-    void set_status(const char* fmt, va_list& args);
+    void set_auto_pid_status(const FlashChar* message);
+    void set_auto_pid_status(const FlashChar* fmt, va_list& args);
     void set_status(const FlashChar* message);
     void set_status(const FlashChar* fmt, va_list& args);
     void reset_status();
