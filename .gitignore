@@ -153,3 +153,5 @@ ArduinoCore
 Marlin/BLTouch-Debug
 Marlin/BLTouch-Release
 
+# Ignore patches
+*.patch
