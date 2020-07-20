@@ -1149,6 +1149,7 @@ bool ManualLeveling::do_dispatch(KeyValue key_value)
 void ManualLeveling::do_back_command()
 {
     enqueue_and_echo_commands_P(PSTR("G1 Z30 F1200"));
+    enqueue_and_echo_commands_P(PSTR("M420 S1")); // re-enable mesh bed compensation
     Parent::do_back_command();
 }
 
@@ -1163,6 +1164,7 @@ Page ManualLeveling::do_prepare_page()
     ::axis_known_position = 0;
     enqueue_and_echo_commands_P(PSTR("G90")); // absolute mode
     enqueue_and_echo_commands_P((PSTR("G28 F6000"))); // homing
+    enqueue_and_echo_commands_P((PSTR("M420 S0"))); // temporaily disable mesh bed compensation during manual leveling
     task.set_background_task(BackgroundTask(this, &ManualLeveling::leveling_task), 200);
     return Page::None;
 }
