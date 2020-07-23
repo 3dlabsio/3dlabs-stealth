@@ -281,7 +281,7 @@ private:
 //! Preheat Page
 struct Preheat: Handler<Preheat>
 {
-    static const size_t NB_PRESETS = 5;
+    static const size_t NB_PRESETS = 14;
 
 private:
     bool do_dispatch(KeyValue key_value);

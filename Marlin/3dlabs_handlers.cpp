@@ -59,11 +59,20 @@ namespace
 {
     //! Default preheat values
     const _3dlabs::Preset DEFAULT_PREHEAT_PRESET[_3dlabs::Preheat::NB_PRESETS] = {
-        {160, 160, 90,  0, 0},
-        {160, 160, 50,  0, 0},
-        {160, 160, 150, 0, 0},
-        {160, 160, 180, 0, 0},
-        {200, 160, 00,  0, 0}
+        {90, 0, 50,  0, 0, 25}, // PLA
+        {160, 0, 105,  65, 0, 15}, // ABS/ASA
+        {160, 0, 80, 0, 0, 10}, // PETG
+        {0, 160, 115, 70, 0, 15}, // PC-ABS
+        {0, 160, 130,  75, 0, 10}, // PC
+        {0, 160, 205,  90, 0, 0}, // PEEK / CF-PEEK
+        {0, 160, 195,  90, 0, 0}, // PEI9085
+        {0, 160, 205,  90, 0, 0}, // PEI1010
+        {0, 160, 195,  90, 0, 0}, // PSU
+        {0, 0, 0,  0, 0, 0}, // Custom
+        {0, 0, 0,  0, 0, 0}, // Custom
+        {0, 0, 0,  0, 0, 0}, // Custom
+        {0, 0, 0,  0, 0, 0}, // Custom
+        {0, 0, 0,  0, 0, 0} // Custom
     };
 
     //! List of multipliers in Print Settings
@@ -79,7 +88,7 @@ namespace
     {
         // Note: F macro can be used only in a function, this is why this is coded like this
         auto custom   = F("Custom");
-        auto stealth  = F("Stealth");
+        auto stealth  = F("X400");
         static const FlashChar* names[_3dlabs::SensorSettings::NB_SENSOR_POSITIONS] = {stealth, custom};
         assert(index < _3dlabs::SensorSettings::NB_SENSOR_POSITIONS);
         return names[index];
