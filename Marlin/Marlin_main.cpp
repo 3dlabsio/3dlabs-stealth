@@ -8595,7 +8595,7 @@ inline void gcode_M105() {
   /**
    * M112: Emergency Stop
    */
-  inline void gcode_M112() { kill(PSTR(MSG_KILLED)); }
+  inline void gcode_M112() { power_button_kill(); }
 
 
   /**
