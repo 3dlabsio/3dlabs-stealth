@@ -75,7 +75,7 @@
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
 #if ENABLED(THERMAL_PROTECTION_HOTENDS)
-  // @advi3++: Use appropriate values for Wanaho i3 Plus
+  // @3dlabs: Use values for X400
   #define THERMAL_PROTECTION_PERIOD 60        // Seconds
   #define THERMAL_PROTECTION_HYSTERESIS 6     // Degrees Celsius
 
@@ -91,7 +91,7 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-   // @advi3++: Use appropriate values for Wanaho i3 Plus
+   // @3dlabs: Use values for X400
   #define WATCH_TEMP_PERIOD 30                // Seconds
   #define WATCH_TEMP_INCREASE 3               // Degrees Celsius
 #endif
@@ -100,7 +100,7 @@
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
 #if ENABLED(THERMAL_PROTECTION_BED)
-  // @advi3++: Use appropriate values for Wanaho i3 Plus
+  // @3dlabs: Use values for X400
   #define THERMAL_PROTECTION_BED_PERIOD 60    // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS 3 // Degrees Celsius
 
@@ -115,7 +115,7 @@
  * Thermal Protection parameters for the chamber are just as above for hotends.
  */
 #if ENABLED(THERMAL_PROTECTION_CHAMBER)
-  // Use appropriate values for Creatbot D600 Pro
+  // @3dlabs: Use values for X400
   #define THERMAL_PROTECTION_CHAMBER_PERIOD 180    // Seconds
   #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
 

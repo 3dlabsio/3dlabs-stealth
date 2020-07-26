@@ -15270,6 +15270,16 @@ void kill(const char* lcd_msg) {
  * Auxiliary kill() function to specifically handle a power button press
  */
 void power_button_kill() {
+
+  thermalManager.disable_all_heaters();
+  disable_all_steppers();
+
+  _delay_ms(600); // Wait a short time (allows messages to get out before shutting down.
+  cli(); // Stop interrupts
+
+  _delay_ms(250); //Wait to ensure all interrupts routines stopped
+  thermalManager.disable_all_heaters(); //turn off heaters again
+
   #if HAS_POWER_SWITCH
     PSU_OFF();
   #endif
