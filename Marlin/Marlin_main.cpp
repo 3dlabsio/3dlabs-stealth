@@ -15234,6 +15234,9 @@ void kill(const char* lcd_msg) {
   _delay_ms(250); //Wait to ensure all interrupts routines stopped
   thermalManager.disable_all_heaters(); //turn off heaters again
 
+  // Wait a few minutes before powering off so the user has the opportunity to read the error message on the screen
+  _delay_ms(300000);
+
   #ifdef ACTION_ON_KILL
     SERIAL_ECHOLNPGM("//action:" ACTION_ON_KILL);
   #endif
@@ -15243,6 +15246,7 @@ void kill(const char* lcd_msg) {
   #endif
 
   suicide();
+
   while (1) {
     #if ENABLED(USE_WATCHDOG)
       watchdog_reset();
