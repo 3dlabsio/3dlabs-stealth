@@ -223,6 +223,7 @@ void flush_and_request_resend();
 void ok_to_send();
 
 void kill(const char*);
+void power_button_kill();
 
 void quickstop_stepper();
 

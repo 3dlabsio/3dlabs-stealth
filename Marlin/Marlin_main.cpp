@@ -15030,7 +15030,7 @@ void manage_inactivity(const bool ignore_stepper_queue/*=false*/) {
     if (killCount >= KILL_DELAY) {
       SERIAL_ERROR_START();
       SERIAL_ERRORLNPGM(MSG_KILL_BUTTON);
-      kill(PSTR(MSG_KILLED));
+      power_button_kill();
     }
   #endif
 
@@ -15212,7 +15212,12 @@ void idle(
  * Kill all activity and lock the machine.
  * After this the machine will need to be reset.
  */
+
+
 void kill(const char* lcd_msg) {
+  unsigned long killCounter = 0;
+  unsigned long killSeconds = 300;
+
   // @advi3++: Output the kill msg
   SERIAL_ERROR_START();
   serialprintPGM(lcd_msg);
@@ -15234,19 +15239,44 @@ void kill(const char* lcd_msg) {
   _delay_ms(250); //Wait to ensure all interrupts routines stopped
   thermalManager.disable_all_heaters(); //turn off heaters again
 
-  // Wait a few minutes before powering off so the user has the opportunity to read the error message on the screen
-  _delay_ms(300000);
+  suicide();
 
-  #ifdef ACTION_ON_KILL
-    SERIAL_ECHOLNPGM("//action:" ACTION_ON_KILL);
-  #endif
+  while (1) {
+    _delay_ms(1000);
 
+    #if HAS_KILL
+
+      // Intercept a power button press while displaying the error and allow the user to shut down the machine 
+      // manually.
+      if (!READ(KILL_PIN))
+        power_button_kill();
+
+    #endif
+
+    killCounter = killCounter + 1;
+
+    if ( killCounter >= killSeconds )
+      power_button_kill();
+
+    #if ENABLED(USE_WATCHDOG)
+      watchdog_reset();
+    #endif
+  } // Wait for reset
+}
+
+/**
+ * Kill all activity and lock the machine.
+ * After this the machine will need to be reset.
+ * Auxiliary kill() function to specifically handle a power button press
+ */
+void power_button_kill() {
   #if HAS_POWER_SWITCH
     PSU_OFF();
   #endif
 
   suicide();
 
+  // If the above fails for any reason, we lock the machine.
   while (1) {
     #if ENABLED(USE_WATCHDOG)
       watchdog_reset();
