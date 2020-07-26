@@ -1140,7 +1140,7 @@ inline void get_serial_commands() {
             wait_for_user = false;
           #endif
         }
-        if (strcmp(command, "M112") == 0) kill(PSTR(MSG_KILLED));
+        if (strcmp(command, "M112") == 0) power_button_kill();
         if (strcmp(command, "M410") == 0) quickstop_stepper();
       #endif
 
@@ -8595,7 +8595,7 @@ inline void gcode_M105() {
   /**
    * M112: Emergency Stop
    */
-  inline void gcode_M112() { kill(PSTR(MSG_KILLED)); }
+  inline void gcode_M112() { power_button_kill(); }
 
 
   /**
