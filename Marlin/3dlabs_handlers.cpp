@@ -893,37 +893,37 @@ void Move::move(const char* command, millis_t delay)
 //! Move the nozzle (+X)
 void Move::x_plus_command()
 {
-    move(PSTR("G1 X4 F1000"), 150);
+    move(PSTR("G1 X-4 F1000"), 150);
 }
 
 //! Move the nozzle (-X)
 void Move::x_minus_command()
 {
-    move(PSTR("G1 X-4 F1000"), 150);
+    move(PSTR("G1 X4 F1000"), 150);
 }
 
 //! Move the nozzle (+Y)
 void Move::y_plus_command()
 {
-    move(PSTR("G1 Y4 F1000"), 150);
+    move(PSTR("G1 Y-4 F1000"), 150);
 }
 
 //! Move the nozzle (-Y)
 void Move::y_minus_command()
 {
-    move(PSTR("G1 Y-4 F1000"), 150);
+    move(PSTR("G1 Y4 F1000"), 150);
 }
 
 //! Move the nozzle (+Z)
 void Move::z_plus_command()
 {
-    move(PSTR("G1 Z0.5 F240"), 10);
+    move(PSTR("G1 Z-1 F12000"), 10);
 }
 
 //! Move the nozzle (-Z)
 void Move::z_minus_command()
 {
-    move(PSTR("G1 Z-0.5 F240"), 10);
+    move(PSTR("G1 Z1 F12000"), 10);
 }
 
 //! Extrude some filament.
