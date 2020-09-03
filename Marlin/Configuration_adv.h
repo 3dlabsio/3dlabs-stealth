@@ -804,10 +804,11 @@
  * Mention @Sebastianv650 on GitHub to alert the author of any issues.
  */
 // @advi3++: Allow Linear Pressure Control v1.5 (Linear Advance). The default K factor is 0 (no compensation)
+// @3dlabs: Default will be 0 and K factor is to be set on a per material basis in slicing profiles.
 // Run Linear Advance Tuning to get the best K factor
 #define LIN_ADVANCE
 #if ENABLED(LIN_ADVANCE)
-  #define LIN_ADVANCE_K 0.22  // Unit: mm compression per 1mm/s extruder speed
+  #define LIN_ADVANCE_K 0.00  // Unit: mm compression per 1mm/s extruder speed
   //#define LA_DEBUG          // If enabled, this will generate debug information output over USB.
 #endif
 
