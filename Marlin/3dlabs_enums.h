@@ -87,15 +87,6 @@ enum class Variable: uint16_t
     Value12                 = 0x0312,
     Value13                 = 0x0313,
     Value14                 = 0x0314,
-    Value15                 = 0x0315,
-    Value16                 = 0x0316,
-    Value17                 = 0x0317,
-    Value18                 = 0x0318,
-    Value19                 = 0x0319,
-    Value20                 = 0x0320,
-    Value21                 = 0x0321,
-    Value22                 = 0x0322,
-    Value23                 = 0x0323,
 };
 
 //! List of actions sent by the LCD.
