@@ -3071,7 +3071,7 @@ void JerkSettings::do_save_command()
 Page LinearAdvanceSettings::do_prepare_page()
 {
     WriteRamDataRequest frame{Variable::Value0};
-    frame << Uint16(Planner::extruder_advance_K * 10);
+    frame << Uint16(Planner::extruder_advance_K * 100);
     frame.send();
 
     return Page::LinearAdvanceSettings;
@@ -3088,7 +3088,7 @@ void LinearAdvanceSettings::do_save_command()
     }
 
     Uint16 k; response >> k;
-    Planner::extruder_advance_K = k.word / 10.0;
+    Planner::extruder_advance_K = k.word / 100.0;
 
     Parent::do_save_command();
 }
