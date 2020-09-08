@@ -596,7 +596,7 @@ private:
 //! Sensor Settings Page
 struct SensorSettings: Handler<SensorSettings>
 {
-    static const size_t NB_SENSOR_POSITIONS = 3;
+    static const size_t NB_SENSOR_POSITIONS = 2;
 
     SensorSettings();
 
