@@ -61,7 +61,7 @@ namespace
     //! Default preheat values
     const _3dlabs::Preset DEFAULT_PREHEAT_PRESET[_3dlabs::Preheat::NB_PRESETS] = {
         {90, 0, 50,  0, 0, 25}, // PLA
-        {160, 0, 105,  65, 0, 15}, // ABS/ASA
+        {160, 0, 105,  65, 0, 15, }, // ABS/ASA
         {160, 0, 80, 0, 0, 10}, // PETG
         {0, 160, 115, 70, 0, 15}, // PC-ABS
         {0, 160, 130,  75, 0, 10}, // PC
@@ -75,6 +75,33 @@ namespace
         {0, 0, 0,  0, 0, 0}, // Custom
         {0, 0, 0,  0, 0, 0} // Custom
     };
+
+    //! Get the name of a material preset
+    //! @param index Index of the holder
+    //! @return The name (in Flash memory) of the holder
+    const FlashChar* get_preset_name(size_t index)
+    {
+        // Note: F macro can be used only in a function, this is why this is coded like this
+        auto pla  = F("PLA");
+        auto abs  = F("ABS/ASA");
+        auto petg = F("PETG");
+        auto pcabs = F("PC-ABS/PC-ASA");
+        auto pc = F("PC");
+        auto peek = F("PEEK/CF-PEEK");
+        auto pei1 = F("PEI9085");
+        auto pei2 = F("PEI1010");
+        auto psu = F("PSU");
+        auto custom1 = F("Custom 1");
+        auto custom2 = F("Custom 2");
+        auto custom3 = F("Custom 3");
+        auto custom4 = F("Custom 4");
+        auto custom5 = F("Custom 5");
+
+        static const FlashChar* names[_3dlabs::Preheat::NB_PRESETS] = 
+            {pla, abs, petg, pcabs, pc, peek, pei1, pei2, psu, custom1, custom2, custom3, custom4, custom5};
+        assert(index < _3dlabs::Preheat::NB_PRESETS);
+        return names[index];
+    }
 
     //! List of multipliers in Print Settings
     const double BABYSTEPS_MULTIPLIERS[] = {0.04, 0.08, 0.12};
@@ -750,10 +777,12 @@ void Preheat::send_presets()
           << Uint16(presets_[index_].fan2);
     frame.send();
 
-    _3DLString<8> preset;
-    preset << index_ + 1 << F(" / ") << NB_PRESETS;
-    frame.reset(Variable::ShortText0);
-    frame << preset;
+    //_3DLString<8> preset;
+    //preset << index_ + 1 << F(" / ") << NB_PRESETS;
+    _3DLString<16> preset{get_preset_name(index_)}; 
+    frame.reset(Variable::LongText0);
+    //frame << preset;
+    frame << preset.align(Alignment::Center);
     frame.send();
 }
 
