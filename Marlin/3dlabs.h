@@ -57,6 +57,7 @@ struct _3DLabs
     static void temperature_error(const FlashChar* message);
     static void set_brightness(int16_t britghness);
     static bool has_status();
+    static void set_fname(const char* message);
     static void set_status(const char* message);
     static void set_status(const FlashChar* message);
     static void set_status(const FlashChar* fmt, va_list& args);

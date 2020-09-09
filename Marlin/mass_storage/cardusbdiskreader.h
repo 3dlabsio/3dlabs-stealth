@@ -25,6 +25,13 @@
 
 #include "../MarlinConfig.h"
 
+#include "../3dlabs.h"
+#include "../3dlabs_log.h"
+#include "../3dlabs_dgus.h"
+#include "../3dlabs_stack.h"
+#include "../3dlabs_versions.h"
+#include "../3dlabs_.h"
+
 #if ENABLED(CH376_STORAGE_SUPPORT)
 
 #define SD_RESORT ENABLED(SDCARD_SORT_ALPHA) && ENABLED(SDSORT_DYNAMIC_RAM)

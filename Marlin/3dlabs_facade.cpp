@@ -134,6 +134,11 @@ bool _3DLabs::has_status()
     return _3dlabs.has_status();
 }
 
+void _3DLabs::set_fname(const char* message)
+{
+    _3dlabs.set_progress_name(message);
+}
+
 void _3DLabs::set_status(const char* message)
 {
     _3dlabs.set_status(message);

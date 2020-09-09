@@ -791,6 +791,10 @@ void USBReader::openFile(char * const path, const bool read, const bool subcall/
       //lcd_setstatus(longFilename[0] ? longFilename : fname);
       lcd_setstatus(fname);
       
+      // @3dlabs - Update lcd progress_name_ to reflect the file being printed when print is initiated
+      // via M24 (Octoprint, ESP8266 etc.)
+      lcd_setfname(fname);
+
       //if (longFilename[0]) {
       //  SERIAL_PROTOCOLPAIR(MSG_SD_FILE_LONG_NAME, longFilename);
       //}

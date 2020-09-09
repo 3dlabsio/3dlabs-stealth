@@ -35,6 +35,7 @@
 
     inline bool lcd_hasstatus() { return _3dlabs::_3DLabs::has_status(); }
     inline void lcd_setstatus(const char* const message, const bool persist=false) { _3dlabs::_3DLabs::set_status(message); }
+    inline void lcd_setfname(const char* const message, const bool persist=false) { _3dlabs::_3DLabs::set_fname(message); }
     inline void lcd_setstatusPGM(const char* const message, const int8_t level=0) { _3dlabs::_3DLabs::set_status(reinterpret_cast<const FlashChar*>(message)); }
     inline void lcd_setalertstatusPGM(const char* message) { _3dlabs::_3DLabs::set_status(reinterpret_cast<const FlashChar*>(message)); }
     inline void lcd_reset_alert_level() { /* Do nothing */ }
