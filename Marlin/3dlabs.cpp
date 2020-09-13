@@ -391,15 +391,22 @@ void _3DLabs_::read_lcd_serial()
         return;
     }
 
-    buzz_on_press();
-    dimming.reset();
-
     Command command{}; Action action{}; Uint8 nb_words; Uint16 value;
     frame >> command >> action >> nb_words >> value;
     auto key_value = static_cast<KeyValue>(value.word);
 
-    Log::log() << F("=R=> ") << nb_words.byte << F(" words, Action = 0x") << static_cast<uint16_t>(action)
+    Log::log() << F("=R=> ") << nb_words.byte << F(" words, Command = 0x") << static_cast<uint16_t>(command) 
+	           << F(", Action = 0x") << static_cast<uint16_t>(action)
                << F(", KeyValue = 0x") << value.word << Log::endl();
+			   
+	if(command != Command::ReadRamData)
+	{
+		Log::log() << F("Race condition detected, ignore command");
+		return;
+	}
+
+    buzz_on_press();
+    dimming.reset();
 
     switch(action)
     {
