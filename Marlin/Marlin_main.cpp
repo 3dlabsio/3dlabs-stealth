@@ -3983,19 +3983,19 @@ inline void gcode_G4() {
 
     #if HAS_BED_PROBE
       // @advi3++
-      SERIAL_ECHOPAIR("Probe Offset X:", advi3pp::ADVi3pp::x_probe_offset_from_extruder());
-      SERIAL_ECHOPAIR(" Y:", advi3pp::ADVi3pp::y_probe_offset_from_extruder());
+      SERIAL_ECHOPAIR("Probe Offset X:", _3dlabs::_3DLabs::x_probe_offset_from_extruder());
+      SERIAL_ECHOPAIR(" Y:", _3dlabs::_3DLabs::y_probe_offset_from_extruder());
       SERIAL_ECHOPAIR(" Z:", zprobe_zoffset);
-      if(advi3pp::ADVi3pp::x_probe_offset_from_extruder() > 0)
+      if(_3dlabs::_3DLabs::x_probe_offset_from_extruder() > 0)
         SERIAL_ECHOPGM(" (Right");
-      else if(advi3pp::ADVi3pp::x_probe_offset_from_extruder() < 0)
+      else if(_3dlabs::_3DLabs::x_probe_offset_from_extruder() < 0)
         SERIAL_ECHOPGM(" (Left");
-      else if(advi3pp::ADVi3pp::y_probe_offset_from_extruder() != 0)
+      else if(_3dlabs::_3DLabs::y_probe_offset_from_extruder() != 0)
         SERIAL_ECHOPGM(" (Middle");
       else
         SERIAL_ECHOPGM(" (Aligned With");
 
-      if(advi3pp::ADVi3pp::y_probe_offset_from_extruder() > 0)
+      if(_3dlabs::_3DLabs::y_probe_offset_from_extruder() > 0)
       {
         #if IS_SCARA
           SERIAL_ECHOPGM("-Distal");
@@ -4003,7 +4003,7 @@ inline void gcode_G4() {
           SERIAL_ECHOPGM("-Back");
         #endif
       }
-      else if(advi3pp::ADVi3pp::y_probe_offset_from_extruder() < 0)
+      else if(_3dlabs::_3DLabs::y_probe_offset_from_extruder() < 0)
       {
         #if IS_SCARA
           SERIAL_ECHOPGM("-Proximal");
@@ -4011,7 +4011,7 @@ inline void gcode_G4() {
           SERIAL_ECHOPGM("-Front");
         #endif
       }
-      else if(advi3pp::ADVi3pp::x_probe_offset_from_extruder() != 0)
+      else if(_3dlabs::_3DLabs::x_probe_offset_from_extruder() != 0)
         SERIAL_ECHOPGM("-Center");
 
       if (zprobe_zoffset < 0)

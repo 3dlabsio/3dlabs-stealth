@@ -60,7 +60,7 @@ private:
 };
 
 void assert_(const char *msg, const char *file, uint16_t line);
-#define assert(E) (void)((E) || (advi3pp::assert_(#E, __FILE__, __LINE__), 0))
+#define assert(E) (void)((E) || (_3dlabs::assert_(#E, __FILE__, __LINE__), 0))
 
 #else
 struct Log
