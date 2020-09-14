@@ -260,7 +260,7 @@ void _3DLabs_::init()
     dimming.reset(true);
     reset_status();
     show_boot_page();
-    set_status(F("Ready"));
+    set_status(F("X400 Ready"));
 }
 
 //! Background idle tasks
