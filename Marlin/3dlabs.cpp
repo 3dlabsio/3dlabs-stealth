@@ -470,6 +470,8 @@ void _3DLabs_::read_lcd_serial()
         case Action::LCDBrightness:         lcd_settings.change_brightness(static_cast<int16_t>(key_value)); break;
         case Action::Fan2Minus:             print_settings.fan2_minus_command(); break;
         case Action::Fan2Plus:              print_settings.fan2_plus_command(); break;
+        case Action::FlowrateMinus:         print_settings.flowrate_minus_command(); break;
+        case Action::FlowratePlus:          print_settings.flowrate_plus_command(); break;
 
         default:                            Log::error() << F("Invalid action ") << static_cast<uint16_t>(action) << Log::endl(); break;
     }

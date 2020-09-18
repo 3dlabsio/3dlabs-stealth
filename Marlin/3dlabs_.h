@@ -670,6 +670,8 @@ struct PrintSettings: Handler<PrintSettings>
     void bed_plus_command();
     void enclosure_minus_command();
     void enclosure_plus_command();
+    void flowrate_minus_command();
+    void flowrate_plus_command();
 
 protected:
     bool do_dispatch(KeyValue value);

@@ -2481,6 +2481,35 @@ void PrintSettings::enclosure_plus_command()
     Temperature::setTargetChamber(temperature + 1);
 }
 
+//! Handle the -Flowrate command
+void PrintSettings::flowrate_minus_command()
+{
+    for(size_t e = 0; e < EXTRUDERS; ++e)
+    {
+        auto flow = planner.flow_percentage[e];
+        if(flow > 50)
+        {
+            planner.flow_percentage[e] = flow - 1;
+            planner.refresh_e_factor(e);
+    }
+    }
+}
+
+//! Handle the +Flowrate command
+void PrintSettings::flowrate_plus_command()
+{
+    for(size_t e = 0; e < EXTRUDERS; ++e)
+    {
+        auto flow = planner.flow_percentage[e];
+        if(flow < 150)
+        {
+            planner.flow_percentage[e] = flow + 1;
+            planner.refresh_e_factor(e);
+        }
+    }
+}
+
+
 // --------------------------------------------------------------------
 // BabySteps Settings
 // --------------------------------------------------------------------

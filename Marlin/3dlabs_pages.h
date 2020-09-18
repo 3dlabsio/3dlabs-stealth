@@ -69,7 +69,11 @@ enum class Page: uint8_t
     ZHeightTuning           = 106,
     LinearAdvanceTuning     = 108,
     LinearAdvanceSettings   = 110,
-    Babystepping            = 116
+    Babystepping            = 116,
+    KeyboardInteger         = 118,
+    KeyboardDecimal         = 120,
+    KeyboardSignedInteger   = 122,
+    KeyboardSignedDecimal   = 124
 };
 
 }

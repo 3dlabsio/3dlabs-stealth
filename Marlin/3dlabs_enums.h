@@ -52,6 +52,7 @@ enum class Variable: uint16_t
     Progress                = 0x0040,
     ET                      = 0x0058,
     TC                      = 0x005C,
+    Flowrate                = 0x0060,
 
     // 1 - Texts
     ShortText0              = 0x0100,
@@ -152,6 +153,8 @@ enum class Action: uint16_t
     LCDBrightness           = 0x0518,
     Fan2Minus               = 0x0519,
     Fan2Plus                = 0x051A,
+    FlowrateMinus           = 0x051B,
+    FlowratePlus            = 0x051C,
 
     Undefined               = 0xFFFF
 };
