@@ -90,6 +90,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>NDEBUG</Value>
 </ListValues></avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths><ListValues><Value>%24(ProjectDir)\..\ArduinoCore\include</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\variants\mega</Value><Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.3.300\include</Value></ListValues></avrgcc.compiler.directories.IncludePaths>
@@ -110,6 +111,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>NDEBUG</Value>
 </ListValues></avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths><ListValues><Value>%24(ProjectDir)\..\ArduinoCore\include</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\variants\mega</Value><Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.3.300\include</Value></ListValues></avrgcccpp.compiler.directories.IncludePaths>
@@ -149,6 +151,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>DEBUG</Value>
 </ListValues></avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths><ListValues><Value>%24(ProjectDir)\..\ArduinoCore\include</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\variants\mega</Value><Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.3.300\include</Value></ListValues></avrgcc.compiler.directories.IncludePaths>
@@ -169,6 +172,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>DEBUG</Value>
 </ListValues></avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths><ListValues><Value>%24(ProjectDir)\..\ArduinoCore\include</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\core</Value><Value>%24(ProjectDir)\..\ArduinoCore\include\variants\mega</Value><Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.3.300\include</Value></ListValues></avrgcccpp.compiler.directories.IncludePaths>
@@ -208,6 +212,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>NDEBUG</Value>
   <Value>ADVi3PP_BLTOUCH</Value>
 </ListValues></avrgcc.compiler.symbols.DefSymbols>
@@ -229,6 +234,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>NDEBUG</Value>
   <Value>ADVi3PP_BLTOUCH</Value>
 </ListValues></avrgcccpp.compiler.symbols.DefSymbols>
@@ -270,6 +276,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>DEBUG</Value>
   <Value>ADVi3PP_BLTOUCH</Value>
 </ListValues></avrgcc.compiler.symbols.DefSymbols>
@@ -291,6 +298,7 @@
   <Value>USB_VID=0x2341</Value>
   <Value>USB_PID=0x0010</Value>
   <Value>USB_MANUFACTURER="\"Arduino LLC\""</Value>
+  <Value>ADVi3PP_SIMULATOR</Value>
   <Value>DEBUG</Value>
   <Value>ADVi3PP_BLTOUCH</Value>
 </ListValues></avrgcccpp.compiler.symbols.DefSymbols>

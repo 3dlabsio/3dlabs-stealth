@@ -1521,7 +1521,6 @@
  */
 // @advi3++: Wanhao i3 Plus printer do have a SD card reader
 // @3dlabs: 3DLabs Stealth does not have an SD card slot
-//#define ADVi3PP_SIMULATOR
 #ifdef ADVi3PP_SIMULATOR
 #define SDSUPPORT
 #endif
