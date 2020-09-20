@@ -1381,26 +1381,36 @@ void Card::select_file_command(uint16_t file_index)
     if(file_index > last_file_index_)
         return;
 
-    card.getfilename(last_file_index_ - file_index);
+    file_index_ = file_index;
 
-    #ifdef CH376_STORAGE_SUPPORT
-        card.getLongnameFromShort();
-    #endif
+    wait.show(F("Print the selected file?"),
+              WaitCallback{[]{pages.show_back_page(); return true;}},
+              WaitCallback{this, &Card::print_file},
+              ShowOptions::None);
+}
+
+bool Card::print_file()
+{
+    card.getfilename(last_file_index_ - file_index_);
+
+#ifdef CH376_STORAGE_SUPPORT
+    card.getLongnameFromShort();
+#endif
 
     if(card.filenameIsDir)
-        return;
+        return false;
 
     const char* filename = (card.longFilename[0] == 0) ? card.filename : card.longFilename;
     if(filename == nullptr) // If the SD card is not readable
-        return;
+        return false;
 
     _3dlabs.set_progress_name(filename);
-
     card.openFile(card.filename, true); // use always short filename so it will work even if the filename is long
     card.startFileprint();
     PrintCounter::start();
-
     pages.show_page(Page::Print, ShowOptions::None);
+
+    return false;
 }
 
 // --------------------------------------------------------------------
@@ -1439,8 +1449,14 @@ void Print::stop_command()
     if(!is_printing())
         return;
 
-    wait.show(F("Stop printing..."), ShowOptions::SaveBack);
-    enqueue_and_echo_commands_P(PSTR("A1"));
+    wait.show(F("Do you really want to stop the print?"),
+              WaitCallback{[]{return true;}},
+              WaitCallback{[]{
+                  wait.show(F("Stop printing..."), ShowOptions::None);
+                  enqueue_and_echo_commands_P(PSTR("A1"));
+                  return false;
+               }},
+              ShowOptions::SaveBack);
 }
 
 //! Pause printing
@@ -1449,8 +1465,14 @@ void Print::pause_resume_command()
     if(!is_printing())
         return;
 
-    wait.show(F("Pause printing..."), ShowOptions::SaveBack);
-    enqueue_and_echo_commands_P(PSTR("A0"));
+    wait.show(F("Pause printing?"),
+              WaitCallback{[]{return true;}},
+              WaitCallback{[]{
+                  wait.show(F("Pause printing..."), ShowOptions::None);
+                  enqueue_and_echo_commands_P(PSTR("A0"));
+                  return false;
+               }},
+              ShowOptions::SaveBack);
 }
 
 //! Advanced Pause for filament change
@@ -1459,8 +1481,14 @@ void Print::advanced_pause_command()
     if(!is_printing())
         return;
 
-    wait.show(F("Pausing..."), ShowOptions::SaveBack);
-    enqueue_and_echo_commands_P(PSTR("M600"));
+    wait.show(F("Change filament?"),
+              WaitCallback{[]{return true;}},
+              WaitCallback{[]{
+                  wait.show(F("Pausing..."), ShowOptions::None);
+                  enqueue_and_echo_commands_P(PSTR("M600"));
+                  return false;
+              }},
+              ShowOptions::SaveBack);
 }
 
 //! Process Stop (A1) code and actually stop the print (if any running).
@@ -2491,7 +2519,7 @@ void PrintSettings::flowrate_minus_command()
         {
             planner.flow_percentage[e] = flow - 1;
             planner.refresh_e_factor(e);
-    }
+        }
     }
 }
 

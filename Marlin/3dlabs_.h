@@ -427,6 +427,7 @@ private:
     void up_command();
     void down_command();
     void select_file_command(uint16_t file_index);
+    bool print_file();
 
 private:
     static constexpr uint16_t nb_visible_sd_files = 5; //!< Number of files per page on the SD screen
@@ -434,6 +435,7 @@ private:
     uint16_t nb_files_ = 0;
     uint16_t last_file_index_ = 0;
     uint16_t page_index_ = 0;
+    uint16_t file_index_ = 0;
 
     friend Parent;
 };
