@@ -1404,6 +1404,7 @@ bool Card::print_file()
     if(filename == nullptr) // If the SD card is not readable
         return false;
 
+    
     _3dlabs.set_progress_name(filename);
     card.openFile(card.filename, true); // use always short filename so it will work even if the filename is long
     card.startFileprint();
@@ -2590,6 +2591,14 @@ Page BabyStepsSettings::do_prepare_page()
 {
     send_data();
     return Page::Babystepping;
+}
+
+// @3dlabs: function to reset the LCD UI babystepping Z-offset value when starting a print.
+// Resolves an issue where babystepping value is set in LCD UI, but not in firmware when a new
+// print is started after completing or stopping a previous one.
+void BabyStepsSettings::reset_offset()
+{
+    offset_ = 0;
 }
 
 void BabyStepsSettings::babystep(double offset)

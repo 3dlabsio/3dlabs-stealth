@@ -39,6 +39,7 @@
     inline void lcd_setstatusPGM(const char* const message, const int8_t level=0) { _3dlabs::_3DLabs::set_status(reinterpret_cast<const FlashChar*>(message)); }
     inline void lcd_setalertstatusPGM(const char* message) { _3dlabs::_3DLabs::set_status(reinterpret_cast<const FlashChar*>(message)); }
     inline void lcd_reset_alert_level() { /* Do nothing */ }
+    inline void lcd_reset_babystep_offset() { _3dlabs::_3DLabs::reset_babystep_offset(); };
     inline void lcd_reset_status() { _3dlabs::_3DLabs::reset_status(); }
     inline void lcd_status_printf_P(uint8_t, const char * fmt, ...) { va_list args; va_start(args, fmt);
         _3dlabs::_3DLabs::set_status(reinterpret_cast<const FlashChar*>(fmt), args); va_end(args); }

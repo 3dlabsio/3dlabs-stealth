@@ -64,6 +64,7 @@ struct _3DLabs
     static void set_auto_pid_progress(int index, int nb);
     static void set_auto_bed_leveling_progress(int index, int nb, int x, int y);
     static void advanced_pause_show_message(AdvancedPauseMessage message);
+    static void reset_babystep_offset();
     static void reset_status();
     static void buzz(long duration, uint16_t frequency = 0);
     static void on_set_temperature(TemperatureKind kind, uint16_t temperature);

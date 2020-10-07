@@ -34,6 +34,7 @@ namespace _3dlabs {
 
 inline namespace singletons
 {
+    extern BabyStepsSettings babysteps_settings;
     extern PidTuning pid_tuning;
     extern AutomaticLeveling automatic_leveling;
     extern SensorSettings sensor_settings;
@@ -167,6 +168,11 @@ void _3DLabs::set_auto_bed_leveling_progress(int index, int nb, int x, int y)
 void  _3DLabs::advanced_pause_show_message(AdvancedPauseMessage message)
 {
     _3dlabs.advanced_pause_show_message(message);
+}
+
+void _3DLabs::reset_babystep_offset()
+{
+    babysteps_settings.reset_offset();
 }
 
 void _3DLabs::reset_status()

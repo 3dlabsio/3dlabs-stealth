@@ -695,7 +695,8 @@ struct BabyStepsSettings: Handler<BabyStepsSettings>
 {
     void minus_command();
     void plus_command();
-
+    void reset_offset();
+    
     enum class Multiplier: uint8_t { M1 = 0, M2 = 1, M3 = 2 };
 
 protected:

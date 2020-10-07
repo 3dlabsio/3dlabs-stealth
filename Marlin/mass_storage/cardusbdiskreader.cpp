@@ -31,6 +31,7 @@
 #include "../stepper.h"
 #include "../language.h"
 #include "../printcounter.h"
+#include "../3dlabs.h"
 
 #include "CH376_hal.h"
 #include "CH376_file_sys.h"
@@ -659,6 +660,9 @@ void USBReader::startFileprint() {
     #if SD_RESORT
       flush_presort();
     #endif
+
+    // @3dlabs - reset babystepping offset in LCD
+    lcd_reset_babystep_offset();
   }
 }
 
