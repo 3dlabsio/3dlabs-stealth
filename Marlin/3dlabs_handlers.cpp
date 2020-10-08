@@ -372,6 +372,24 @@ void Wait::set_message(const FlashChar* message)
     frame.send();
 }
 
+void Wait::set_message_centered(const FlashChar* message)
+{
+    WriteRamDataRequest frame{Variable::LongText0};
+    _3DLString<48> message_to_send{message};
+    message_to_send.align(Alignment::Center);
+    frame << message_to_send;
+    frame.send();
+}
+
+void Wait::set_message_fname(const char * filename)
+{
+    WriteRamDataRequest frame{Variable::LongText1};
+    _3DLString<sd_file_length> message_to_send{filename};
+    message_to_send.align(Alignment::Center);
+    frame << message_to_send;
+    frame.send();
+}
+
 //! Show a simple wait page with a message
 //! @param message  The message to display
 //! @param options  Options when displaying the page (i.e. save the current page or not)
@@ -406,6 +424,22 @@ void Wait::show(const FlashChar* message, const WaitCallback& back, const WaitCa
     back_ = back;
     continue_ = cont;
     pages.show_page(Page::WaitBackContinue, options);
+}
+
+//! Show a simple wait page with a message
+//! @param message  The message to display
+//! @param back     Callback to be called when the back button is pressed
+//! @param cont     Callback to be called when the continue button is pressed
+//! @param options  Options when displaying the page (i.e. save the current page or not)
+//! @param filename Filename to display
+void Wait::show_file_confirm(const FlashChar* message, const WaitCallback& back, const WaitCallback& cont, ShowOptions options, const char * filename = NULL)
+{
+    set_message(message);
+    set_message_fname(filename);
+
+    back_ = back;
+    continue_ = cont;
+    pages.show_page(Page::WaitConfirm, options);
 }
 
 //! Show a simple wait page with a message
@@ -1383,10 +1417,24 @@ void Card::select_file_command(uint16_t file_index)
 
     file_index_ = file_index;
 
-    wait.show(F("Print the selected file?"),
+    card.getfilename(last_file_index_ - file_index_);
+
+    #ifdef CH376_STORAGE_SUPPORT
+        card.getLongnameFromShort();
+    #endif
+
+    if(card.filenameIsDir)
+        return;
+
+    const char* filename = (card.longFilename[0] == 0) ? card.filename : card.longFilename;
+    if(filename == nullptr) // If the SD card is not readable
+        return;
+
+    wait.show_file_confirm(F("Print the selected file?"),
               WaitCallback{[]{pages.show_back_page(); return true;}},
               WaitCallback{this, &Card::print_file},
-              ShowOptions::None);
+              ShowOptions::None,
+              filename);
 }
 
 bool Card::print_file()

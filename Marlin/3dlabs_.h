@@ -205,11 +205,14 @@ struct Wait: Handler<Wait>
     void show(const FlashChar* message, ShowOptions options = ShowOptions::SaveBack);
     void show(const FlashChar* message, const WaitCallback& back, ShowOptions options = ShowOptions::SaveBack);
     void show(const FlashChar* message, const WaitCallback& back, const WaitCallback& cont, ShowOptions options = ShowOptions::SaveBack);
+    void show_file_confirm(const FlashChar* message, const WaitCallback& back, const WaitCallback& cont, ShowOptions options = ShowOptions::SaveBack, const char * filename = NULL);
     void show_continue(const FlashChar* message, const WaitCallback& cont, ShowOptions options = ShowOptions::SaveBack);
     void show_continue(const FlashChar* message, ShowOptions options = ShowOptions::SaveBack);
     template<size_t L> void show_continue(const _3DLString<L>& message, ShowOptions options = ShowOptions::SaveBack);
     void show_back(const FlashChar* message, ShowOptions options = ShowOptions::SaveBack);
     void set_message(const FlashChar* message);
+    void set_message_centered(const FlashChar* message);
+    void set_message_fname(const char * filename);
     template<size_t L> void set_message(const _3DLString<L>& message);
 
 private:

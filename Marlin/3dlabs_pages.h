@@ -35,6 +35,7 @@ enum class Page: uint8_t
     LoadUnload              = 30,
     WaitBack                = 32,
     WaitBackContinue        = 34,
+    WaitConfirm             = 131,
     Preheat                 = 36,
     Move                    = 38,
     SdCard                  = 40,
