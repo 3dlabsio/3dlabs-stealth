@@ -605,20 +605,13 @@ int Temperature::getHeaterPower(const int heater) {
 void Temperature::_temp_error(const int8_t e, const char * const serial_msg, const char * const lcd_msg) {
   // @advi3++: Display the error on the LCD panel
   _3dlabs::_3DLabs::temperature_error(reinterpret_cast<const __FlashStringHelper*>(lcd_msg));
-  /*
-  if (IsRunning()) {
-    SERIAL_ERROR_START();
-    serialprintPGM(serial_msg);
-    SERIAL_ERRORPGM(MSG_STOPPED_HEATER);
-    if (e >= 0) SERIAL_ERRORLN((int)e); else SERIAL_ERRORLNPGM(MSG_HEATER_BED);
-  }
-  */
+
   if (IsRunning()) {
     SERIAL_ERROR_START();
     serialprintPGM(serial_msg);
     SERIAL_ERRORPGM(MSG_STOPPED_HEATER);
     if (e >= 0) SERIAL_ERRORLN((int)e);
-    else{
+    else {
     	if(e == -1)
     		SERIAL_ERRORLNPGM(MSG_HEATER_BED);
     	if(e == -2)
@@ -644,15 +637,6 @@ void Temperature::max_temp_error(const int8_t e) {
 void Temperature::min_temp_error(const int8_t e) {
   _temp_error(e, PSTR(MSG_T_MINTEMP), TEMP_ERR_PSTR(MSG_ERR_MINTEMP, e));
 }
-
-#if HAS_TEMP_CHAMBER
-void Temperature::chamber_temp_error(const bool max){
-	if(max)
-		_temp_error(-2, PSTR(MSG_T_MAXTEMP), PSTR("Error: MAXTEMP CHAMBER"));
-	else
-		_temp_error(-2, PSTR(MSG_T_MINTEMP), PSTR("Error: MINTEMP CHAMBER"));
-}
-#endif
 
 float Temperature::get_pid_output(const int8_t e) {
   #if HOTENDS == 1
@@ -876,6 +860,10 @@ void Temperature::manage_heater() {
   #endif // FILAMENT_WIDTH_SENSOR
 
   #if HAS_HEATED_BED
+    #if ENABLED(THERMAL_PROTECTION_BED)
+      if (degBed() > BED_MAXTEMP)
+        _temp_error(-1, PSTR(MSG_T_THERMAL_RUNAWAY), TEMP_ERR_PSTR(MSG_THERMAL_RUNAWAY, -1));
+    #endif
 
     #if WATCH_THE_BED
       // Make sure temperature is increasing
@@ -942,7 +930,10 @@ void Temperature::manage_heater() {
 
 	#if HAS_TEMP_CHAMBER
     #if HAS_HEATED_CHAMBER
-
+      #if ENABLED(THERMAL_PROTECTION_CHAMBER)
+        if (degChamber() > CHAMBER_MAXTEMP)
+          _temp_error(-2, PSTR(MSG_T_THERMAL_RUNAWAY), TEMP_ERR_PSTR(MSG_THERMAL_RUNAWAY, -2));
+      #endif
       #if WATCH_THE_CHAMBER
         // Make sure temperature is increasing
         if (watch_chamber_next_ms && ELAPSED(ms, watch_chamber_next_ms)) {        // Time to check the chamber?
@@ -1980,14 +1971,14 @@ void Temperature::readings_ready() {
   #endif
 
   #if HAS_TEMP_CHAMBER
-    #if HEATER_CHAMBER_RAW_LO_TEMP > HEATER_BED_RAW_HI_TEMP
+    #if HEATER_CHAMBER_RAW_LO_TEMP > HEATER_CHAMBER_RAW_HI_TEMP
       #define GECHAMBER <=
     #else
       #define GECHAMBER >=
     #endif
     const bool chamber_on = (target_temperature_chamber > 0) || (soft_pwm_amount_chamber > 0);
-    if (current_temperature_chamber_raw GECHAMBER chamber_maxttemp_raw) max_temp_error(-1);
-    if (chamber_minttemp_raw GECHAMBER current_temperature_chamber_raw && chamber_on) min_temp_error(-1);
+    if (current_temperature_chamber_raw GECHAMBER chamber_maxttemp_raw) max_temp_error(-2);
+    if (chamber_minttemp_raw GECHAMBER current_temperature_chamber_raw && chamber_on) min_temp_error(-2);
   #endif  
 }
 
