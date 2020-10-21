@@ -1731,7 +1731,7 @@ void SensorZHeight::post_home_task()
     reset();
 
     enqueue_and_echo_commands_P(PSTR("G1 Z0 F1200"));  // raise head
-    enqueue_and_echo_commands_P(PSTR("G1 X100 Y100 F6000")); // middle
+    enqueue_and_echo_commands_P(PSTR("G1 X215 Y150 F6000")); // middle
     enqueue_and_echo_commands_P(PSTR("M211 S0")); // disable soft-endstops
     send_data();
 
