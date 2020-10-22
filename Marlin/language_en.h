@@ -804,6 +804,9 @@
 #ifndef MSG_HEATING_FAILED_LCD_BED
   #define MSG_HEATING_FAILED_LCD_BED          _UxGT("Bed heating failed")
 #endif
+#ifndef MSG_HEATING_FAILED_LCD_CHAMBER
+  #define MSG_HEATING_FAILED_LCD_CHAMBER          _UxGT("Chamber heating failed")
+#endif
 #ifndef MSG_ERR_REDUNDANT_TEMP
   #define MSG_ERR_REDUNDANT_TEMP              _UxGT("Err: REDUNDANT TEMP")
 #endif
@@ -811,7 +814,10 @@
   #define MSG_THERMAL_RUNAWAY                 _UxGT("The temperature has deviated too much")
 #endif
 #ifndef MSG_THERMAL_RUNAWAY_BED
-  #define MSG_THERMAL_RUNAWAY_BED             _UxGT("The temperature of the bed has deviated too much")
+  #define MSG_THERMAL_RUNAWAY_BED             _UxGT("The temperature of the bed has deviated")
+#endif
+#ifndef MSG_THERMAL_RUNAWAY_CHAMBER
+  #define MSG_THERMAL_RUNAWAY_CHAMBER             _UxGT("The temperature of the chamber has deviated")
 #endif
 #ifndef MSG_ERR_MAXTEMP
   #define MSG_ERR_MAXTEMP                     _UxGT("Maximum temperature exceeded")
@@ -824,6 +830,12 @@
 #endif
 #ifndef MSG_ERR_MINTEMP_BED
   #define MSG_ERR_MINTEMP_BED                 _UxGT("Minimum bed temperature exceeded")
+#endif
+#ifndef MSG_ERR_MAXTEMP_CHAMBER
+  #define MSG_ERR_MAXTEMP_CHAMBER                 _UxGT("Maximum chamber temperature exceeded")
+#endif
+#ifndef MSG_ERR_MINTEMP_CHAMBER
+  #define MSG_ERR_MINTEMP_CHAMBER                 _UxGT("Minimum chamber temperature exceeded")
 #endif
 #ifndef MSG_ERR_Z_HOMING
   #define MSG_ERR_Z_HOMING                    MSG_HOME _UxGT(" ") MSG_X MSG_Y _UxGT(" ") MSG_FIRST
